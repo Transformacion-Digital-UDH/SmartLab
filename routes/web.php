@@ -13,6 +13,10 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/login', function () {
+    return Inertia::render('Login', []);
+});
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
