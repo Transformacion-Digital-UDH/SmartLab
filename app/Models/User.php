@@ -24,9 +24,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nombres',
+        'apellidos',
+        'dni',
         'email',
         'password',
+        'codigo',
+        'rol',
+        'is_active',
     ];
 
     /**
@@ -61,5 +66,23 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Un usuario puede tener muchas asistencias.
+    public function asistencias()
+    {
+        return $this->hasMany(Asistencia::class);
+    }
+
+    // Un usuario puede tener muchas reservas.
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class);
+    }
+
+    // Un usuario puede participar en muchos proyectos.
+    public function miembroProyectos()
+    {
+        return $this->hasMany(MiembroProyecto::class);
     }
 }
