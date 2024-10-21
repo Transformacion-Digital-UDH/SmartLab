@@ -22,3 +22,15 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
+Route::get('/areas', function () {
+    return Inertia::render('Areas/AreaList');
+});
+
+Route::get('/areas/create', function () {
+    return Inertia::render('Areas/AreasCreate');
+});
+
+Route::get('/areas/edit/{id}', function ($id) {
+    return Inertia::render('Areas/AreasEdit', ['id' => $id]);
+});
