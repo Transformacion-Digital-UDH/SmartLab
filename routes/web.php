@@ -16,9 +16,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/login', function () {
-    return Inertia::render('Login', []);
-});
 
 Route::middleware([
     'auth:sanctum',
@@ -46,6 +43,7 @@ Route::get('/laboratorios', [LaboratorioController::class, 'index'])->name('labo
 Route::post('/laboratorios', [LaboratorioController::class, 'store'])->name('laboratorios.store');
 Route::put('/laboratorios/{laboratorio}', [LaboratorioController::class, 'update'])->name('laboratorios.update');
 Route::delete('/laboratorios/{laboratorio}', [LaboratorioController::class, 'destroy'])->name('laboratorios.destroy');
+
 
 Route::get('/areas', function () {
     return Inertia::render('Areas/AreaList');
