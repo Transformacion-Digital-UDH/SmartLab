@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\LaboratorioController;
+use App\Models\Asistencia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -37,7 +38,8 @@ Route::prefix('api/asistencia') -> controller(AsistenciaController::class) -> gr
 
 Route::get('/asistencia', function () {
     return Inertia::render('Asistencia/Asistencia', [
-        'token' => csrf_token()
+        'token' => csrf_token(),
+        'asistencias' => Asistencia::all()
     ]);
 });
 

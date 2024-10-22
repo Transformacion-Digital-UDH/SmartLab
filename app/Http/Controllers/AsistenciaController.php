@@ -27,7 +27,7 @@ class AsistenciaController extends Controller
             $user = User::where('codigo', $codigo)->first();
 
             if (!$user) {
-                return response('USTED NO ESTA REGISTRADO', 200);
+                return response('USTED NO ESTA REGISTRADO', 300);
             }
         }
 
@@ -57,22 +57,22 @@ class AsistenciaController extends Controller
 
     // POST
     public function registrarEntrada(Request $request){
-        // $request -> validate([
-        //     'usuario_id' => 'required|integer'
-        // ]);
+        $request -> validate([
+            'usuario_id' => 'required|integer'
+        ]);
 
-        // $data = $request->all();
-        // $usuario_id = $data['usuario_id'];
-        // $proyecto_id = $data['proyecto_id'];
+        $data = $request->all();
+        $usuario_id = $data['usuario_id'];
+        $proyecto_id = $data['proyecto_id'];
 
         try {
             
             Asistencia::create([
                 'id'           => null,
-                'usuario_id'   => 2,
+                'usuario_id'   => $usuario_id,
                 'hora_entrada' => now(),
-                'tarea'        => null,
-                'proyecto_id'  => null
+                'tarea'        => '',
+                'proyecto_id'  => $proyecto_id
             ]);
         } catch (\Throwable $th) {
             return response($th, 270);
@@ -84,11 +84,17 @@ class AsistenciaController extends Controller
 
     // PUT
     public function registrarSalida(Request $request){
-        return response('SE REGISTRO EXITOSAMENTE LA ASISTENCIA', 200);
-        $user_id = $request -> input('user_id');
-
-        $asistencia = Asistencia::where('user_id', $user_id)->latest('hora_entrada')->first();
+        $user_id = $request -> input('usuario_id');
+        
+        $asistencia = Asistencia::where('usuario_id', $user_id)->latest('hora_entrada')->first();
         $asistencia -> hora_salida = now();
+        $asistencia -> save();
+        return response('SE REGISTRO SU SALIDA EXITOSAMENTE', 200);
+
+    }
+    public function listar(Request $request){
+        
+        return response()->json(Asistencia::all())->get();
 
     }
 }
