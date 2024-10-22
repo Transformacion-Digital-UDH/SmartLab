@@ -18,19 +18,16 @@ Route::get('/login', function () {
     return Inertia::render('Login', []);
 });
 
-// Route::middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified',
-// ])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return Inertia::render('Dashboard');
-//     })->name('dashboard');
-// });
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+});
 
-// Route::get('/api/asistencia/user', [AsistenciaController::class, 'informacionDelUsuario']);
-// Route::post('/api/asistencia/registrar_entrada', [AsistenciaController::class, 'registrarEntrada']);
-// Route::put('/api/asistencia/registrar_salida', [AsistenciaController::class, 'registrarSalida']);
 
 Route::prefix('api/asistencia') -> controller(AsistenciaController::class) -> group(function() {
     Route::get('/user/{codigo}', 'index')
