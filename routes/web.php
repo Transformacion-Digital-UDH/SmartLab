@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+use App\Http\Controllers\LaboratorioController;
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -14,9 +16,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/login', function () {
-    return Inertia::render('Login', []);
-});
 
 Route::middleware([
     'auth:sanctum',
@@ -35,4 +34,30 @@ Route::prefix('api/asistencia') -> controller(AsistenciaController::class) -> gr
     Route::post('/registrar_entrada', 'registrarEntrada');
     Route::put('/registrar_salida', 'registrarSalida');
 });
+
+Route::get('/asistencia', function () {
+    return Inertia::render('Asistencia/Asistencia', [
+        'token' => csrf_token()
+    ]);
+});
+
+// Rutas para pruebas sin middlewares
+Route::get('/laboratorios', [LaboratorioController::class, 'index'])->name('laboratorios.index');
+Route::post('/laboratorios', [LaboratorioController::class, 'store'])->name('laboratorios.store');
+Route::put('/laboratorios/{laboratorio}', [LaboratorioController::class, 'update'])->name('laboratorios.update');
+Route::delete('/laboratorios/{laboratorio}', [LaboratorioController::class, 'destroy'])->name('laboratorios.destroy');
+
+
+Route::get('/areas', function () {
+    return Inertia::render('Areas/AreaList');
+});
+
+Route::get('/areas/create', function () {
+    return Inertia::render('Areas/AreasCreate');
+});
+
+Route::get('/areas/edit/{id}', function ($id) {
+    return Inertia::render('Areas/AreasEdit', ['id' => $id]);
+});
+
 

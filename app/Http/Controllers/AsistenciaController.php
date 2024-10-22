@@ -10,11 +10,11 @@ use Illuminate\Http\Request;
 
 class AsistenciaController extends Controller
 {
-    private function crearUsuarioInvitado($dni, $codigo) {
+    private function crearUsuarioInvitado($dni) {
         return User::create([
             'id' => null,
             'dni' => $dni,
-            'codigo' => $codigo,
+            'codigo' => null,
             'rol' => 'Invitado'
         ]);
     }
@@ -25,12 +25,15 @@ class AsistenciaController extends Controller
             $user = User::where('dni', $codigo)->first();
         } else {
             $user = User::where('codigo', $codigo)->first();
+
+            if (!$user) {
+                return response('USTED NO ESTA REGISTRADO', 200);
+            }
         }
 
 
         if (!$user) {
             $dni = strlen($codigo) == 8 ? $codigo : null;
-            $codigo = strlen($codigo) == 10 ? $codigo : null;
             $user = $this->crearUsuarioInvitado($dni, $codigo);
         } 
         
@@ -54,23 +57,29 @@ class AsistenciaController extends Controller
 
     // POST
     public function registrarEntrada(Request $request){
-        $request -> validate([
-            'usuario_id' => 'required|integer'
-        ]);
+        // $request -> validate([
+        //     'usuario_id' => 'required|integer'
+        // ]);
 
-        $data = $request->all();
-        $usuario_id = $data['usuario_id'];
-        $proyecto_id = $data['proyecto_id'];
+        // $data = $request->all();
+        // $usuario_id = $data['usuario_id'];
+        // $proyecto_id = $data['proyecto_id'];
 
-        Asistencia::create([
-            'id'           => null,
-            'usuario_id'   => $usuario_id,
-            'hora_entrada' => now(),
-            'tarea'        => null,
-            'proyecto_id'  => $proyecto_id
-        ]);
+        try {
+            
+            Asistencia::create([
+                'id'           => null,
+                'usuario_id'   => 2,
+                'hora_entrada' => now(),
+                'tarea'        => null,
+                'proyecto_id'  => null
+            ]);
+        } catch (\Throwable $th) {
+            return response($th, 270);
+            
+        }
 
-        return response('SE REGISTRO LA ENTRADA'.$data, 200);
+        return response('SE REGISTRO LA ENTRADA', 200);
     }
 
     // PUT
