@@ -71,7 +71,7 @@ const manejarEnvio = () => {
     router.get(route('laboratorios.index'), {}, {
         preserveScroll: true,
         onSuccess: (response) => {
-            laboratorios.value = response.props.laboratorios; // Actualizar la lista 
+            laboratorios.value = response.props.laboratorios; // Actualizar la lista
         }
     });
 };
