@@ -11,15 +11,13 @@
                 <PrimaryButton @click="abrirModalCrear">Agregar laboratorio</PrimaryButton>
             </div>
 
-            <!-- Tabla de laboratorios -->
-            <DataTable
-                :titulos="['Nombre', 'Código', 'Aforo', 'Email']"
-                :columnasVisibles="['nombre', 'codigo', 'aforo', 'email']"
-                :datos="laboratorios"
-                :tieneAcciones="true"
-                @editar="abrirModalEditar"
-                @eliminar="eliminarLaboratorio"
-            />
+            <!-- Tabla de laboratorios utilizando Ant Design Table -->
+            <Table :columns="columns" :dataSource="laboratorios" rowKey="id">
+                <template #acciones="{ record }">
+                    <a @click="abrirModalEditar(record)" class="text-blue-600">Editar</a>
+                    <a @click="eliminarLaboratorio(record)" class="text-red-600 ml-2">Eliminar</a>
+                </template>
+            </Table>
 
             <!-- Modal para agregar/editar laboratorio -->
             <FormModal
@@ -38,8 +36,42 @@ import { ref } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import DataTable from '@/Components/DataTable.vue';
 import FormModal from '@/Pages/Laboratorios/Partials/FormModal.vue';
+import Table from 'ant-design-vue/es/table';
+
+// Definir las columnas de la tabla
+const columns = [
+    {
+        title: 'Nombre',
+        dataIndex: 'nombre',
+        key: 'nombre',
+        sorter: (a, b) => a.nombre.localeCompare(b.nombre),  
+        sortDirections: ['ascend', 'descend'],
+    },
+    {
+        title: 'Código',
+        dataIndex: 'codigo',
+        key: 'codigo',
+    },
+    {
+        title: 'Aforo',
+        dataIndex: 'aforo',
+        key: 'aforo',
+        sorter: (a, b) => a.aforo - b.aforo,
+        sortDirections: ['ascend', 'descend'],
+    },
+    {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email',
+    },
+    {
+        title: 'Acciones',
+        key: 'acciones',
+        slots: { customRender: 'acciones' },
+
+    },
+];
 
 const { props } = usePage();
 const laboratorios = ref(props.laboratorios || []);
@@ -67,15 +99,13 @@ const cerrarModal = () => {
 };
 
 const manejarEnvio = () => {
-    // En lugar de recargar toda la página, hacer una solicitud a la API para obtener la lista de laboratorios
     router.get(route('laboratorios.index'), {}, {
         preserveScroll: true,
         onSuccess: (response) => {
-            laboratorios.value = response.props.laboratorios; // Actualizar la lista
+            laboratorios.value = response.props.laboratorios;
         }
     });
 };
-
 
 // Eliminar un laboratorio
 const eliminarLaboratorio = (laboratorio) => {
