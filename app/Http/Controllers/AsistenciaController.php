@@ -7,9 +7,28 @@ use App\Models\MiembroProyecto;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class AsistenciaController extends Controller
 {
+    public function index(){
+        $asistencias = DB::table('asistencias')
+        ->join('users','users.id','=','asistencias.usuario_id')
+        ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
+        ->get();
+
+        // $asistencias = DB::table('asistencias')
+        // ->join('users','users.id','=','asistencias.usuario_id')
+        // ->where('asistencias.usuario_id', '=', '2')
+        // ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
+        // ->get();
+
+        return Inertia::render('Asistencia/Main', [
+            'token' => csrf_token(),
+            'asistencias' => $asistencias
+        ]);
+    }
     private function crearUsuarioInvitado($dni) {
         return User::create([
             'id' => null,
@@ -18,8 +37,10 @@ class AsistenciaController extends Controller
             'rol' => 'Invitado'
         ]);
     }
-    // GET
-    public function index(Request $request, $codigo) {
+
+    // APIS
+    // GET - Recuperar la informacion del usuario
+    public function info(Request $request, $codigo) {
         $user = null;
         if (strlen($codigo) == 8) {
             $user = User::where('dni', $codigo)->first();
@@ -55,7 +76,7 @@ class AsistenciaController extends Controller
         ]);
     }
 
-    // POST
+    // POST - Establecer la hora de entrada
     public function registrarEntrada(Request $request){
         $request -> validate([
             'usuario_id' => 'required|integer'
@@ -82,7 +103,7 @@ class AsistenciaController extends Controller
         return response('SE REGISTRO LA ENTRADA', 200);
     }
 
-    // PUT
+    // PUT - Registra la salida
     public function registrarSalida(Request $request){
         $user_id = $request -> input('usuario_id');
         

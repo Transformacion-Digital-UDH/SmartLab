@@ -7,9 +7,17 @@ use Inertia\Inertia;
 
 use App\Http\Controllers\LaboratorioController;
 use App\Models\Asistencia;
+use App\Models\Laboratorio;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    // return Inertia::render('Welcome', [
+    //     'canLogin' => Route::has('login'),
+    //     'canRegister' => Route::has('register'),
+    //     'laravelVersion' => Application::VERSION,
+    //     'phpVersion' => PHP_VERSION,
+    // ]);
+    return Inertia::render('Login', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -28,20 +36,16 @@ Route::middleware([
     })->name('dashboard');
 });
 
-
+// Seccion Asistencia
 Route::prefix('api/asistencia') -> controller(AsistenciaController::class) -> group(function() {
-    Route::get('/user/{codigo}', 'index')
+    Route::get('/user/{codigo}', 'info')
         -> where('codigo', '^(\d{8}|\d{10})$');
     Route::post('/registrar_entrada', 'registrarEntrada');
     Route::put('/registrar_salida', 'registrarSalida');
 });
 
-Route::get('/asistencia', function () {
-    return Inertia::render('Asistencia/Asistencia', [
-        'token' => csrf_token(),
-        'asistencias' => Asistencia::all()
-    ]);
-});
+// Seccion Asistencia Vista
+Route::get('/asistencias', [AsistenciaController::class, 'index']);
 
 // Rutas para pruebas sin middlewares
 Route::get('/laboratorios', [LaboratorioController::class, 'index'])->name('laboratorios.index');
