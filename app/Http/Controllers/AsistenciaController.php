@@ -24,7 +24,7 @@ class AsistenciaController extends Controller
         // ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
         // ->get();
 
-        return Inertia::render('Asistencia/Main', [
+        return Inertia::render('Asistencia/Index', [
             'token' => csrf_token(),
             'asistencias' => $asistencias
         ]);
@@ -116,6 +116,16 @@ class AsistenciaController extends Controller
     public function listar(Request $request){
         
         return response()->json(Asistencia::all())->get();
+
+    }
+    // DELETE
+    public function eliminarAsistencia(Request $request){
+        $user_id = $request -> input('usuario_id');
+        
+        $asistencia = Asistencia::where('usuario_id', $user_id)->latest('hora_entrada')->first();
+        $asistencia -> hora_salida = now();
+        $asistencia -> save();
+        return response('SE REGISTRO SU SALIDA EXITOSAMENTE', 200);
 
     }
 }
