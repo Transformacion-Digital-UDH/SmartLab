@@ -11,7 +11,7 @@ class LaboratorioController extends Controller
     public function index()
     {
         // Obtener los laboratorios desde la base de datos
-        $laboratorios = Laboratorio::all();
+        $laboratorios = Laboratorio::with('responsable', 'areas')->get();
 
         // Pasar los laboratorios a la vista usando Inertia
         return Inertia::render('Laboratorios/Index', [
@@ -73,7 +73,6 @@ class LaboratorioController extends Controller
         return redirect()->route('laboratorios.index')->with('laboratorios', $laboratorios);
     }
 
-
     public function destroy(Laboratorio $laboratorio)
     {
         // Eliminar laboratorio
@@ -82,4 +81,6 @@ class LaboratorioController extends Controller
         // Redireccionar con éxito usando Inertia
         return redirect()->back()->with('success', 'Laboratorio eliminado con éxito.');
     }
+
+
 }

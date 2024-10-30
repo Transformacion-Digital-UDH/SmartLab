@@ -58,3 +58,4 @@ Route::get('/areas/edit/{id}', function ($id) {
 });
 
 
+Route::get('/laboratorios/{laboratorio}/miembros', [LaboratorioController::class, 'mostrarMiembros'])->name('laboratorios.miembros');
