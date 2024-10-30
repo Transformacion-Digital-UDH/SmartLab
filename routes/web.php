@@ -42,6 +42,7 @@ Route::prefix('api/asistencia') -> controller(AsistenciaController::class) -> gr
         -> where('codigo', '^(\d{8}|\d{10})$');
     Route::post('/registrar_entrada', 'registrarEntrada');
     Route::put('/registrar_salida', 'registrarSalida');
+    Route::put('/eliminar/{id}', 'eliminar');
 });
 
 // Seccion Asistencia Vista
@@ -67,3 +68,4 @@ Route::get('/areas/edit/{id}', function ($id) {
 });
 
 
+Route::get('/laboratorios/{laboratorio}/miembros', [LaboratorioController::class, 'mostrarMiembros'])->name('laboratorios.miembros');
