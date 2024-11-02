@@ -6,9 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\LaboratorioController;
-use App\Models\Asistencia;
-use App\Models\Laboratorio;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\UserController;
+
 
 Route::get('/', function () {
     // return Inertia::render('Welcome', [
@@ -69,3 +68,6 @@ Route::get('/areas/edit/{id}', function ($id) {
 
 
 Route::get('/laboratorios/{laboratorio}/miembros', [LaboratorioController::class, 'mostrarMiembros'])->name('laboratorios.miembros');
+
+
+Route::get('/responsables', [UserController::class, 'getResponsables'])->name('responsables.index');
