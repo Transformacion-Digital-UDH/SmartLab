@@ -1,6 +1,6 @@
 // import './bootstrap';
 import '../css/app.css';
-import 'ant-design-vue/dist/reset.css';
+// import 'ant-design-vue/dist/reset.css';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';

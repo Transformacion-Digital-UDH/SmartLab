@@ -22,8 +22,7 @@
             <!-- Modal para agregar laboratorio -->
             <ModalAgregar
                 v-model:visible="mostrarModalCrear"
-                :responsables="responsables"
-                @guardar="guardarLaboratorio"
+                @actualizarTabla="agregarLaboratorio"
             />
 
             <!-- Modal de Áreas separado en AreasModal -->
@@ -41,40 +40,35 @@
 import { ref } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Button } from 'ant-design-vue';
+import { Button, Modal, message } from 'ant-design-vue';
 import TablaLabs from './Partes/TablaLabs.vue';
 import AreasModal from './Partes/AreasModal.vue';
 import ModalAgregar from './Partes/ModalAgregar.vue';
 
 const { props } = usePage();
 const laboratorios = ref(props.laboratorios || []);
-const responsables = ref(props.responsables || []);
 const mostrarModalCrear = ref(false);
 const mostrarModalAreas = ref(false);
 const labSeleccionadoId = ref(null);
 
-// Función para abrir el modal de creación
 const abrirModalCrear = () => {
     mostrarModalCrear.value = true;
 };
 
-// Función para guardar el nuevo laboratorio
-const guardarLaboratorio = (nuevoLaboratorio) => {
-    router.post(route('laboratorios.store'), nuevoLaboratorio, {
-        onSuccess: (page) => {
-            laboratorios.value.push(page.props.laboratorio);
-            mostrarModalCrear.value = false;
-        }
-    });
+// Function to add the new laboratory to the list
+const agregarLaboratorio = (nuevoLaboratorio) => {
+    console.log('Nuevo laboratorio:', nuevoLaboratorio);
+    laboratorios.value.push(nuevoLaboratorio);
+    console.log('Laboratorios:', laboratorios.value);
+    mostrarModalCrear.value = false;
 };
 
-// Función para abrir el modal de áreas
+// Function to open areas modal
 const abrirModalAreas = (laboratorio) => {
     labSeleccionadoId.value = laboratorio.id;
     mostrarModalAreas.value = true;
 };
 
-// Función para cerrar el modal de áreas
 const cerrarModalAreas = () => {
     mostrarModalAreas.value = false;
 };
@@ -88,11 +82,18 @@ const confirmarEliminacion = (laboratorio) => {
         cancelText: 'Cancelar',
         onOk() {
             router.delete(route('laboratorios.destroy', laboratorio.id), {
+                preserveScroll: true,
                 onSuccess: () => {
                     laboratorios.value = laboratorios.value.filter(lab => lab.id !== laboratorio.id);
+                    message.success('Laboratorio eliminado exitosamente');
+                },
+                onError: (error) => {
+                    console.error('Error al eliminar el laboratorio:', error);
+                    message.error('Error al eliminar el laboratorio');
                 }
             });
         },
     });
 };
+
 </script>

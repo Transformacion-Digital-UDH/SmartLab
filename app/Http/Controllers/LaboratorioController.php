@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Laboratorio;
+use Carbon\Carbon;
 
 class LaboratorioController extends Controller
 {
     public function index()
     {
         // Obtener los laboratorios desde la base de datos
-        $laboratorios = Laboratorio::with('responsable', 'areas')->get();
+        $laboratorios = Laboratorio::with('responsable')->get();
 
         // Pasar los laboratorios a la vista usando Inertia
         return Inertia::render('Laboratorios/Index', [
@@ -22,7 +23,7 @@ class LaboratorioController extends Controller
     public function store(Request $request)
     {
         // Validación
-        $validated = $request->validate([
+        $request->validate([
             'nombre' => 'required|max:100',
             'codigo' => 'nullable|max:20',
             'descripcion' => 'nullable|max:255',
@@ -38,13 +39,23 @@ class LaboratorioController extends Controller
             'date' => 'Ingrese una fecha válida.',
         ]);
 
-        // Crear laboratorio
-        Laboratorio::create($validated);
+        // Convertir la fecha de inauguración a formato 'Y-m-d'
+        if ($request->has('inauguracion')) {
+            $request->merge([
+                'inauguracion' => date('Y-m-d', strtotime($request->inauguracion))
+            ]);
+        }
 
-        // Redirigir con laboratorios actualizados usando Inertia
-        $laboratorios = Laboratorio::all();
-        return redirect()->route('laboratorios.index')->with('laboratorios', $laboratorios);
+        // Crear el laboratorio
+        $laboratorio = Laboratorio::create($request->all())->load('responsable');
+
+        // Retornar el laboratorio recién creado como JSON
+        return response()->json([
+            'laboratorio' => $laboratorio
+        ], 201);
     }
+
+
 
     public function update(Request $request, Laboratorio $laboratorio)
     {

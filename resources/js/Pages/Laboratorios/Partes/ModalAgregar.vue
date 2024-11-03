@@ -43,13 +43,13 @@
 
 <script setup>
 import { ref, watch, defineProps, defineEmits } from 'vue';
-import { message, Modal, Form, FormItem, Input, Select, DatePicker, InputNumber } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, DatePicker, InputNumber, message } from 'ant-design-vue';
 import axios from 'axios';
 
 const props = defineProps({
     visible: Boolean,
 });
-const emit = defineEmits(['update:visible', 'guardar']);
+const emit = defineEmits(['update:visible', 'actualizarLista']);
 
 const laboratorio = ref({
     nombre: '',
@@ -70,14 +70,20 @@ const cerrarModal = () => {
 };
 
 // Envía el formulario de creación del laboratorio
-const enviarFormulario = () => {
+const enviarFormulario = async () => {
     cargando.value = true;
-    emit('guardar', laboratorio.value);
-    setTimeout(() => {
-        cargando.value = false;
+    try {
+        // Enviar la solicitud para crear el laboratorio
+        const response = await axios.post(route('laboratorios.store'), laboratorio.value);
         message.success('Laboratorio agregado exitosamente');
         cerrarModal();
-    }, 1000);
+        emit('actualizarTabla', response.data["laboratorio"]);
+    } catch (error) {
+        message.error('Error al agregar el laboratorio');
+        console.error('Error al guardar el laboratorio:', error);
+    } finally {
+        cargando.value = false;
+    }
 };
 
 // Función para obtener los responsables desde el servidor
@@ -97,6 +103,7 @@ const cargarResponsables = async () => {
 // Verificar si el modal se abre por primera vez y cargar responsables
 watch(() => props.visible, (val) => {
     if (val) {
+        // Resetear los datos del formulario
         laboratorio.value = {
             nombre: '',
             codigo: '',
