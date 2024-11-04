@@ -12,8 +12,9 @@
                     v-model:value="valorBuscar"
                     placeholder="Buscar laboratorio por nombre"
                     style="width: 350px"
+                    size="large"
                 />
-                <Button type="primary" @click="abrirModalCrear">Agregar laboratorio</Button>
+                <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium" >Agregar laboratorio</Button>
             </div>
 
             <!-- Tabla de laboratorios -->
@@ -89,8 +90,8 @@ const abrirModalCrear = () => {
 };
 
 const abrirModalEditar = (laboratorio) => {
-    labSeleccionado.value = { ...laboratorio };
     mostrarModalEditar.value = true;
+    labSeleccionado.value = { ...laboratorio };
 };
 
 const abrirModalAreas = (laboratorio) => {
@@ -102,5 +103,6 @@ const cerrarModalAreas = () => {
     mostrarModalAreas.value = false;
 };
 
-
+console.log("visble agregar", mostrarModalCrear.value);
+console.log("visble editar", mostrarModalEditar.value);
 </script>

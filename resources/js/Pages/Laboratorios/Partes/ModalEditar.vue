@@ -1,20 +1,17 @@
 <template>
     <Modal
+    title="Agregar laboratorio"
         :open="visible"
-        title="Editar laboratorio"
-        @ok="enviarFormulario"
         @cancel="cerrarModal"
-        :ok-button-props="{ loading: cargando }"
-        okText="Guardar cambios"
-        cancelText="Cancelar"
         centered
+        :footer="null"
     >
-        <Form layout="vertical" @submit.prevent="enviarFormulario">
-            <FormItem label="Nombre" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
+        <Form layout="vertical" @finish="enviarFormulario" :model="laboratorio">
+            <FormItem label="Nombre" name="nombre" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
                 <Input v-model:value="laboratorio.nombre" placeholder="Ingrese el nombre" />
             </FormItem>
 
-            <FormItem label="Responsable">
+            <FormItem label="Responsable" name="responsable_id">
                 <Select
                     v-model:value="laboratorio.responsable_id"
                     placeholder="Seleccione un responsable"
@@ -24,32 +21,40 @@
                 />
             </FormItem>
 
-            <FormItem label="Código">
+            <FormItem label="Código" name="codigo">
                 <Input v-model:value="laboratorio.codigo" placeholder="Ingrese el código" />
             </FormItem>
 
-            <FormItem label="Descripción">
+            <FormItem label="Descripción" name="descripcion">
                 <Input v-model:value="laboratorio.descripcion" placeholder="Ingrese una descripción" />
             </FormItem>
 
-            <FormItem label="Aforo">
-                <InputNumber v-model:value="laboratorio.aforo" placeholder="Ingrese el aforo" style="width: 100%;" />
+            <FormItem label="Aforo" name="aforo" >
+                <InputNumber v-model:value="laboratorio.aforo"
+                    placeholder="Ingrese el aforo" style="width: 100%;" type="number" step="1" min="0"
+                />
             </FormItem>
 
-            <FormItem label="Email">
+            <FormItem label="Email" name="email" :rules="[{ type: 'email', message: 'Por favor ingrese un correo válido' }]">
                 <Input v-model:value="laboratorio.email" placeholder="Ingrese el correo electrónico" />
             </FormItem>
 
-            <FormItem label="Fecha de inauguración">
-                <DatePicker style="width: 100%;" :format="'YYYY-MM-DD'"/>
+            <FormItem label="Fecha de inauguración" name="inauguracion">
+                <DatePicker v-model:value="laboratorio.inauguracion" style="width: 100%;" />
             </FormItem>
+
+            <FormItem class="flex justify-end mb-0">
+                <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
+                <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
+            </FormItem>
+
         </Form>
     </Modal>
 </template>
 
 <script setup>
 import { ref, watch, defineProps, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, DatePicker, InputNumber, message } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, DatePicker, InputNumber, Button, message } from 'ant-design-vue';
 import axios from 'axios';
 
 const props = defineProps({
@@ -68,6 +73,7 @@ const props = defineProps({
         }),
     },
 });
+
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
 const laboratorio = ref({ ...props.laboratorio });
@@ -107,7 +113,7 @@ const enviarFormulario = async () => {
 // Verificar si el modal se abre y cargar los valores del laboratorio
 watch(() => props.visible, (val) => {
     if (val) {
-        console.log('watch ed')
+        console.log('watch ed: ', props.visible)
         laboratorio.value = { ...props.laboratorio };
     }
 
