@@ -8,16 +8,22 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AsistenciaController extends Controller
 {
-    public function index(){
-        $asistencias = DB::table('asistencias')
-        ->join('users','users.id','=','asistencias.usuario_id')
-        ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
-        ->get();
+    public function index(Request $request){
+        $cantidad = $request -> query('cantidad', 20);
 
+        $asistencias = DB::table('asistencias')
+            ->where('asistencias.is_active',1)
+            ->join('users','users.id','=','asistencias.usuario_id')
+            ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
+            ->orderBy('asistencias.hora_entrada', 'desc')
+            ->paginate($cantidad);
+
+     
         // $asistencias = DB::table('asistencias')
         // ->join('users','users.id','=','asistencias.usuario_id')
         // ->where('asistencias.usuario_id', '=', '2')
@@ -29,6 +35,15 @@ class AsistenciaController extends Controller
             'asistencias' => $asistencias
         ]);
     }
+    public function test() {
+        return $asistencias = DB::table('asistencias')
+            ->where('asistencias.is_active',1)
+            ->join('users','users.id','=','asistencias.usuario_id')
+            ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
+            ->orderBy('asistencias.hora_entrada', 'desc')
+            ->paginate(12);
+    }
+
     private function crearUsuarioInvitado($dni) {
         return User::create([
             'id' => null,

@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* svg {
+svg {
   display: block;
-} */
+}
+
+/* AntDesign Icons config */
+.anticon {
+  display: block !important;
+}
