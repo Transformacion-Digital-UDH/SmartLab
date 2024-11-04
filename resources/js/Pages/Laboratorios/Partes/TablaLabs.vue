@@ -18,7 +18,8 @@
 
 <script setup>
 import { defineProps, defineEmits } from "vue";
-import { Table } from "ant-design-vue";
+import { Table, Modal, message } from "ant-design-vue";
+import { router } from '@inertiajs/vue3';
 import {
     FormOutlined,
     DeleteOutlined,
@@ -29,10 +30,7 @@ const props = defineProps({
     laboratorios: Array,
 });
 
-// imprimir todos los laboratorios
-console.log("Laboratorios:", props.laboratorios);
-
-const emitir = defineEmits(["editar", "eliminar", "mostrar-areas"]);
+const emitir = defineEmits(["editar", "eliminar", "mostrar-areas", "actualizar-tabla"]);
 
 // Definir las columnas de la tabla de laboratorios
 const columnas = [
@@ -63,9 +61,28 @@ function editar(laboratorio) {
     emitir("editar", laboratorio);
 }
 
-function confirmarEliminacion(laboratorio) {
-    emitir("eliminar", laboratorio);
-}
+const confirmarEliminacion = (laboratorio) => {
+    Modal.confirm({
+        title: '¿Estás seguro de eliminar este laboratorio?',
+        content: `${laboratorio.nombre}`,
+        okText: 'Confirmar',
+        cancelText: 'Cancelar',
+        onOk() {
+            router.delete(route('laboratorios.destroy', laboratorio), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    // Redirige a laboratorios.index después de la eliminación
+                    message.success('Laboratorio eliminado exitosamente');
+                    emitir('actualizar-tabla');
+                },
+                onError: (error) => {
+                    console.error('Error al eliminar el laboratorio:', error);
+                    message.error('Error al eliminar el laboratorio');
+                }
+            });
+        },
+    });
+};
 
 function mostrarAreas(laboratorio) {
     emitir("mostrar-areas", laboratorio);

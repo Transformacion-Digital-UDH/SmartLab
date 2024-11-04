@@ -1,17 +1,17 @@
 <template>
     <Modal
         :open="visible"
-        title="Agregar laboratorio"
+        title="Editar laboratorio"
         @ok="enviarFormulario"
         @cancel="cerrarModal"
         :ok-button-props="{ loading: cargando }"
-        okText="Guardar"
+        okText="Guardar cambios"
         cancelText="Cancelar"
         centered
     >
         <Form layout="vertical" @submit.prevent="enviarFormulario">
             <FormItem label="Nombre" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
-                <Input v-model:value="laboratorio.nombre" placeholder="Ingrese el nombre" size="small"/>
+                <Input v-model:value="laboratorio.nombre" placeholder="Ingrese el nombre" />
             </FormItem>
 
             <FormItem label="Responsable">
@@ -41,7 +41,7 @@
             </FormItem>
 
             <FormItem label="Fecha de inauguración">
-                <DatePicker v-model:value="laboratorio.inauguracion" style="width: 100%;" />
+                <DatePicker style="width: 100%;" :format="'YYYY-MM-DD'"/>
             </FormItem>
         </Form>
     </Modal>
@@ -55,23 +55,29 @@ import axios from 'axios';
 const props = defineProps({
     visible: Boolean,
     responsables: Array,
+    laboratorio: {
+        type: Object,
+        default: () => ({
+            nombre: '',
+            codigo: '',
+            descripcion: '',
+            aforo: null,
+            email: '',
+            inauguracion: null,
+            responsable_id: '',
+        }),
+    },
 });
-
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
-const laboratorio = ref({
-    nombre: '',
-    codigo: '',
-    descripcion: '',
-    aforo: null,
-    email: '',
-    inauguracion: null,
-    responsable_id: null,
-});
-
+const laboratorio = ref({ ...props.laboratorio });
 const cargando = ref(false);
 const opcionesResponsables = ref([]);
 
+opcionesResponsables.value = props.responsables.map(responsable => ({
+    label: responsable.nombres,
+    value: responsable.id,
+}));
 
 // Cierra el modal y emite el evento para cerrar en el componente padre
 const cerrarModal = () => {
@@ -82,43 +88,28 @@ const buscarResponsable = (input, option) => {
     return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 };
 
-// Envía el formulario de creación del laboratorio
+// Envía el formulario de edición del laboratorio
 const enviarFormulario = async () => {
     cargando.value = true;
     try {
-        // Enviar la solicitud para crear el laboratorio
-        const response = await axios.post(route('laboratorios.store'), laboratorio.value);
-        message.success('Laboratorio agregado exitosamente');
+        // Enviar la solicitud para actualizar el laboratorio
+        const response = await axios.put(route('laboratorios.update', props.laboratorio.id), laboratorio.value);
+        message.success('Laboratorio actualizado exitosamente');
         cerrarModal();
         emitir('actualizar-tabla', response.data["laboratorio"]);
     } catch (error) {
-        message.error('Error al agregar el laboratorio');
-        console.error('Error al guardar el laboratorio:', error);
+        message.error('Error al actualizar el laboratorio');
     } finally {
         cargando.value = false;
     }
 };
 
-// Verificar si el modal se abre por primera vez y cargar responsables
+// Verificar si el modal se abre y cargar los valores del laboratorio
 watch(() => props.visible, (val) => {
     if (val) {
-        console.log('watch ag')
-
-        laboratorio.value = {
-            nombre: '',
-            codigo: '',
-            descripcion: '',
-            aforo: null,
-            email: '',
-            inauguracion: '',
-            responsable_id: null,
-        };
-
-        // Cargar las opciones de los responsables
-        opcionesResponsables.value = props.responsables.map(responsable => ({
-            label: responsable.nombres,
-            value: responsable.id,
-        }));
+        console.log('watch ed')
+        laboratorio.value = { ...props.laboratorio };
     }
+
 });
 </script>
