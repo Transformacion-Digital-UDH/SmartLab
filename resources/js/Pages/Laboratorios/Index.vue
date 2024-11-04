@@ -17,13 +17,14 @@
                 @editar="abrirModalEditar"
                 @eliminar="confirmarEliminacion"
                 @mostrar-areas="abrirModalAreas"
+                @actualizar-tabla="actualizarTabla"
             />
 
             <!-- Modal para agregar laboratorio -->
             <ModalAgregar
                 v-model:visible="mostrarModalCrear"
                 :responsables="props.responsables"
-                @actualizarTabla="actualizarTabla"
+                @actualizar-tabla="actualizarTabla"
             />
 
             <!-- Modal para editar laboratorio -->
@@ -32,7 +33,7 @@
                 v-model:visible="mostrarModalEditar"
                 :laboratorio="labSeleccionado"
                 :responsables="props.responsables"
-                @actualizarTabla="actualizarTabla"
+                @actualizar-tabla="actualizarTabla"
             />
 
             <!-- Modal de Áreas separado en AreasModal -->
