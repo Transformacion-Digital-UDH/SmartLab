@@ -1,5 +1,5 @@
 <template>
-    <Table :columns="columnas" :dataSource="laboratorios" rowKey="id">
+    <Table :columns="columnas" :dataSource="laboratorios" rowKey="id" :pagination="false">
         <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'acciones'">
                 <FormOutlined @click="editar(record)" class="text-blue-600" />
@@ -30,7 +30,7 @@ const props = defineProps({
     laboratorios: Array,
 });
 
-const emitir = defineEmits(["editar", "eliminar", "mostrar-areas", "actualizar-tabla"]);
+const emitir = defineEmits(["editar", "mostrar-areas", "actualizar-tabla"]);
 
 // Definir las columnas de la tabla de laboratorios
 const columnas = [

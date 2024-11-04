@@ -8,14 +8,18 @@
 
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-6">
+                <InputSearch
+                    v-model:value="valorBuscar"
+                    placeholder="Buscar laboratorio por nombre"
+                    style="width: 350px"
+                />
                 <Button type="primary" @click="abrirModalCrear">Agregar laboratorio</Button>
             </div>
 
             <!-- Tabla de laboratorios -->
             <TablaLabs
-                :laboratorios="laboratorios"
+                :laboratorios="labsFiltrados"
                 @editar="abrirModalEditar"
-                @eliminar="confirmarEliminacion"
                 @mostrar-areas="abrirModalAreas"
                 @actualizar-tabla="actualizarTabla"
             />
@@ -48,10 +52,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Button } from 'ant-design-vue';
+import { Button, InputSearch } from 'ant-design-vue';
 import TablaLabs from './Partes/TablaLabs.vue';
 import ModalAreas from './Partes/ModalAreas.vue';
 import ModalAgregar from './Partes/ModalAgregar.vue';
@@ -64,6 +68,21 @@ const mostrarModalEditar = ref(false);
 const mostrarModalAreas = ref(false);
 const labSeleccionadoId = ref(null);
 const labSeleccionado = ref(null);
+const valorBuscar = ref('');
+
+const labsFiltrados = computed(() => !valorBuscar.value
+    ? laboratorios.value
+    : laboratorios.value.filter(lab =>
+        lab.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase())
+    )
+);
+
+
+const actualizarTabla = () => {
+    mostrarModalCrear.value = false;
+    mostrarModalEditar.value = false;
+    router.visit(route('laboratorios.index'), { preserveScroll: true });
+};
 
 const abrirModalCrear = () => {
     mostrarModalCrear.value = true;
@@ -74,12 +93,6 @@ const abrirModalEditar = (laboratorio) => {
     mostrarModalEditar.value = true;
 };
 
-const actualizarTabla = () => {
-    mostrarModalCrear.value = false;
-    mostrarModalEditar.value = false;
-    router.visit(route('laboratorios.index'), { preserveScroll: true });
-};
-
 const abrirModalAreas = (laboratorio) => {
     labSeleccionadoId.value = laboratorio.id;
     mostrarModalAreas.value = true;
@@ -88,5 +101,6 @@ const abrirModalAreas = (laboratorio) => {
 const cerrarModalAreas = () => {
     mostrarModalAreas.value = false;
 };
+
 
 </script>
