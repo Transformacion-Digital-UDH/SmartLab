@@ -8,31 +8,41 @@
 
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-6">
-                <PrimaryButton @click="abrirModalCrear">Agregar laboratorio</PrimaryButton>
+                <Button type="primary" @click="abrirModalCrear">Agregar laboratorio</Button>
             </div>
 
-            <!-- Tabla de laboratorios utilizando Ant Design Table -->
-            <Table :columns="columns" :dataSource="laboratorios" rowKey="id">
-                <template #acciones="{ record }">
-                    <FormOutlined @click="abrirModalEditar(record)" class="text-blue-600" />
-                    <DeleteOutlined @click="confirmarEliminar(record)" class="text-red-600 ml-2" />
-                    <AppstoreAddOutlined @click="abrirModalAreas(record)" class="text-green-600 ml-2" />
-                </template>
-            </Table>
-
-            <!-- Modal para agregar/editar laboratorio -->
-            <FormModal
-                :mostrar="mostrarModal"
-                :estaEditando="estaEditando"
-                :dataLab="laboratorioSeleccionado"
-                @cerrar="cerrarModal"
-                @enviar="manejarEnvio"
+            <!-- Tabla de laboratorios -->
+            <TablaLabs
+                :laboratorios="laboratorios"
+                @editar="abrirModalEditar"
+                @eliminar="confirmarEliminacion"
+                @mostrar-areas="abrirModalAreas"
+                @actualizar-tabla="actualizarTabla"
             />
 
-            <!-- Modal de Áreas -->
-            <Modal v-model:visible="mostrarModalAreas" title="Áreas del laboratorio" @cancel="cerrarModalAreas">
-                <Table :columns="areaColumns" :dataSource="areas" rowKey="id" />
-            </Modal>
+            <!-- Modal para agregar laboratorio -->
+            <ModalAgregar
+                v-model:visible="mostrarModalCrear"
+                :responsables="props.responsables"
+                @actualizar-tabla="actualizarTabla"
+            />
+
+            <!-- Modal para editar laboratorio -->
+            <ModalEditar
+                v-if="labSeleccionado"
+                v-model:visible="mostrarModalEditar"
+                :laboratorio="labSeleccionado"
+                :responsables="props.responsables"
+                @actualizar-tabla="actualizarTabla"
+            />
+
+            <!-- Modal de Áreas separado en AreasModal -->
+            <ModalAreas
+                v-if="labSeleccionadoId"
+                v-model:open="mostrarModalAreas"
+                :laboratorio_id="labSeleccionadoId"
+                @cerrar="cerrarModalAreas"
+            />
         </div>
     </AppLayout>
 </template>
@@ -41,82 +51,42 @@
 import { ref } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import DataTable from '@/Components/DataTable.vue';
-import FormModal from '@/Pages/Laboratorios/Partials/FormModal.vue';
-import Table from 'ant-design-vue/es/table';
-import { Modal } from 'ant-design-vue';
-import { FormOutlined, DeleteOutlined, AppstoreAddOutlined } from '@ant-design/icons-vue';
-
-// Definir las columnas de la tabla de laboratorios
-const columns = [
-    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre', sorter: (a, b) => a.nombre.localeCompare(b.nombre) },
-    { title: 'Código', dataIndex: 'codigo', key: 'codigo' },
-    { title: 'Responsable', dataIndex: ['responsable', 'nombre'], key: 'responsable' },
-    { title: 'Aforo', dataIndex: 'aforo', key: 'aforo', sorter: (a, b) => a.aforo - b.aforo },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
-    { title: 'Acciones', key: 'acciones', slots: { customRender: 'acciones' } },
-];
-
-// Columnas para la tabla de áreas en el modal
-const areaColumns = [
-    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre' },
-    { title: 'Descripción', dataIndex: 'descripcion', key: 'descripcion' },
-];
+import { Button } from 'ant-design-vue';
+import TablaLabs from './Partes/TablaLabs.vue';
+import ModalAreas from './Partes/ModalAreas.vue';
+import ModalAgregar from './Partes/ModalAgregar.vue';
+import ModalEditar from './Partes/ModalEditar.vue';
 
 const { props } = usePage();
 const laboratorios = ref(props.laboratorios || []);
-const mostrarModal = ref(false);
+const mostrarModalCrear = ref(false);
+const mostrarModalEditar = ref(false);
 const mostrarModalAreas = ref(false);
-const estaEditando = ref(false);
-const laboratorioSeleccionado = ref(null);
-const areas = ref([]);
+const labSeleccionadoId = ref(null);
+const labSeleccionado = ref(null);
 
-// Abrir el modal para crear un nuevo laboratorio
 const abrirModalCrear = () => {
-    laboratorioSeleccionado.value = null;
-    estaEditando.value = false;
-    mostrarModal.value = true;
+    mostrarModalCrear.value = true;
 };
 
-// Abrir el modal para editar un laboratorio
 const abrirModalEditar = (laboratorio) => {
-    laboratorioSeleccionado.value = laboratorio;
-    estaEditando.value = true;
-    mostrarModal.value = true;
+    labSeleccionado.value = { ...laboratorio };
+    mostrarModalEditar.value = true;
 };
 
-// Abrir el modal de áreas
+const actualizarTabla = () => {
+    mostrarModalCrear.value = false;
+    mostrarModalEditar.value = false;
+    router.visit(route('laboratorios.index'), { preserveScroll: true });
+};
+
 const abrirModalAreas = (laboratorio) => {
-    areas.value = laboratorio.areas || []; // Asigna las áreas del laboratorio seleccionado
+    labSeleccionadoId.value = laboratorio.id;
     mostrarModalAreas.value = true;
 };
 
-// Cerrar el modal de áreas
 const cerrarModalAreas = () => {
     mostrarModalAreas.value = false;
 };
 
-// Confirmar eliminación
-const confirmarEliminar = (laboratorio) => {
-    Modal.confirm({
-        title: '¿Estás seguro de eliminar este laboratorio?',
-        content: `${laboratorio.nombre}`,
-        okText: 'Confirmar',
-        cancelText: 'Cancelar',
-        onOk() {
-            eliminarLaboratorio(laboratorio);
-        },
-    });
-};
-
-
-// Eliminar un laboratorio
-const eliminarLaboratorio = (laboratorio) => {
-    router.delete(route('laboratorios.destroy', laboratorio.id), {
-        onSuccess: () => {
-            laboratorios.value = laboratorios.value.filter(lab => lab.id !== laboratorio.id);
-        }
-    });
-};
 </script>

@@ -18,10 +18,10 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->integer('aforo')->nullable();
             $table->string('email', 100)->nullable();
-            $table->date('inauguracion')->nullable();
+            $table->string('inauguracion')->nullable();
             $table->boolean('is_active')->default(true);
 
-            $table->foreignId('responsable_id')->constrained('users')->onDelete('restrict');
+            $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('restrict');
 
             $table->timestamps();
         });

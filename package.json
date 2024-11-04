@@ -19,6 +19,7 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
-        "ant-design-vue": "^4.2.5"
+        "ant-design-vue": "^4.2.5",
+        "dayjs": "^1.11.13"
     }
 }
