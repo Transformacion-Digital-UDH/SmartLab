@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 svg {
-  display: block;
+    display: block;
 }
 
-/* AntDesign Icons config */
+/* AntDesign Icons config
 .anticon {
-  display: block !important;
-}
+    display: block !important;
+} */
 
 .scrollbar-none::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
