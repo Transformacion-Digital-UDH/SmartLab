@@ -20,7 +20,9 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                primary: '#12A08D'
+                primary: '#12A08D',
+                udh_1: '#2EBAA0',
+                udh_3: '#001B4A',
             }
         },
     },
