@@ -46,6 +46,7 @@ Route::prefix('api/asistencia') -> controller(AsistenciaController::class) -> gr
 
 // Views: Asistencia
 Route::get('/asistencias', [AsistenciaController::class, 'index']);
+Route::get('/mis_asistencias', [AsistenciaController::class, 'mis_asistencias']);
 
 // Rutas para pruebas sin middlewares
 Route::get('/laboratorios', [LaboratorioController::class, 'index'])->name('laboratorios.index');

@@ -23,14 +23,20 @@ class AsistenciaController extends Controller
             ->orderBy('asistencias.hora_entrada', 'desc')
             ->paginate($cantidad);
 
-     
-        // $asistencias = DB::table('asistencias')
-        // ->join('users','users.id','=','asistencias.usuario_id')
-        // ->where('asistencias.usuario_id', '=', '2')
-        // ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
-        // ->get();
 
         return Inertia::render('Asistencia/Index', [
+            'token' => csrf_token(),
+            'asistencias' => $asistencias
+        ]);
+    }
+    function mis_asistencias(){
+        $asistencias = DB::table('asistencias')
+        ->join('users','users.id','=','asistencias.usuario_id')
+        ->where('asistencias.usuario_id', '=', '2')
+        ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
+        ->get();
+
+        return Inertia::render('Asistencia/MiAsistencia', [
             'token' => csrf_token(),
             'asistencias' => $asistencias
         ]);

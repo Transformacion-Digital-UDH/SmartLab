@@ -90,7 +90,7 @@
 </script>
 <template>
   <NavBar title="Asistencias">
-    <div class="p-4">
+    <div class="grid p-4">
       <div class="flex pb-4">
         <h1 class="font-bold text-4xl">Asistencias</h1>
       </div>
@@ -102,68 +102,69 @@
          />
       </div>
       <div class="pt-4"></div>
-      <Table :columns="columns" :data-source="asistencias" :pagination="false">
-        <!-- Head -->
-        <template #headerCell="{ column }">
-          <template v-if="column.key === 'nombres'">
-            <span  class="flex items-center gap-2">
-             <SmileOutlined />
-             Nombres
-            </span>
+      <div class="">
+        <Table :columns="columns" :data-source="asistencias" :pagination="false" :scroll="{ y: '50vh' }">
+          <!-- Head -->
+          <template #headerCell="{ column }">
+            <template v-if="column.key === 'nombres'">
+              <span  class="flex items-center gap-2">
+               Nombres
+              </span>
+            </template>
+            <template v-if="column.key === 'dni'">
+              <span>
+               DNI
+              </span>
+            </template>
+            <template v-if="column.key === 'tipo'">
+              <span>
+               Tipo
+              </span>
+            </template>
+            <template v-if="column.key === 'rol'">
+              <span>
+               Rol
+              </span>
+            </template>
+            <template v-if="column.key === 'entrada'">
+              <span>
+               Entrada
+              </span>
+            </template>
+            <template v-if="column.key === 'salida'">
+              <span>
+                Salida
+              </span>
+            </template>
+            <template v-if="column.key === 'acciones'">
+              <!-- Acciones -->
+            </template>
           </template>
-          <template v-if="column.key === 'dni'">
-            <span>
-             DNI
-            </span>
+          <!-- Body -->
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'nombres'">
+              <a>
+                {{ record.nombres }} 
+              </a>
+            </template>
+            <template v-if="column.key === 'tipo'">
+              <Tag v-if="record.hora_salida" :bordered="false" color="green">
+                Salida
+              </Tag>
+              <Tag v-else :bordered="false" color="red">
+                Entrada
+              </Tag>
+            </template>
+            <template v-if="column.key === 'acciones'">
+              <div class="flex gap-4 justify-end">
+                <Button type="dashed" shape="circle" :icon="h(EditOutlined)" />
+                <Button type="link" shape="circle" danger :icon="h(DeleteOutlined)" />
+              </div>
+            </template>
           </template>
-          <template v-if="column.key === 'tipo'">
-            <span>
-             Tipo
-            </span>
-          </template>
-          <template v-if="column.key === 'rol'">
-            <span>
-             Rol
-            </span>
-          </template>
-          <template v-if="column.key === 'entrada'">
-            <span>
-             Entrada
-            </span>
-          </template>
-          <template v-if="column.key === 'salida'">
-            <span>
-              Salida
-            </span>
-          </template>
-          <template v-if="column.key === 'acciones'">
-            <!-- Acciones -->
-          </template>
-        </template>
-        <!-- Body -->
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'nombres'">
-            <a>
-              {{ record.nombres }} 
-            </a>
-          </template>
-          <template v-if="column.key === 'tipo'">
-            <Tag v-if="record.hora_salida" :bordered="false" color="green">
-              Salida
-            </Tag>
-            <Tag v-else :bordered="false" color="red">
-              Entrada
-            </Tag>
-          </template>
-          <template v-if="column.key === 'acciones'">
-            <div class="flex gap-4 justify-end">
-              <Button type="dashed" shape="circle" :icon="h(EditOutlined)" />
-              <Button type="link" shape="circle" danger :icon="h(DeleteOutlined)" />
-            </div>
-          </template>
-        </template>
-      </Table>
-      
+        </Table>
+        
+      </div>
     </div>
     <div class="grid place-items-center pb-5">
       <Pagination

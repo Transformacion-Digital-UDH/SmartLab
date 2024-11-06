@@ -10,3 +10,7 @@ svg {
 .anticon {
   display: block !important;
 }
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
