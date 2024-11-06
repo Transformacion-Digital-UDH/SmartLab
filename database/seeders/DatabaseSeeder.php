@@ -19,5 +19,11 @@ class DatabaseSeeder extends Seeder
 
         $this->call(LaboratorioSeeder::class);
 
+        $this->call(AreasSeeder::class);
+
+        $this->call(RecursosSeeder::class);
+
+        $this->call(EquiposSeeder::class);
+
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\LaboratorioController;
+use App\Http\Controllers\RecursoController;
 
 
 Route::get('/', function () {
@@ -52,15 +53,19 @@ Route::post('/laboratorios', [LaboratorioController::class, 'store'])->name('lab
 Route::put('/laboratorios/{laboratorio}', [LaboratorioController::class, 'update'])->name('laboratorios.update');
 Route::delete('/laboratorios/{laboratorio}', [LaboratorioController::class, 'destroy'])->name('laboratorios.destroy');
 
+Route::get('/recursos', [RecursoController::class, 'index'])->name('recursos.index');
+Route::post('/recursos', [RecursoController::class, 'store'])->name('recursos.store');
+Route::put('/recursos/{recurso}', [RecursoController::class, 'update'])->name('recursos.update');
+Route::delete('/recursos/{recurso}', [RecursoController::class, 'destroy'])->name('recursos.destroy');
+
+Route::get('/asistencias', [AsistenciaController::class, 'index'])->name('asistencias.index');
 
 Route::get('/areas', function () {
     return Inertia::render('Areas/AreaList');
 });
-
 Route::get('/areas/create', function () {
     return Inertia::render('Areas/AreasCreate');
 });
-
 Route::get('/areas/edit/{id}', function ($id) {
     return Inertia::render('Areas/AreasEdit', ['id' => $id]);
 });

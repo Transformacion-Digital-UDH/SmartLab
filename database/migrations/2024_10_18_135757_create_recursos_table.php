@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('recursos', function (Blueprint $table) {
-            $table->id(); 
+            $table->id();
             $table->string('nombre', 100);
             $table->string('codigo', 20)->nullable();
             $table->enum('tipo', ['Reservable', 'No reservable', 'Suministro']);
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('estado', ['Activo', 'Inactivo', 'Reservado', 'Prestado']);
             $table->boolean('is_active')->default(true);
 
-            $table->foreignId('area_id')->constrained('areas')->onDelete('restrict');
+            $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('restrict');
             $table->foreignId('equipo_id')->nullable()->constrained('equipos')->onDelete('restrict');
 
             $table->timestamps();

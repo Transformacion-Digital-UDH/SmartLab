@@ -52,7 +52,14 @@ const logout = () => {
                                 <NavLink :href="route('laboratorios.index')" :active="route().current('laboratorios.index')">
                                     Laboratorios
                                 </NavLink>
+                                <NavLink :href="route('recursos.index')" :active="route().current('recursos.index')">
+                                    Recursos
+                                </NavLink>
+                                <NavLink :href="route('asistencias.index')" :active="route().current('asistencias.index')">
+                                    Asistencias
+                                </NavLink>
                             </div>
+
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -189,7 +196,14 @@ const logout = () => {
                         <ResponsiveNavLink :href="route('laboratorios.index')" :active="route().current('laboratorios.index')">
                             Laboratorios
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('recursos.index')" :active="route().current('recursos.index')">
+                            Recursos
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('asistencias.index')" :active="route().current('asistencias.index')">
+                            Asistencias
+                        </ResponsiveNavLink>
                     </div>
+
 
                     <!-- Opciones Responsivas de Configuración -->
                     <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">

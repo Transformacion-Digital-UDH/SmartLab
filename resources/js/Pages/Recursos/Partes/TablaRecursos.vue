@@ -1,5 +1,5 @@
 <template>
-    <Table :columns="columnas" :dataSource="laboratorios" rowKey="id" :pagination="false">
+    <Table :columns="columnas" :dataSource="recursos" rowKey="id" :pagination="false">
         <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'acciones'">
                 <FormOutlined @click="editar(record)" class="text-blue-600" />
@@ -27,12 +27,12 @@ import {
 } from "@ant-design/icons-vue";
 
 const props = defineProps({
-    laboratorios: Array,
+    recursos: Array,
 });
 
 const emitir = defineEmits(["editar", "mostrar-areas", "actualizar-tabla"]);
 
-// Definir las columnas de la tabla de laboratorios
+// Definir las columnas de la tabla de recursos
 const columnas = [
     { title: "Código", dataIndex: "codigo", key: "codigo" },
     {
@@ -42,49 +42,51 @@ const columnas = [
         sorter: (a, b) => a.nombre.localeCompare(b.nombre),
     },
     {
-        title: "Responsable",
-        dataIndex: ["responsable", "nombres"],
-        key: "nombres",
+        title: "Área",
+        dataIndex: ["area", "nombre"],
+        key: "area",
     },
     {
-        title: "Aforo",
-        dataIndex: "aforo",
-        key: "aforo",
-        sorter: (a, b) => a.aforo - b.aforo,
+        title: "Tipo",
+        dataIndex: "tipo",
+        key: "tipo",
     },
-    { title: "Email", dataIndex: "email", key: "email" },
+    {
+        title: "Estado",
+        dataIndex: "estado",
+        key: "estado",
+    },
     { title: "Acciones", key: "acciones" },
 ];
 
 // Emitir eventos para editar, eliminar y ver áreas
-function editar(laboratorio) {
-    emitir("editar", laboratorio);
+function editar(recurso) {
+    emitir("editar", recurso);
 }
 
-const confirmarEliminacion = (laboratorio) => {
+const confirmarEliminacion = (recurso) => {
     Modal.confirm({
-        title: '¿Estás seguro de eliminar este laboratorio?',
-        content: `${laboratorio.nombre}`,
+        title: '¿Estás seguro de eliminar este recurso?',
+        content: `${recurso.nombre}`,
         okText: 'Confirmar',
         cancelText: 'Cancelar',
         onOk() {
-            router.delete(route('laboratorios.destroy', laboratorio), {
+            router.delete(route('recursos.destroy', recurso), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // Redirige a laboratorios.index después de la eliminación
-                    message.success('Laboratorio eliminado exitosamente');
+                    message.success('Recurso eliminado exitosamente');
                     emitir('actualizar-tabla');
                 },
                 onError: (error) => {
-                    console.error('Error al eliminar el laboratorio:', error);
-                    message.error('Error al eliminar el laboratorio');
+                    console.error('Error al eliminar el recurso:', error);
+                    message.error('Error al eliminar el recurso');
                 }
             });
         },
     });
 };
 
-function mostrarAreas(laboratorio) {
-    emitir("mostrar-areas", laboratorio);
+function mostrarAreas(recurso) {
+    emitir("mostrar-areas", recurso);
 }
 </script>
