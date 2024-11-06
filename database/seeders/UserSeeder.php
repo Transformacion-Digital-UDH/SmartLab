@@ -55,6 +55,19 @@ class UserSeeder extends Seeder
             'codigo' => Str::random(6),
         ]);
 
+        // Crear un usuario con rol Miembro
+        User::create([
+            'nombres' => 'Abimael',
+            'apellidos' => 'Saenz',
+            'dni' => '71223344',
+            'email' => 'coordinador@smartlab.udh',
+            'password' => Hash::make('coordinador@smartlab.udh'),
+            'rol' => 'Coordinador',
+            'email_verified_at' => now(),
+            'is_active' => true,
+            'codigo' => Str::random(6),
+        ]);
+
         // Crear un usuario con rol Responsable
         User::create([
             'nombres' => 'María',
