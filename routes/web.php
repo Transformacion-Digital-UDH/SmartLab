@@ -35,17 +35,19 @@ Route::middleware([
     })->name('dashboard');
 });
 
-// Seccion Asistencia
+// API: Asistencias
 Route::prefix('api/asistencia') -> controller(AsistenciaController::class) -> group(function() {
     Route::get('/user/{codigo}', 'info')
         -> where('codigo', '^(\d{8}|\d{10})$');
     Route::post('/registrar_entrada', 'registrarEntrada');
     Route::put('/registrar_salida', 'registrarSalida');
     Route::put('/eliminar/{id}', 'eliminar');
+    Route::get('/test', 'test');
 });
 
-// Seccion Asistencia Vista
+// Views: Asistencia
 Route::get('/asistencias', [AsistenciaController::class, 'index']);
+Route::get('/mis_asistencias', [AsistenciaController::class, 'mis_asistencias']);
 
 // Rutas para pruebas sin middlewares
 Route::get('/laboratorios', [LaboratorioController::class, 'index'])->name('laboratorios.index');
