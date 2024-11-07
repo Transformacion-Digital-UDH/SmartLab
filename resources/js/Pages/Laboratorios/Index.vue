@@ -6,12 +6,14 @@
             </h2>
         </template>
 
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-6">
+        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8 px-4">
+            <div class="flex flex-col-reverse justify-end gap-y-4 mb-6
+                sm:flex-row sm:justify-between sm:items-center gap-x-4"
+            >
                 <InputSearch
                     v-model:value="valorBuscar"
                     placeholder="Buscar laboratorio por nombre"
-                    style="width: 350px"
+                    class="w-full"
                     size="large"
                 />
                 <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium" >Agregar laboratorio</Button>
