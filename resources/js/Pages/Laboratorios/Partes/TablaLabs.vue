@@ -51,6 +51,7 @@ const columnas = [
         dataIndex: "aforo",
         key: "aforo",
         sorter: (a, b) => a.aforo - b.aforo,
+        width: 100,
     },
     { title: "Email", dataIndex: "email", key: "email", responsive: ['sm'] },
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },

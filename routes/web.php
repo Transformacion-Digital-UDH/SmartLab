@@ -56,8 +56,10 @@ Route::middleware([
 
     // Áreas
     // Route::apiResource('areas', AreaController::class);
-    Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index']);
-    Route::post('/areas', [AreaController::class, 'store']);
+    Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.index');
+    Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
+    Route::put('/areas/{area_id}', [AreaController::class, 'update'])->name('areas.update');
+
 
 
 });

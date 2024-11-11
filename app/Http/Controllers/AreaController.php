@@ -38,16 +38,13 @@ class AreaController extends Controller
         ]);
 
         // Crear el área
-        $area = Area::create([
+        Area::create([
             'nombre' => $validated['nombre'],
             'descripcion' => $validated['descripcion'] ?? null,
             'aforo' => $validated['aforo'] ?? null,
             'laboratorio_id' => $validated['laboratorio_id'],
             'is_active' => true,
         ]);
-
-        // Retornar respuesta JSON con el área creada
-        return response()->json($area, 201);
     }
 
     /**
@@ -61,9 +58,20 @@ class AreaController extends Controller
     /**
      * API: Actualizar un área específica.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $area_id)
     {
-        //
+        // Validación de los datos recibidos
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'aforo' => 'nullable|integer',
+        ]);
+
+        // Buscar el área por ID y actualizarla
+        $area = Area::findOrFail($area_id);
+        $area->update($request->only(['nombre', 'descripcion', 'aforo']));
+
+        return response()->json(['message' => 'Área actualizada exitosamente', 'area' => $area]);
     }
 
     /**

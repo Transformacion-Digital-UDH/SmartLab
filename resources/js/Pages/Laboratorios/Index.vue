@@ -48,7 +48,6 @@
                 v-if="labSeleccionado"
                 v-model:visible="mostrarModalAreas"
                 :laboratorio="labSeleccionado"
-                @cerrar="cerrarModalAreas"
             />
         </div>
     </AppLayout>
@@ -69,7 +68,6 @@ const laboratorios = ref(props.laboratorios || []);
 const mostrarModalCrear = ref(false);
 const mostrarModalEditar = ref(false);
 const mostrarModalAreas = ref(false);
-const labSeleccionadoId = ref(null);
 const labSeleccionado = ref(null);
 const valorBuscar = ref('');
 
