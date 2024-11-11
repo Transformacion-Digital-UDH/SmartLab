@@ -21,7 +21,7 @@ class EquiposSeeder extends Seeder
                 'descripcion' => 'Descripción del Equipo 1',
                 'estado' => 'Activo',
                 'is_active' => true,
-                'area_id' => 1, // Asegúrate de que exista un área con ID 1
+                'area_id' => 1,
             ],
             [
                 'nombre' => 'Equipo 2',

@@ -10,7 +10,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\UserController;
 
 // Las rutas que serán accedidas por aplicaciones externas se definen en api.php,
-// las que se usarán internamente en web.php
+// las que se usarán internamente en esta app laravel se definen en web.php
 
 // Página principal
 Route::get('/', function () {
@@ -55,15 +55,9 @@ Route::middleware([
     Route::delete('/recursos/{recurso}', [RecursoController::class, 'destroy'])->name('recursos.destroy');
 
     // Áreas
-    Route::apiResource('areas', AreaController::class);
+    // Route::apiResource('areas', AreaController::class);
+    Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index']);
+    Route::post('/areas', [AreaController::class, 'store']);
 
-    Route::get('/areas', function () {
-        return Inertia::render('Areas/AreaList');
-    });
-    Route::get('/areas/create', function () {
-        return Inertia::render('Areas/AreasCreate');
-    });
-    Route::get('/areas/edit/{id}', function ($id) {
-        return Inertia::render('Areas/AreasEdit', ['id' => $id]);
-    });
+
 });

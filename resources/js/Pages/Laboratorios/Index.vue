@@ -12,7 +12,7 @@
             >
                 <InputSearch
                     v-model:value="valorBuscar"
-                    placeholder="Buscar laboratorio por nombre"
+                    placeholder="Buscar laboratorio por nombre o código"
                     class="w-full"
                     size="large"
                 />
@@ -45,9 +45,9 @@
 
             <!-- Modal de Áreas separado en AreasModal -->
             <ModalAreas
-                v-if="labSeleccionadoId"
-                v-model:open="mostrarModalAreas"
-                :laboratorio_id="labSeleccionadoId"
+                v-if="labSeleccionado"
+                v-model:visible="mostrarModalAreas"
+                :laboratorio="labSeleccionado"
                 @cerrar="cerrarModalAreas"
             />
         </div>
@@ -76,7 +76,8 @@ const valorBuscar = ref('');
 const labsFiltrados = computed(() => !valorBuscar.value
     ? laboratorios.value
     : laboratorios.value.filter(lab =>
-        lab.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase())
+        lab.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
+        lab.codigo.toLowerCase().includes(valorBuscar.value.toLowerCase())
     )
 );
 
@@ -97,7 +98,7 @@ const abrirModalEditar = (laboratorio) => {
 };
 
 const abrirModalAreas = (laboratorio) => {
-    labSeleccionadoId.value = laboratorio.id;
+    labSeleccionado.value = { ...laboratorio };
     mostrarModalAreas.value = true;
 };
 

@@ -71,7 +71,6 @@ const confirmarEliminacion = (laboratorio) => {
             router.delete(route('laboratorios.destroy', laboratorio), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // Redirige a laboratorios.index después de la eliminación
                     message.success('Laboratorio eliminado exitosamente');
                     emitir('actualizar-tabla');
                 },
