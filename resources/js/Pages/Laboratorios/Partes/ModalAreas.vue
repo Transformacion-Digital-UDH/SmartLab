@@ -36,13 +36,19 @@
                 <template v-else-if="column.dataIndex === 'operation'">
                     <div class="editable-row-operations">
                         <span v-if="editableData[record.key]">
-                            <TypographyLink @click="save(record.key, record.id)">Guardar</TypographyLink>
-                            <Popconfirm title="¿Seguro que quieres cancelar?" @confirm="cancel(record.key)">
-                                <a>Cancelar</a>
-                            </Popconfirm>
+                            <CheckOutlined @click="save(record.key, record.id)" class="text-green-600 mr-2" />
+                            <CloseOutlined @click="cancel(record.key)" class="text-red-600" />
                         </span>
                         <span v-else>
-                            <FormOutlined @click="edit(record.key)" class="text-blue-600">Editar</FormOutlined>
+                            <FormOutlined @click="edit(record.key)" class="text-blue-600 mr-2" />
+                            <Popconfirm
+                                title="Confirmar acción"
+                                okText="Sí"
+                                cancelText="No"
+                                @confirm="eliminarArea(record.id)"
+                            >
+                                <DeleteOutlined class="text-red-600" />
+                            </Popconfirm>
                         </span>
                     </div>
                 </template>
@@ -87,8 +93,9 @@
 
 <script setup>
 import { ref, watch, defineProps, defineEmits, onMounted } from 'vue';
-import { Modal, Table, Form, FormItem, Input, InputNumber, Button, message, TypographyLink, Popconfirm } from 'ant-design-vue';
-import { FormOutlined } from "@ant-design/icons-vue";
+import { router } from '@inertiajs/vue3';
+import { Modal, Table, Form, FormItem, Input, InputNumber, Button, message, Popconfirm } from 'ant-design-vue';
+import { FormOutlined, DeleteOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
 import axios from 'axios';
 
 const props = defineProps({
@@ -139,7 +146,7 @@ const cerrarModalAgregar = () => {
 // Función para cargar las áreas
 const cargarAreas = async () => {
     try {
-        const response = await axios.get(`/laboratorios/${props.laboratorio.id}/areas`);
+        const response = await axios.get(route('areas.index', { laboratorio_id: props.laboratorio.id }));
         areas.value = response.data.map((area, index) => ({
             key: index.toString(),
             ...area,
@@ -159,7 +166,7 @@ const save = async (key, areaId) => {
     const index = areas.value.findIndex(area => area.key === key);
     if (index !== -1 && editableData.value[key]) {
         try {
-            await axios.put(`/areas/${areaId}`, {
+            await axios.put(route('areas.update', { area_id: areaId }), {
                 nombre: editableData.value[key].nombre,
                 descripcion: editableData.value[key].descripcion,
                 aforo: editableData.value[key].aforo,
@@ -177,11 +184,22 @@ const cancel = (key) => {
     delete editableData.value[key];
 };
 
+// Función para eliminar un área (cambiar is_active a false)
+const eliminarArea = async (areaId) => {
+    try {
+        await axios.delete(route('areas.destroy', { area_id: areaId }));
+        message.success('Área eliminada exitosamente');
+        cargarAreas(); 
+    } catch (error) {
+        console.error("Error al eliminar el área:", error);
+    }
+};
+
 // Registrar la nueva área
 const guardarArea = async () => {
     cargando.value = true;
     try {
-        const response = await axios.post('/areas', {
+        const response = await axios.post(route('areas.store'), {
             nombre: nuevaArea.value.nombre,
             descripcion: nuevaArea.value.descripcion,
             aforo: nuevaArea.value.aforo,
@@ -219,6 +237,6 @@ watch(
 
 <style scoped>
 .editable-row-operations a {
-  margin-right: 8px;
+    margin-right: 8px;
 }
 </style>

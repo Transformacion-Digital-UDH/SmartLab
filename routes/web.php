@@ -59,6 +59,7 @@ Route::middleware([
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.index');
     Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
     Route::put('/areas/{area_id}', [AreaController::class, 'update'])->name('areas.update');
+    Route::delete('/areas/{area_id}', [AreaController::class, 'destroy'])->name('areas.destroy');
 
 
 

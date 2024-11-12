@@ -70,15 +70,15 @@ class AreaController extends Controller
         // Buscar el área por ID y actualizarla
         $area = Area::findOrFail($area_id);
         $area->update($request->only(['nombre', 'descripcion', 'aforo']));
-
-        return response()->json(['message' => 'Área actualizada exitosamente', 'area' => $area]);
     }
 
     /**
      * API: Eliminar un área específica.
      */
-    public function destroy(string $id)
+    public function destroy($area_id)
     {
-
+        $area = Area::findOrFail($area_id);
+        $area->update(['is_active' => false]);
     }
+
 }
