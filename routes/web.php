@@ -46,7 +46,11 @@ Route::middleware([
     Route::get('/laboratorios/{laboratorio}/miembros', [LaboratorioController::class, 'mostrarMiembros'])->name('laboratorios.miembros');
 
     // Usuarios
-    Route::get('/responsables', [UserController::class, 'getResponsables'])->name('responsables.index');
+    Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
+    Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
+    Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
+    Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+
 
     // Recursos
     Route::get('/recursos', [RecursoController::class, 'index'])->name('recursos.index');
