@@ -34,7 +34,7 @@ const emitir = defineEmits(["editar", "mostrar-areas", "actualizar-tabla"]);
 
 // Definir las columnas de la tabla de laboratorios
 const columnas = [
-    { title: "Código", dataIndex: "codigo", key: "codigo" },
+    { title: "Código", dataIndex: "codigo", key: "codigo", width: 120 },
     {
         title: "Nombre",
         dataIndex: "nombre",

@@ -59,7 +59,7 @@ import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Button, InputSearch } from 'ant-design-vue';
 import TablaLabs from './Partes/TablaLabs.vue';
-import ModalAreas from './Partes/ModalAreas.vue';
+import ModalAreas from './Partes/Areas/ModalAreas.vue';
 import ModalAgregar from './Partes/ModalAgregar.vue';
 import ModalEditar from './Partes/ModalEditar.vue';
 

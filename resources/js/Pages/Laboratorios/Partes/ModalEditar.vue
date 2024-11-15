@@ -1,6 +1,6 @@
 <template>
     <Modal
-    title="Agregar laboratorio"
+    title="Editar laboratorio"
         :open="visible"
         @cancel="cerrarModal"
         centered
