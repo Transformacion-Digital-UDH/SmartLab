@@ -4,7 +4,7 @@
         :title="`Áreas del ${laboratorio.nombre}`"
         :footer="null"
         width="800px"
-        @cancel="cerrarmodal"
+        @cancel="cerrarModal"
     >
         <div class="my-3">
             <Button type="primary" @click="abrirModalAgregar" size="middle">
@@ -16,14 +16,15 @@
             :columns="columnasAreas"
             :dataSource="areas"
             :pagination="false"
+            :scroll="{ x: 500 }"
             rowKey="id"
         >
             <template #bodyCell="{ column, text, record }">
                 <template v-if="['nombre', 'descripcion', 'aforo'].includes(column.dataIndex)">
                     <div>
                         <Input
-                            v-if="editableData[record.key]"
-                            v-model:value="editableData[record.key][column.dataIndex]"
+                            v-if="datosEditables[record.key]"
+                            v-model:value="datosEditables[record.key][column.dataIndex]"
                             style="margin: -5px 0"
                             size="small"
                         />
@@ -33,13 +34,13 @@
                     </div>
                 </template>
                 <template v-else-if="column.dataIndex === 'operation'">
-                    <div class="editable-row-operations">
-                        <span v-if="editableData[record.key]">
-                            <CheckOutlined @click="save(record.key, record.id)" class="text-green-600 mr-2" />
-                            <CloseOutlined @click="cancel(record.key)" class="text-red-600" />
+                    <div>
+                        <span v-if="datosEditables[record.key]">
+                            <CheckOutlined @click="guardar(record.key, record.id)" class="text-green-600 mr-2" />
+                            <CloseOutlined @click="cancelar(record.key)" class="text-red-600" />
                         </span>
                         <span v-else>
-                            <FormOutlined @click="edit(record.key)" class="text-blue-600 mr-2" />
+                            <FormOutlined @click="editar(record.key)" class="text-blue-600 mr-2" />
                             <Popconfirm
                                 title="Confirmar acción"
                                 okText="Sí"
@@ -54,7 +55,12 @@
             </template>
         </Table>
 
-        <AgregarArea :visible="modalAgregarVisible" :laboratorio_id="laboratorio.id" @close="cerrarModalAgregar" @areaGuardada="cargarAreas" />
+        <AgregarArea
+            :visible="modalAgregarVisible"
+            :laboratorio_id="laboratorio.id"
+            @close="cerrarModalAgregar"
+            @areaGuardada="cargarAreas"
+        />
     </Modal>
 </template>
 
@@ -79,21 +85,21 @@ const emit = defineEmits(['update:visible']);
 const columnasAreas = [
     { title: 'Nombre', dataIndex: 'nombre', key: 'nombre' },
     { title: 'Descripción', dataIndex: 'descripcion', key: 'descripcion' },
-    { title: 'Aforo', dataIndex: 'aforo', key: 'aforo', width: 100 },
-    { title: 'Acciones', dataIndex: 'operation', key: 'operation' },
+    { title: 'Aforo', dataIndex: 'aforo', key: 'aforo', width: 80 },
+    { title: 'Acciones', dataIndex: 'operation', key: 'operation', fixed: 'right', width: 100 },
 ];
 
 const areas = ref([]);
 const modalAgregarVisible = ref(false);
-const editableData = ref({});
+const datosEditables = ref({});
 
-const cerrarmodal = () => {
+const cerrarModal = () => {
     emit('update:visible', false);
 };
 
 const abrirModalAgregar = () => {
     modalAgregarVisible.value = true;
-    cerrarmodal();
+    cerrarModal();
 };
 
 const cerrarModalAgregar = () => {
@@ -113,21 +119,21 @@ const cargarAreas = async () => {
     }
 };
 
-const edit = (key) => {
-    editableData.value[key] = { ...areas.value.find(area => area.key === key) };
+const editar = (key) => {
+    datosEditables.value[key] = { ...areas.value.find(area => area.key === key) };
 };
 
-const save = async (key, areaId) => {
+const guardar = async (key, areaId) => {
     const index = areas.value.findIndex(area => area.key === key);
-    if (index !== -1 && editableData.value[key]) {
+    if (index !== -1 && datosEditables.value[key]) {
         try {
             await axios.put(route('areas.update', { area_id: areaId }), {
-                nombre: editableData.value[key].nombre,
-                descripcion: editableData.value[key].descripcion,
-                aforo: editableData.value[key].aforo,
+                nombre: datosEditables.value[key].nombre,
+                descripcion: datosEditables.value[key].descripcion,
+                aforo: datosEditables.value[key].aforo,
             });
-            areas.value[index] = { ...editableData.value[key] };
-            delete editableData.value[key];
+            areas.value[index] = { ...datosEditables.value[key] };
+            delete datosEditables.value[key];
             message.success('Área actualizada exitosamente');
         } catch (error) {
             console.error("Error al actualizar el área:", error);
@@ -135,8 +141,8 @@ const save = async (key, areaId) => {
     }
 };
 
-const cancel = (key) => {
-    delete editableData.value[key];
+const cancelar = (key) => {
+    delete datosEditables.value[key];
 };
 
 const eliminarArea = async (areaId) => {
@@ -164,8 +170,3 @@ watch(
 
 </script>
 
-<style scoped>
-.editable-row-operations a {
-    margin-right: 8px;
-}
-</style>
