@@ -27,6 +27,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'is_active' => true,
             'codigo' => Str::random(6),
+            'celular' => '987654321',
         ]);
 
         // Crear un usuario con rol Invitado
@@ -40,6 +41,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'is_active' => true,
             'codigo' => Str::random(6),
+            'celular' => '987654322',
         ]);
 
         // Crear un usuario con rol Miembro
@@ -53,9 +55,10 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'is_active' => true,
             'codigo' => Str::random(6),
+            'celular' => '987654323',
         ]);
 
-        // Crear un usuario con rol Miembro
+        // Crear un usuario con rol Coordinador
         User::create([
             'nombres' => 'Abimael',
             'apellidos' => 'Saenz',
@@ -66,6 +69,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'is_active' => true,
             'codigo' => Str::random(6),
+            'celular' => '987654324',
         ]);
 
         // Crear un usuario con rol Responsable
@@ -79,6 +83,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'is_active' => true,
             'codigo' => Str::random(6),
+            'celular' => '987654325',
         ]);
 
         // Crear un usuario con rol Admin
@@ -92,6 +97,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'is_active' => true,
             'codigo' => Str::random(6),
+            'celular' => '987654326',
         ]);
     }
 }

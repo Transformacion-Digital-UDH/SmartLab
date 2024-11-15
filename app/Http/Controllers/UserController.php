@@ -25,11 +25,12 @@ class UserController extends Controller
     {
         $request->validate([
             'nombres' => 'required|max:255',
-            'apellidos' => 'required|max:255',
+            'apellidos' => 'nullable|max:255',
             'dni' => 'required|numeric|digits:8|unique:users,dni',
             'email' => 'nullable|email|max:255|unique:users,email',
             'password' => 'required|min:6',
             'is_active' => 'boolean',
+            'celular' => 'nullable|numeric|digits:9',
         ], [
             'required' => 'Este campo es obligatorio.',
             'email' => 'Ingrese un correo electrónico válido.',
@@ -37,7 +38,6 @@ class UserController extends Controller
             'max' => 'Este campo no puede exceder de :max caracteres.',
             'numeric' => 'Este campo debe ser un número.',
             'digits' => 'Este campo debe tener :digits dígitos.',
-            'in' => 'El rol seleccionado no es válido.',
         ]);
 
         User::create([
@@ -49,6 +49,7 @@ class UserController extends Controller
             'codigo' => $request->codigo,
             'rol' => 'Libre',
             'is_active' => $request->is_active ?? true,
+            'celular' => $request->celular,
         ]);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente');
@@ -58,8 +59,13 @@ class UserController extends Controller
     {
         $request->validate([
             'nombres' => 'required|max:255',
-            'apellidos' => 'required|max:255',
+            'apellidos' => 'nullable|max:255',
             'rol' => 'required|in:Libre,Invitado,Miembro,Coordinador',
+            'celular' => 'nullable|numeric|digits:9',
+        ], [
+            'required' => 'Este campo es obligatorio.',
+            'numeric' => 'Este campo debe ser un número.',
+            'digits' => 'Este campo debe tener :digits dígitos.',
         ]);
 
         $usuario->update([
@@ -71,6 +77,7 @@ class UserController extends Controller
             'codigo' => $request->codigo,
             'rol' => $request->rol,
             'is_active' => $request->is_active,
+            'celular' => $request->celular,
         ]);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente');

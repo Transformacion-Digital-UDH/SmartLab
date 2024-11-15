@@ -33,8 +33,8 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
-        <div class="text-center mb-5">
-            <h1 class="block text-2xl font-bold text-udh_3">Registro</h1>
+        <div class="text-center mb-3">
+            <h1 class="block text-2xl font-bold text-udh_3">Registrarse</h1>
             <p class="mt-3 text-sm text-gray-600">
                 ¿Ya tienes una cuenta?
                 <Link class="text-udh_1 hover:underline decoration-2 font-semibold" :href="route('login')">
@@ -44,8 +44,8 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit">
-            <div class="mt-4">
-                <InputLabel for="nombres" value="Nombres" />
+            <div >
+                <InputLabel for="nombres" value="Nombre" />
                 <TextInput
                     id="nombres"
                     v-model="form.nombres"
@@ -56,19 +56,6 @@ const submit = () => {
                     autocomplete="given-name"
                 />
                 <InputError class="mt-2" :message="form.errors.nombres" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="apellidos" value="Apellidos" />
-                <TextInput
-                    id="apellidos"
-                    v-model="form.apellidos"
-                    type="text"
-                    class="block mt-1 w-full"
-                    required
-                    autocomplete="family-name"
-                />
-                <InputError class="mt-2" :message="form.errors.apellidos" />
             </div>
 
             <div class="mt-4">
@@ -86,7 +73,7 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="email" value="Correo Electrónico" />
+                <InputLabel for="email" value="Correo electrónico" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -112,7 +99,7 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirmar Contraseña" />
+                <InputLabel for="password_confirmation" value="Confirmar contraseña" />
                 <TextInput
                     id="password_confirmation"
                     v-model="form.password_confirmation"
