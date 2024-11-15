@@ -37,6 +37,8 @@ Route::middleware([
     // Vistas de Asistencia
     Route::get('/asistencias', [AsistenciaController::class, 'index'])->name('asistencias.index');
     Route::get('/mis_asistencias', [AsistenciaController::class, 'mis_asistencias']);
+    Route::delete('/asistencias/eliminar/{id}', [AsistenciaController::class, 'eliminar_asistencia'])->name("asistencia.eliminar");
+    Route::put('/asistencias/editar_salida/{id}/{date}', [AsistenciaController::class, 'editar_salida'])->name('asistencia.editar.salida');
 
     // Laboratorios
     Route::get('/laboratorios', [LaboratorioController::class, 'index'])->name('laboratorios.index');

@@ -41,6 +41,7 @@ class AsistenciaController extends Controller
             'asistencias' => $asistencias
         ]);
     }
+
     public function test() {
         return $asistencias = DB::table('asistencias')
             ->where('asistencias.is_active',1)
@@ -140,13 +141,21 @@ class AsistenciaController extends Controller
 
     }
     // DELETE
-    public function eliminarAsistencia(Request $request){
-        $user_id = $request -> input('usuario_id');
-        
-        $asistencia = Asistencia::where('usuario_id', $user_id)->latest('hora_entrada')->first();
-        $asistencia -> hora_salida = now();
+    function eliminar_asistencia(Request $request, $id){
+        $asistencia = Asistencia::find($id);
+
+        $asistencia -> is_active = 0;
         $asistencia -> save();
-        return response('SE REGISTRO SU SALIDA EXITOSAMENTE', 200);
+
+        // return response()->json(['message' => 'SE ELIMINO CORRECTAMENTE'], 200);
+    }
+    function editar_salida(Request $request, $id, $date){
+        $asistencia = Asistencia::find($id);
+
+        $asistencia -> hora_salida = $date;
+        $asistencia -> save();
+
+        // return response()->json(['message' => 'SE EACTUALIZO LA HORA DE SALIDA'], 200);
 
     }
 }

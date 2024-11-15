@@ -50,6 +50,7 @@
             />
         </div>
     </AppLayout>
+    
 </template>
 
 <script setup>

@@ -14,5 +14,6 @@ Route::prefix('/asistencia')->middleware('auth:sanctum')->group(function () {
     Route::put('/registrar_salida', [AsistenciaController::class, 'registrarSalida']);
     Route::put('/eliminar/{id}', [AsistenciaController::class, 'eliminar']);
     Route::get('/test', [AsistenciaController::class, 'test']);
+
 });
  
