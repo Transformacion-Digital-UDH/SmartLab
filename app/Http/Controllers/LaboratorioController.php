@@ -12,7 +12,11 @@ class LaboratorioController extends Controller
 {
     public function index()
     {
-        $laboratorios = Laboratorio::with('responsable')->orderBy('id', 'desc')->get();
+        $laboratorios = Laboratorio::with('responsable')
+            ->where('is_active', true)
+            ->orderBy('id', 'desc')
+            ->get();
+
         $responsables = User::where('rol', 'Responsable')->get();
 
         return Inertia::render('Laboratorios/Index', [
@@ -20,7 +24,6 @@ class LaboratorioController extends Controller
             'responsables' => $responsables,
         ]);
     }
-
 
 
     public function store(Request $request)
@@ -43,7 +46,7 @@ class LaboratorioController extends Controller
         ]);
 
         // Crear el laboratorio
-        Laboratorio::create($request->all())->load('responsable');
+        Laboratorio::create($request->all());
     }
 
 
@@ -74,8 +77,8 @@ class LaboratorioController extends Controller
 
     public function destroy(Laboratorio $laboratorio)
     {
-        $laboratorio->delete();
+        $laboratorio->is_active = false;
+        $laboratorio->save();
     }
-
 
 }

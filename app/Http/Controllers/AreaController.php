@@ -3,67 +3,82 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Laboratorio;
 use Illuminate\Http\Request;
 
 class AreaController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * API: Obtener todas las áreas activas de un laboratorio.
+     */
+    public function index($laboratorio_id)
     {
-        $search = $request->input('search');
+        if (Laboratorio::where('id', $laboratorio_id)->exists()) {
 
-        $areas = Area::when($search, function ($query, $search) {
-            return $query->where('nombre', 'like', "%{$search}%")
-                ->orWhere('descripcion', 'like', "%{$search}%");
-        })
-            ->paginate(10);
+            $areas = Area::where('laboratorio_id', $laboratorio_id)
+                    ->where('is_active', true)
+                    ->orderBy('id', 'desc')
+                    ->get();
 
-        return response()->json($areas);
+            return response()->json($areas);
+        }
     }
 
+    /**
+     * API: Guardar un nuevo área.
+     */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        // Validación de los datos
+        $validated = $request->validate([
             'nombre' => 'required|string|max:100',
             'descripcion' => 'nullable|string',
             'aforo' => 'nullable|integer',
-            'is_active' => 'boolean',
             'laboratorio_id' => 'required|exists:laboratorios,id',
         ]);
 
-        $area = Area::create($validatedData);
-
-        return response()->json($area, 201);
+        // Crear el área
+        Area::create([
+            'nombre' => $validated['nombre'],
+            'descripcion' => $validated['descripcion'] ?? null,
+            'aforo' => $validated['aforo'] ?? null,
+            'laboratorio_id' => $validated['laboratorio_id'],
+            'is_active' => true,
+        ]);
     }
 
-    public function show($id)
+    /**
+     * API: Obtener un área específica.
+     */
+    public function show(string $id)
     {
-        $area = Area::findOrFail($id);
-
-        return response()->json($area);
+        //
     }
 
-    public function update(Request $request, $id)
+    /**
+     * API: Actualizar un área específica.
+     */
+    public function update(Request $request, $area_id)
     {
-        $validatedData = $request->validate([
-            'nombre' => 'required|string|max:100',
+        // Validación de los datos recibidos
+        $request->validate([
+            'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
             'aforo' => 'nullable|integer',
-            'is_active' => 'boolean',
-            'laboratorio_id' => 'required|exists:laboratorios,id',
         ]);
 
-        $area = Area::findOrFail($id);
-
-        $area->update($validatedData);
-
-        return response()->json($area);
+        // Buscar el área por ID y actualizarla
+        $area = Area::findOrFail($area_id);
+        $area->update($request->only(['nombre', 'descripcion', 'aforo']));
     }
 
-    public function destroy($id)
+    /**
+     * API: Eliminar un área específica.
+     */
+    public function destroy($area_id)
     {
-        $area = Area::findOrFail($id);
-        $area->delete();
-
-        return response()->json(null, 204);
+        $area = Area::findOrFail($area_id);
+        $area->update(['is_active' => false]);
     }
+
 }

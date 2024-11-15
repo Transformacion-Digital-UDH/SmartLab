@@ -10,7 +10,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\UserController;
 
 // Las rutas que serán accedidas por aplicaciones externas se definen en api.php,
-// las que se usarán internamente en web.php
+// las que se usarán internamente en esta app laravel se definen en web.php
 
 // Página principal
 Route::get('/', function () {
@@ -48,7 +48,11 @@ Route::middleware([
     Route::get('/laboratorios/{laboratorio}/miembros', [LaboratorioController::class, 'mostrarMiembros'])->name('laboratorios.miembros');
 
     // Usuarios
-    Route::get('/responsables', [UserController::class, 'getResponsables'])->name('responsables.index');
+    Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
+    Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
+    Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
+    Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+
 
     // Recursos
     Route::get('/recursos', [RecursoController::class, 'index'])->name('recursos.index');
@@ -57,15 +61,12 @@ Route::middleware([
     Route::delete('/recursos/{recurso}', [RecursoController::class, 'destroy'])->name('recursos.destroy');
 
     // Áreas
-    Route::apiResource('areas', AreaController::class);
+    // Route::apiResource('areas', AreaController::class);
+    Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.index');
+    Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
+    Route::put('/areas/{area_id}', [AreaController::class, 'update'])->name('areas.update');
+    Route::delete('/areas/{area_id}', [AreaController::class, 'destroy'])->name('areas.destroy');
 
-    Route::get('/areas', function () {
-        return Inertia::render('Areas/AreaList');
-    });
-    Route::get('/areas/create', function () {
-        return Inertia::render('Areas/AreasCreate');
-    });
-    Route::get('/areas/edit/{id}', function ($id) {
-        return Inertia::render('Areas/AreasEdit', ['id' => $id]);
-    });
+
+
 });

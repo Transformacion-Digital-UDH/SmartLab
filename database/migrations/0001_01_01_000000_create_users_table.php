@@ -19,11 +19,12 @@ return new class extends Migration
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
             $table->string('codigo', 20)->nullable();
+            $table->string('celular', 20)->nullable();
             $table->enum('rol', ['Libre', 'Invitado', 'Miembro', 'Coordinador', 'Responsable', 'Admin']);
             $table->string('profile_photo_path', 2048)->nullable();
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
-            
+
             $table->foreignId('current_team_id')->nullable();
 
             $table->timestamp('email_verified_at')->nullable();

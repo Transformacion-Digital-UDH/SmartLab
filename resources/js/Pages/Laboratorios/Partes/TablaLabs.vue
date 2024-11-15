@@ -1,5 +1,5 @@
 <template>
-    <Table :columns="columnas" :dataSource="laboratorios" rowKey="id" :pagination="false">
+    <Table :columns="columnas" :dataSource="laboratorios" rowKey="id" :pagination="false" :scroll="{ x: 800 }">
         <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'acciones'">
                 <FormOutlined @click="editar(record)" class="text-blue-600" />
@@ -51,9 +51,10 @@ const columnas = [
         dataIndex: "aforo",
         key: "aforo",
         sorter: (a, b) => a.aforo - b.aforo,
+        width: 100,
     },
-    { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Acciones", key: "acciones" },
+    { title: "Email", dataIndex: "email", key: "email", responsive: ['sm'] },
+    { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 
 // Emitir eventos para editar, eliminar y ver áreas
@@ -71,7 +72,6 @@ const confirmarEliminacion = (laboratorio) => {
             router.delete(route('laboratorios.destroy', laboratorio), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // Redirige a laboratorios.index después de la eliminación
                     message.success('Laboratorio eliminado exitosamente');
                     emitir('actualizar-tabla');
                 },

@@ -6,12 +6,14 @@
             </h2>
         </template>
 
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-6">
+        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8 px-4">
+            <div class="flex flex-col-reverse justify-end gap-y-4 mb-6
+                sm:flex-row sm:justify-between sm:items-center gap-x-4"
+            >
                 <InputSearch
                     v-model:value="valorBuscar"
-                    placeholder="Buscar laboratorio por nombre"
-                    style="width: 350px"
+                    placeholder="Buscar laboratorio por nombre o código"
+                    class="w-full"
                     size="large"
                 />
                 <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium" >Agregar laboratorio</Button>
@@ -43,10 +45,9 @@
 
             <!-- Modal de Áreas separado en AreasModal -->
             <ModalAreas
-                v-if="labSeleccionadoId"
-                v-model:open="mostrarModalAreas"
-                :laboratorio_id="labSeleccionadoId"
-                @cerrar="cerrarModalAreas"
+                v-if="labSeleccionado"
+                v-model:visible="mostrarModalAreas"
+                :laboratorio="labSeleccionado"
             />
         </div>
     </AppLayout>
@@ -68,14 +69,14 @@ const laboratorios = ref(props.laboratorios || []);
 const mostrarModalCrear = ref(false);
 const mostrarModalEditar = ref(false);
 const mostrarModalAreas = ref(false);
-const labSeleccionadoId = ref(null);
 const labSeleccionado = ref(null);
 const valorBuscar = ref('');
 
 const labsFiltrados = computed(() => !valorBuscar.value
     ? laboratorios.value
     : laboratorios.value.filter(lab =>
-        lab.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase())
+        lab.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
+        lab.codigo.toLowerCase().includes(valorBuscar.value.toLowerCase())
     )
 );
 
@@ -96,7 +97,7 @@ const abrirModalEditar = (laboratorio) => {
 };
 
 const abrirModalAreas = (laboratorio) => {
-    labSeleccionadoId.value = laboratorio.id;
+    labSeleccionado.value = { ...laboratorio };
     mostrarModalAreas.value = true;
 };
 

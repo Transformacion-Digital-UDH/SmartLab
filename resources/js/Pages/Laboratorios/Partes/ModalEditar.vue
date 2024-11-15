@@ -26,7 +26,7 @@
             </FormItem>
 
             <FormItem label="Descripción" name="descripcion">
-                <Input v-model:value="laboratorio.descripcion" placeholder="Ingrese una descripción" />
+                <Textarea v-model:value="laboratorio.descripcion" placeholder="Ingrese una descripción" auto-size />
             </FormItem>
 
             <FormItem label="Aforo" name="aforo" >
@@ -40,7 +40,7 @@
             </FormItem>
 
             <FormItem label="Fecha de inauguración" name="inauguracion">
-                <DatePicker v-model:value="laboratorio.inauguracion" style="width: 100%;" />
+                <DatePicker style="width: 100%;" />
             </FormItem>
 
             <FormItem class="flex justify-end mb-0">
@@ -54,7 +54,7 @@
 
 <script setup>
 import { ref, watch, defineProps, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, DatePicker, InputNumber, Button, message } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, DatePicker, InputNumber, Button, Textarea, message } from 'ant-design-vue';
 import axios from 'axios';
 
 const props = defineProps({

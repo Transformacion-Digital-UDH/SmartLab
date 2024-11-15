@@ -18,7 +18,7 @@ class LaboratorioSeeder extends Seeder
             'email' => 'quimica@ejemplo.com',
             'inauguracion' => '2020-03-15',
             'is_active' => true,
-            'responsable_id' => 4, // Cambiado a 4
+            'responsable_id' => 4,
         ]);
 
         Laboratorio::create([
@@ -29,7 +29,7 @@ class LaboratorioSeeder extends Seeder
             'email' => 'biologia@ejemplo.com',
             'inauguracion' => '2019-08-20',
             'is_active' => true,
-            'responsable_id' => 4, // Cambiado a 4
+            'responsable_id' => 4,
         ]);
 
         Laboratorio::create([
@@ -40,7 +40,7 @@ class LaboratorioSeeder extends Seeder
             'email' => 'fisica@ejemplo.com',
             'inauguracion' => '2018-11-05',
             'is_active' => true,
-            'responsable_id' => 4, // Cambiado a 4
+            'responsable_id' => 4,
         ]);
 
         Laboratorio::create([
@@ -51,7 +51,7 @@ class LaboratorioSeeder extends Seeder
             'email' => 'informatica@ejemplo.com',
             'inauguracion' => '2021-06-10',
             'is_active' => true,
-            'responsable_id' => 4, // Cambiado a 4
+            'responsable_id' => 4,
         ]);
 
         Laboratorio::create([
@@ -62,7 +62,7 @@ class LaboratorioSeeder extends Seeder
             'email' => 'electronica@ejemplo.com',
             'inauguracion' => '2022-01-25',
             'is_active' => false,
-            'responsable_id' => 4, // Cambiado a 4
+            'responsable_id' => 4,
         ]);
     }
 }
