@@ -1,15 +1,11 @@
 <template>
-    <Table :columns="columnas" :dataSource="laboratorios" rowKey="id" :pagination="false" :scroll="{ x: 800 }">
+    <Table :columns="columnas" :dataSource="proyectos" rowKey="id" :pagination="false" :scroll="{ x: 800 }">
         <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'acciones'">
                 <FormOutlined @click="editar(record)" class="text-blue-600" />
                 <DeleteOutlined
                     @click="confirmarEliminacion(record)"
                     class="text-red-600 ml-2"
-                />
-                <AppstoreAddOutlined
-                    @click="mostrarAreas(record)"
-                    class="text-green-600 ml-2"
                 />
             </template>
         </template>
@@ -23,68 +19,48 @@ import { router } from '@inertiajs/vue3';
 import {
     FormOutlined,
     DeleteOutlined,
-    AppstoreAddOutlined,
 } from "@ant-design/icons-vue";
 
 const props = defineProps({
-    laboratorios: Array,
+    proyectos: Array,
 });
 
-const emitir = defineEmits(["editar", "mostrar-areas", "actualizar-tabla"]);
+const emitir = defineEmits(["editar", "actualizar-tabla"]);
 
-// Definir las columnas de la tabla de laboratorios
+// Definir las columnas de la tabla de proyectos
 const columnas = [
-    { title: "Código", dataIndex: "codigo", key: "codigo", width: 120 },
-    {
-        title: "Nombre",
-        dataIndex: "nombre",
-        key: "nombre",
-        sorter: (a, b) => a.nombre.localeCompare(b.nombre),
-    },
-    {
-        title: "Responsable",
-        dataIndex: ["responsable", "nombres"],
-        key: "nombres",
-    },
-    {
-        title: "Aforo",
-        dataIndex: "aforo",
-        key: "aforo",
-        sorter: (a, b) => a.aforo - b.aforo,
-        width: 100,
-    },
-    { title: "Email", dataIndex: "email", key: "email", responsive: ['sm'] },
+    { title: "Nombre", dataIndex: "nombre", key: "nombre", sorter: (a, b) => a.nombre.localeCompare(b.nombre) },
+    { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
+    { title: "Responsable", dataIndex: ["responsable", "nombres"], key: "nombres" },
+    { title: "Fecha Inicio", dataIndex: "fecha_inicio", key: "fecha_inicio", width: 150 },
+    { title: "Fecha Fin", dataIndex: "fecha_fin", key: "fecha_fin", width: 150 },
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 
-// Emitir eventos para editar, eliminar y ver áreas
-function editar(laboratorio) {
-    emitir("editar", laboratorio);
+// Emitir eventos para editar y eliminar
+function editar(proyecto) {
+    emitir("editar", proyecto);
 }
 
-const confirmarEliminacion = (laboratorio) => {
+const confirmarEliminacion = (proyecto) => {
     Modal.confirm({
-        title: '¿Estás seguro de eliminar este laboratorio?',
-        content: `${laboratorio.nombre}`,
+        title: '¿Estás seguro de eliminar este proyecto?',
+        content: `${proyecto.nombre}`,
         okText: 'Confirmar',
         cancelText: 'Cancelar',
         onOk() {
-            router.delete(route('laboratorios.destroy', laboratorio), {
+            router.delete(route('proyectos.destroy', proyecto), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    message.success('Laboratorio eliminado exitosamente');
+                    message.success('Proyecto eliminado exitosamente');
                     emitir('actualizar-tabla');
                 },
                 onError: (error) => {
-                    console.error('Error al eliminar el laboratorio:', error);
-                    message.error('Error al eliminar el laboratorio');
+                    console.error('Error al eliminar el proyecto:', error);
+                    message.error('Error al eliminar el proyecto');
                 }
             });
         },
     });
 };
-
-function mostrarAreas(laboratorio) {
-    emitir("mostrar-areas", laboratorio);
-}
 </script>

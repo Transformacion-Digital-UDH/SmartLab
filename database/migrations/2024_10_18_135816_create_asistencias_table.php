@@ -19,9 +19,9 @@ return new class extends Migration
             $table->text('nota')->nullable();
             $table->boolean('is_active')->default(true);
 
-            $table->foreignId('usuario_id')->constrained('users')->onDelete('set null');
+            $table->foreignId('usuario_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('proyecto_id')->nullable()->constrained('proyectos')->onDelete('set null');
-            $table->foreignId('laboratorio_id')->constrained('laboratorios')->onDelete('set null');
+            $table->foreignId('laboratorio_id')->nullable()->constrained('laboratorios')->onDelete('set null');
 
             $table->timestamps();
         });
