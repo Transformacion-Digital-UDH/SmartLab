@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string('inauguracion')->nullable();
             $table->boolean('is_active')->default(true);
 
-            $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('restrict');
+            $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('coordinador_id')->nullable()->constrained('users')->onDelete('set null');
 
             $table->timestamps();
         });

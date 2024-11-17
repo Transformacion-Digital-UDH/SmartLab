@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('proyectos', function (Blueprint $table) {
-            $table->id(); 
+            $table->id();
             $table->string('nombre', 100);
             $table->text('descripcion')->nullable();
             $table->date('fecha_inicio')->nullable();
             $table->date('fecha_fin')->nullable();
             $table->boolean('is_active')->default(true);
+
+            $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('set null');
+
             $table->timestamps();
         });
     }

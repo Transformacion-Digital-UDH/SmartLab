@@ -18,6 +18,7 @@ class Asistencia extends Model
         'is_active',
         'usuario_id',
         'proyecto_id',
+        'laboratorio_id',
     ];
 
     // Una asistencia pertenece a un usuario.
@@ -30,6 +31,12 @@ class Asistencia extends Model
     public function proyecto()
     {
         return $this->belongsTo(Proyecto::class);
+    }
+
+    // Una asistencia pertenece a un laboratorio.
+    public function laboratorio()
+    {
+        return $this->belongsTo(Laboratorio::class, 'laboratorio_id');
     }
 
     // Una asistencia puede tener muchos usos (relacionados con recursos).

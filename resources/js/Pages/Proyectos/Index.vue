@@ -51,7 +51,6 @@
             />
         </div>
     </AppLayout>
-    
 </template>
 
 <script setup>
@@ -59,7 +58,7 @@ import { ref, computed } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Button, InputSearch } from 'ant-design-vue';
-import TablaLabs from './Partes/TablaLabs.vue';
+import TablaLabs from './Partes/TablaProyectos.vue';
 import ModalAreas from './Partes/Areas/ModalAreas.vue';
 import ModalAgregar from './Partes/ModalAgregar.vue';
 import ModalEditar from './Partes/ModalEditar.vue';

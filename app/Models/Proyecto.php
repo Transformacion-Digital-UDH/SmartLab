@@ -16,6 +16,7 @@ class Proyecto extends Model
         'fecha_inicio',
         'fecha_fin',
         'is_active',
+        'responsable_id',
     ];
 
     // Un proyecto puede tener muchos miembros.
@@ -29,4 +30,11 @@ class Proyecto extends Model
     {
         return $this->hasMany(Asistencia::class);
     }
+
+    // Un proyecto puede tener muchos recursos.
+    public function responsable()
+    {
+        return $this->belongsTo(User::class, 'responsable_id');
+    }
+
 }
