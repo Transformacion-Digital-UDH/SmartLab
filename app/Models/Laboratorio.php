@@ -19,7 +19,10 @@ class Laboratorio extends Model
         'inauguracion',
         'is_active',
         'responsable_id',
+        'coordinador_id',
     ];
+
+    // Relaciones
 
     // Un laboratorio puede tener muchas áreas.
     public function areas()
@@ -33,9 +36,15 @@ class Laboratorio extends Model
         return $this->belongsTo(User::class, 'responsable_id');
     }
 
+    // Un laboratorio tiene un coordinador que es un usuario.
+    public function coordinador()
+    {
+        return $this->belongsTo(User::class, 'coordinador_id');
+    }
+
     // Un laboratorio puede tener muchas asistencias.
     public function asistencias()
     {
-        return $this->hasMany(Asistencia::class);
+        return $this->hasMany(Asistencia::class, 'laboratorio_id');
     }
 }
