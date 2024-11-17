@@ -81,4 +81,23 @@ class LaboratorioController extends Controller
         $laboratorio->save();
     }
 
+    // API
+    public function info()
+    {
+        $laboratorios = Laboratorio::select('id', 'nombre')->get();
+        return [
+            'data' => $laboratorios
+        ];
+    }
+    public function validar_lab(Request $request)
+    {
+        $id = $request -> input('id');
+        $codigo = $request -> input('codigo');
+
+        $lab = Laboratorio::find($id);
+        if($lab -> codigo == $codigo) {
+            return response(null);
+        }
+        return response('Codigo Invalido', 401);
+    }
 }
