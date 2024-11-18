@@ -55,9 +55,42 @@ class ProyectoController extends Controller
         $proyecto->save();
     }
 
-    // Obtener los miembros de un proyecto
-    public function obtenerMiembros(Proyecto $proyecto)
+    // Obtener participantes del proyecto
+    public function obtenerParticipantes(Proyecto $proyecto)
     {
-        return $proyecto->miembros;
+        $participantes = $proyecto->participantes()
+        ->with(['usuario' => function ($query) {
+            $query->select('id', 'nombres','apellidos', 'dni', 'email', 'celular');
+        }])->get();
+
+        return response()->json($participantes);
     }
+
+
+    // Agregar un participante al proyecto
+    public function agregarParticipante(Request $request, Proyecto $proyecto)
+    {
+        $request->validate([
+            'usuario_id' => 'required|exists:users,id',
+        ]);
+
+        $proyecto->participantes()->create([
+            'usuario_id' => $request->usuario_id,
+        ]);
+
+        return response()->json([
+            'message' => 'Participante agregado correctamente.',
+        ]);
+    }
+
+    // Quitar un participante del proyecto
+    public function quitarParticipante(Proyecto $proyecto, $participanteId)
+    {
+        $proyecto->participantes()->where('id', $participanteId)->delete();
+
+        return response()->json([
+            'message' => 'Participante eliminado correctamente.',
+        ]);
+    }
+
 }

@@ -14,7 +14,7 @@
                     class="w-full"
                     size="large"
                 />
-                <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium">Agregar Nuevo Usuario</Button>
+                <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium">Agregar usuario</Button>
             </div>
 
             <!-- Tabla de usuarios -->
@@ -49,12 +49,12 @@ import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Button, InputSearch } from 'ant-design-vue';
 import TablaUsuarios from './Partes/TablaUsuarios.vue';
-import ModalAreas from './Partes/ModalAreas.vue';
 import ModalAgregar from './Partes/ModalAgregar.vue';
 import ModalEditar from './Partes/ModalEditar.vue';
 
 const { props } = usePage();
 const usuarios = ref(props.usuarios || []);
+console.log(usuarios.value);
 const mostrarModalCrear = ref(false);
 const mostrarModalEditar = ref(false);
 const mostrarModalAreas = ref(false);
@@ -89,7 +89,4 @@ const abrirModalAreas = (usuario) => {
     mostrarModalAreas.value = true;
 };
 
-const cerrarModalAreas = () => {
-    mostrarModalAreas.value = false;
-};
 </script>

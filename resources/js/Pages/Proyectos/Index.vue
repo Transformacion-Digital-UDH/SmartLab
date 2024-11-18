@@ -23,6 +23,7 @@
             <TablaProyectos
                 :proyectos="proyectosFiltrados"
                 @editar="abrirModalEditar"
+                @mostrar-participantes="abrirModalParticipantes"
                 @actualizar-tabla="actualizarTabla"
             />
 
@@ -41,6 +42,13 @@
                 :responsables="props.responsables"
                 @actualizar-tabla="actualizarTabla"
             />
+
+            <!-- Modal para participantes -->
+            <ModalParticipantes
+                v-if="proyectoSeleccionado"
+                v-model:visible="mostrarModalParticipantes"
+                :proyecto="proyectoSeleccionado"
+            />
         </div>
     </AppLayout>
 </template>
@@ -53,14 +61,17 @@ import { Button, InputSearch } from 'ant-design-vue';
 import TablaProyectos from './Partes/TablaProyectos.vue';
 import ModalAgregar from './Partes/ModalAgregar.vue';
 import ModalEditar from './Partes/ModalEditar.vue';
+import ModalParticipantes from './Partes/Participantes/ModalParticipantes.vue';
 
 const { props } = usePage();
 const proyectos = ref(props.proyectos || []);
 const mostrarModalCrear = ref(false);
 const mostrarModalEditar = ref(false);
+const mostrarModalParticipantes = ref(false);
 const proyectoSeleccionado = ref(null);
 const valorBuscar = ref('');
 
+// Filtrar proyectos según el término de búsqueda
 const proyectosFiltrados = computed(() => !valorBuscar.value
     ? proyectos.value
     : proyectos.value.filter(proyecto =>
@@ -69,18 +80,25 @@ const proyectosFiltrados = computed(() => !valorBuscar.value
     )
 );
 
+// Actualizar la tabla de proyectos
 const actualizarTabla = () => {
-    mostrarModalCrear.value = false;
-    mostrarModalEditar.value = false;
     router.visit(route('proyectos.index'), { preserveScroll: true });
 };
 
+// Abrir modal para agregar un proyecto
 const abrirModalCrear = () => {
     mostrarModalCrear.value = true;
 };
 
+// Abrir modal para editar un proyecto
 const abrirModalEditar = (proyecto) => {
     mostrarModalEditar.value = true;
+    proyectoSeleccionado.value = { ...proyecto };
+};
+
+// Abrir modal para mostrar participantes
+const abrirModalParticipantes = (proyecto) => {
+    mostrarModalParticipantes.value = true;
     proyectoSeleccionado.value = { ...proyecto };
 };
 </script>

@@ -1,79 +1,42 @@
 <template>
     <Modal
         :open="visible"
-        :title="`Áreas del ${laboratorio.nombre}`"
+        :title="`Participantes del proyecto: ${proyecto.nombre}`"
         :footer="null"
         width="800px"
         @cancel="cerrarModal"
     >
-        <div class="my-3">
-            <Button type="primary" @click="abrirModalAgregar" size="middle">
-                Agregar área
-            </Button>
+        <!-- Select múltiple para agregar usuarios -->
+        <div class="my-3 flex items-center gap-2">
+            <Select
+                mode="multiple"
+                :options="opcionesUsuarios"
+                v-model="usuariosSeleccionados"
+                placeholder="Selecciona usuarios para agregar"
+                class="w-full"
+            />
+            <Button type="primary" @click="agregarParticipantes">Agregar</Button>
         </div>
 
+        <!-- Tabla de participantes -->
         <Table
-            :columns="columnasAreas"
-            :dataSource="areas"
+            :columns="columnasParticipantes"
+            :dataSource="participantes"
             :pagination="false"
-            :scroll="{ x: 500 }"
+            :scroll="{ x: 800 }"
             rowKey="id"
-        >
-            <template #bodyCell="{ column, text, record }">
-                <template v-if="['nombre', 'descripcion', 'aforo'].includes(column.dataIndex)">
-                    <div>
-                        <Input
-                            v-if="datosEditables[record.key]"
-                            v-model:value="datosEditables[record.key][column.dataIndex]"
-                            style="margin: -5px 0"
-                            size="small"
-                        />
-                        <template v-else>
-                            {{ text }}
-                        </template>
-                    </div>
-                </template>
-                <template v-else-if="column.dataIndex === 'operation'">
-                    <div>
-                        <span v-if="datosEditables[record.key]">
-                            <CheckOutlined @click="guardar(record.key, record.id)" class="text-green-600 mr-2" />
-                            <CloseOutlined @click="cancelar(record.key)" class="text-red-600" />
-                        </span>
-                        <span v-else>
-                            <FormOutlined @click="editar(record.key)" class="text-blue-600 mr-2" />
-                            <Popconfirm
-                                title="Confirmar acción"
-                                okText="Sí"
-                                cancelText="No"
-                                @confirm="eliminarArea(record.id)"
-                            >
-                                <DeleteOutlined class="text-red-600" />
-                            </Popconfirm>
-                        </span>
-                    </div>
-                </template>
-            </template>
-        </Table>
-
-        <AgregarArea
-            :visible="modalAgregarVisible"
-            :laboratorio_id="laboratorio.id"
-            @close="cerrarModalAgregar"
-            @areaGuardada="cargarAreas"
         />
     </Modal>
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits, onMounted } from 'vue';
-import { Modal, Table, Input, Button, message, Popconfirm } from 'ant-design-vue';
-import { FormOutlined, DeleteOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
+import { ref, defineProps, defineEmits, watch } from 'vue';
+import { Modal, Table, message, Select, Button } from 'ant-design-vue';
 import axios from 'axios';
-import AgregarArea from './AgregarParticipante.vue';
 
 const props = defineProps({
     visible: Boolean,
-    laboratorio: {
+    proyecto: {
         type: Object,
         required: true,
     },
@@ -81,92 +44,88 @@ const props = defineProps({
 
 const emit = defineEmits(['update:visible']);
 
-// Columnas de la tabla
-const columnasAreas = [
-    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre' },
-    { title: 'Descripción', dataIndex: 'descripcion', key: 'descripcion' },
-    { title: 'Aforo', dataIndex: 'aforo', key: 'aforo', width: 80 },
-    { title: 'Acciones', dataIndex: 'operation', key: 'operation', fixed: 'right', width: 100 },
+// Columnas de la tabla de participantes
+const columnasParticipantes = [
+    { title: 'DNI', dataIndex: 'dni', key: 'dni', width: 120 },
+    { title: 'Nombres', dataIndex: 'nombres', key: 'nombres' },
+    { title: 'Apellidos', dataIndex: 'apellidos', key: 'apellidos' },
+    { title: 'Correo', dataIndex: 'correo', key: 'correo' },
+    { title: 'Celular', dataIndex: 'celular', key: 'celular', width: 150 },
 ];
 
-const areas = ref([]);
-const modalAgregarVisible = ref(false);
-const datosEditables = ref({});
+const participantes = ref([]);
+const opcionesUsuarios = ref([]);
+const usuariosSeleccionados = ref([]);
+const cargandoUsuarios = ref(false);
 
+// Cierra el modal y emite el evento para cerrar en el componente padre
 const cerrarModal = () => {
     emit('update:visible', false);
 };
 
-const abrirModalAgregar = () => {
-    modalAgregarVisible.value = true;
-    cerrarModal();
-};
-
-const cerrarModalAgregar = () => {
-    modalAgregarVisible.value = false;
-    emit('update:visible', true);
-};
-
-const cargarAreas = async () => {
+// Cargar participantes del proyecto
+const cargarParticipantes = async () => {
     try {
-        const response = await axios.get(route('areas.index', { laboratorio_id: props.laboratorio.id }));
-        areas.value = response.data.map((area, index) => ({
-            key: index.toString(),
-            ...area,
+        const response = await axios.get(route('proyectos.participantes', { proyecto: props.proyecto.id }));
+        participantes.value = response.data.map((participante) => ({
+            id: participante.id,
+            dni: participante.usuario.dni,
+            nombres: participante.usuario.nombres,
+            apellidos: participante.usuario.apellidos,
+            correo: participante.usuario.email,
+            celular: participante.usuario.celular,
+            rol: participante.rol || 'Sin especificar',
         }));
+        console.log("participantes: ", participantes.value);
     } catch (error) {
-        console.error("Error al cargar las áreas:", error);
+        console.error('Error al cargar los participantes:', error);
+        message.error('No se pudieron cargar los participantes');
     }
 };
 
-const editar = (key) => {
-    datosEditables.value[key] = { ...areas.value.find(area => area.key === key) };
-};
-
-const guardar = async (key, areaId) => {
-    const index = areas.value.findIndex(area => area.key === key);
-    if (index !== -1 && datosEditables.value[key]) {
-        try {
-            await axios.put(route('areas.update', { area_id: areaId }), {
-                nombre: datosEditables.value[key].nombre,
-                descripcion: datosEditables.value[key].descripcion,
-                aforo: datosEditables.value[key].aforo,
-            });
-            areas.value[index] = { ...datosEditables.value[key] };
-            delete datosEditables.value[key];
-            message.success('Área actualizada exitosamente');
-        } catch (error) {
-            console.error("Error al actualizar el área:", error);
-        }
-    }
-};
-
-const cancelar = (key) => {
-    delete datosEditables.value[key];
-};
-
-const eliminarArea = async (areaId) => {
+// Cargar la lista de usuarios desde la API
+const cargarUsuarios = async () => {
+    cargandoUsuarios.value = true;
     try {
-        await axios.delete(route('areas.destroy', { area_id: areaId }));
-        message.success('Área eliminada exitosamente');
-        cargarAreas();
+        const response = await axios.get(route('usuarios.json'));
+        opcionesUsuarios.value = response.data.map(usuario => ({
+            label: `${usuario.dni} - ${usuario.nombres} ${usuario.apellidos} - ${usuario.email}`,
+            value: usuario.id,
+        }));
+        console.log(opcionesUsuarios.value);
     } catch (error) {
-        console.error("Error al eliminar el área:", error);
+        console.error("Error al cargar usuarios:", error);
+        message.error('Error al cargar usuarios');
+    } finally {
+        cargandoUsuarios.value = false;
     }
 };
 
-onMounted(() => {
-    cargarAreas();
-});
-
-watch(
-    () => props.laboratorio.id,
-    (nuevoLaboratorioId, previoLaboratorioId) => {
-        if (nuevoLaboratorioId !== previoLaboratorioId) {
-            cargarAreas();
-        }
+// Agregar participantes al proyecto
+const agregarParticipantes = async () => {
+    if (usuariosSeleccionados.value.length === 0) {
+        message.warning('Selecciona al menos un usuario');
+        return;
     }
-);
 
+    try {
+        await axios.post(route('proyectos.agregar-participantes', { proyecto_id: props.proyecto.id }), {
+            usuarios: usuariosSeleccionados.value,
+        });
+        message.success('Participantes agregados exitosamente');
+        usuariosSeleccionados.value = [];
+        cargarParticipantes();
+    } catch (error) {
+        console.error('Error al agregar participantes:', error);
+        message.error('No se pudieron agregar los participantes');
+    }
+};
+
+// Cargar los participantes y usuarios cuando el modal se abre
+watch(() => props.visible, (val) => {
+    if (val) {
+        cargarParticipantes();
+        cargarUsuarios();
+    }
+});
 </script>
-

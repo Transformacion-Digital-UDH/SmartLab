@@ -43,9 +43,9 @@ Route::middleware([
     Route::resource('laboratorios', LaboratorioController::class)->except(['show', 'create', 'edit']);
     Route::get('/laboratorios/{laboratorio}/miembros', [LaboratorioController::class, 'obtenerMiembros'])->name('laboratorios.miembros');
 
-
     // Usuarios
     Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
+    Route::get('/usuarios/json', [UserController::class, 'getUsuarios'])->name('usuarios.json');
     Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
     Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
     Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
@@ -66,5 +66,8 @@ Route::middleware([
 
     // Proyectos
     Route::resource('proyectos', ProyectoController::class);
+    Route::get('/proyectos/{proyecto}/participantes', [ProyectoController::class, 'obtenerParticipantes'])->name('proyectos.participantes');
+    Route::post('/proyectos/{proyecto}/participantes', [ProyectoController::class, 'agregarParticipante'])->name('proyectos.agregar-participante');
+    Route::delete('/proyectos/{proyecto}/participantes/{participanteId}', [ProyectoController::class, 'quitarParticipante'])->name('proyectos.quitar-participante');
 
 });

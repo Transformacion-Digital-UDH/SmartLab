@@ -21,8 +21,8 @@
                 />
             </FormItem>
 
-            <FormItem label="Estado" name="estado">
-                <Select v-model:value="proyecto.estado" placeholder="Seleccione un estado" default-value="Sin iniciar">
+            <FormItem label="Estado" name="estado" :rules="[{ required: true, message: 'Por favor seleccione un estado' }]">
+                <Select v-model:value="proyecto.estado" placeholder="Seleccione un estado">
                     <Select.Option value="Sin iniciar">Sin iniciar</Select.Option>
                     <Select.Option value="En proceso">En proceso</Select.Option>
                     <Select.Option value="Completado">Completado</Select.Option>
@@ -62,14 +62,16 @@ const props = defineProps({
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
-const proyecto = ref({
+const formProyecto = {
     nombre: '',
     descripcion: '',
     fecha_inicio: null,
     fecha_fin: null,
     responsable_id: null,
     estado: 'Sin iniciar',
-});
+};
+
+const proyecto = ref({ ...formProyecto });
 
 const cargando = ref(false);
 const opcionesResponsables = ref([]);
@@ -104,13 +106,7 @@ const enviarFormulario = async () => {
 // Verificar si el modal se abre por primera vez y cargar responsables
 watch(() => props.visible, (val) => {
     if (val) {
-        proyecto.value = {
-            nombre: '',
-            descripcion: '',
-            fecha_inicio: null,
-            fecha_fin: null,
-            responsable_id: null,
-        };
+        proyecto.value = { ...formProyecto };
 
         // Cargar las opciones de los responsables
         opcionesResponsables.value = props.responsables.map(responsable => ({

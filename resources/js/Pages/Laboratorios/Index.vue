@@ -81,8 +81,6 @@ const labsFiltrados = computed(() => !valorBuscar.value
 
 
 const actualizarTabla = () => {
-    mostrarModalCrear.value = false;
-    mostrarModalEditar.value = false;
     router.visit(route('laboratorios.index'), { preserveScroll: true });
 };
 

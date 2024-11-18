@@ -21,7 +21,7 @@ class Proyecto extends Model
     ];
 
     // Un proyecto puede tener muchos miembros.
-    public function miembros()
+    public function participantes()
     {
         return $this->hasMany(MiembroProyecto::class);
     }

@@ -11,7 +11,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $usuarios = User::where('rol', '!=', 'Admin')
+        $usuarios = User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular')
+            ->where('rol', '!=', 'Admin') 
             ->where('is_active', true)
             ->orderBy('id', 'desc')
             ->get();
@@ -20,6 +21,7 @@ class UserController extends Controller
             'usuarios' => $usuarios,
         ]);
     }
+
 
     public function store(Request $request)
     {
@@ -90,4 +92,14 @@ class UserController extends Controller
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario desactivado exitosamente');
     }
+
+
+    // Devuelve la lista de usuarios en JSON
+    public function getUsuarios()
+    {
+        return User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular')
+        ->where('is_active', true)
+        ->orderBy('nombres')
+        ->get();    }
+
 }
