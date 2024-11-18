@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->boolean('is_active')->default(true);
 
-            $table->foreignId('miembro_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('proyecto_id')->constrained('proyectos')->onDelete('cascade');
 
             $table->timestamps();

@@ -100,10 +100,4 @@ const abrirModalAreas = (laboratorio) => {
     mostrarModalAreas.value = true;
 };
 
-const cerrarModalAreas = () => {
-    mostrarModalAreas.value = false;
-};
-
-console.log("visble agregar", mostrarModalCrear.value);
-console.log("visble editar", mostrarModalEditar.value);
 </script>

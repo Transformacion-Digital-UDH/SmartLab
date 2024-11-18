@@ -1,8 +1,8 @@
 <template>
-    <AppLayout title="Laboratorios">
+    <AppLayout title="Proyectos">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Laboratorios
+                Proyectos
             </h2>
         </template>
 
@@ -12,42 +12,34 @@
             >
                 <InputSearch
                     v-model:value="valorBuscar"
-                    placeholder="Buscar laboratorio por nombre o código"
+                    placeholder="Buscar proyecto por nombre o descripción"
                     class="w-full"
                     size="large"
                 />
-                <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium" >Agregar laboratorio</Button>
+                <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium">Agregar proyecto</Button>
             </div>
 
-            <!-- Tabla de laboratorios -->
-            <TablaLabs
-                :laboratorios="labsFiltrados"
+            <!-- Tabla de proyectos -->
+            <TablaProyectos
+                :proyectos="proyectosFiltrados"
                 @editar="abrirModalEditar"
-                @mostrar-areas="abrirModalAreas"
                 @actualizar-tabla="actualizarTabla"
             />
 
-            <!-- Modal para agregar laboratorio -->
+            <!-- Modal para agregar proyecto -->
             <ModalAgregar
                 v-model:visible="mostrarModalCrear"
                 :responsables="props.responsables"
                 @actualizar-tabla="actualizarTabla"
             />
 
-            <!-- Modal para editar laboratorio -->
+            <!-- Modal para editar proyecto -->
             <ModalEditar
-                v-if="labSeleccionado"
+                v-if="proyectoSeleccionado"
                 v-model:visible="mostrarModalEditar"
-                :laboratorio="labSeleccionado"
+                :proyecto="proyectoSeleccionado"
                 :responsables="props.responsables"
                 @actualizar-tabla="actualizarTabla"
-            />
-
-            <!-- Modal de Áreas separado en AreasModal -->
-            <ModalAreas
-                v-if="labSeleccionado"
-                v-model:visible="mostrarModalAreas"
-                :laboratorio="labSeleccionado"
             />
         </div>
     </AppLayout>
@@ -58,52 +50,37 @@ import { ref, computed } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Button, InputSearch } from 'ant-design-vue';
-import TablaLabs from './Partes/TablaProyectos.vue';
-import ModalAreas from './Partes/Areas/ModalAreas.vue';
+import TablaProyectos from './Partes/TablaProyectos.vue';
 import ModalAgregar from './Partes/ModalAgregar.vue';
 import ModalEditar from './Partes/ModalEditar.vue';
 
 const { props } = usePage();
-const laboratorios = ref(props.laboratorios || []);
+const proyectos = ref(props.proyectos || []);
 const mostrarModalCrear = ref(false);
 const mostrarModalEditar = ref(false);
-const mostrarModalAreas = ref(false);
-const labSeleccionado = ref(null);
+const proyectoSeleccionado = ref(null);
 const valorBuscar = ref('');
 
-const labsFiltrados = computed(() => !valorBuscar.value
-    ? laboratorios.value
-    : laboratorios.value.filter(lab =>
-        lab.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
-        lab.codigo.toLowerCase().includes(valorBuscar.value.toLowerCase())
+const proyectosFiltrados = computed(() => !valorBuscar.value
+    ? proyectos.value
+    : proyectos.value.filter(proyecto =>
+        proyecto.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
+        proyecto.descripcion?.toLowerCase().includes(valorBuscar.value.toLowerCase())
     )
 );
-
 
 const actualizarTabla = () => {
     mostrarModalCrear.value = false;
     mostrarModalEditar.value = false;
-    router.visit(route('laboratorios.index'), { preserveScroll: true });
+    router.visit(route('proyectos.index'), { preserveScroll: true });
 };
 
 const abrirModalCrear = () => {
     mostrarModalCrear.value = true;
 };
 
-const abrirModalEditar = (laboratorio) => {
+const abrirModalEditar = (proyecto) => {
     mostrarModalEditar.value = true;
-    labSeleccionado.value = { ...laboratorio };
+    proyectoSeleccionado.value = { ...proyecto };
 };
-
-const abrirModalAreas = (laboratorio) => {
-    labSeleccionado.value = { ...laboratorio };
-    mostrarModalAreas.value = true;
-};
-
-const cerrarModalAreas = () => {
-    mostrarModalAreas.value = false;
-};
-
-console.log("visble agregar", mostrarModalCrear.value);
-console.log("visble editar", mostrarModalEditar.value);
 </script>

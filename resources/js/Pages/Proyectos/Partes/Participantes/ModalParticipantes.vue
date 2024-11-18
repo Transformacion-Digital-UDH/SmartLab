@@ -69,7 +69,7 @@ import { ref, watch, defineProps, defineEmits, onMounted } from 'vue';
 import { Modal, Table, Input, Button, message, Popconfirm } from 'ant-design-vue';
 import { FormOutlined, DeleteOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
 import axios from 'axios';
-import AgregarArea from './AgregarArea.vue';
+import AgregarArea from './AgregarParticipante.vue';
 
 const props = defineProps({
     visible: Boolean,

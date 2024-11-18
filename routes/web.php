@@ -7,6 +7,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AreaController;
+use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\UserController;
 
 // Las rutas que serán accedidas por aplicaciones externas se definen en api.php,
@@ -39,11 +40,9 @@ Route::middleware([
     Route::get('/mis_asistencias', [AsistenciaController::class, 'mis_asistencias']);
 
     // Laboratorios
-    Route::get('/laboratorios', [LaboratorioController::class, 'index'])->name('laboratorios.index');
-    Route::post('/laboratorios', [LaboratorioController::class, 'store'])->name('laboratorios.store');
-    Route::put('/laboratorios/{laboratorio}', [LaboratorioController::class, 'update'])->name('laboratorios.update');
-    Route::delete('/laboratorios/{laboratorio}', [LaboratorioController::class, 'destroy'])->name('laboratorios.destroy');
-    Route::get('/laboratorios/{laboratorio}/miembros', [LaboratorioController::class, 'mostrarMiembros'])->name('laboratorios.miembros');
+    Route::resource('laboratorios', LaboratorioController::class)->except(['show', 'create', 'edit']);
+    Route::get('/laboratorios/{laboratorio}/miembros', [LaboratorioController::class, 'obtenerMiembros'])->name('laboratorios.miembros');
+
 
     // Usuarios
     Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
@@ -65,6 +64,7 @@ Route::middleware([
     Route::put('/areas/{area_id}', [AreaController::class, 'update'])->name('areas.update');
     Route::delete('/areas/{area_id}', [AreaController::class, 'destroy'])->name('areas.destroy');
 
-
+    // Proyectos
+    Route::resource('proyectos', ProyectoController::class);
 
 });

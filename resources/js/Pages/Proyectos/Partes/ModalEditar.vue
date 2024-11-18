@@ -1,19 +1,19 @@
 <template>
     <Modal
-    title="Editar laboratorio"
+        title="Editar proyecto"
         :open="visible"
         @cancel="cerrarModal"
         centered
         :footer="null"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="laboratorio">
+        <Form layout="vertical" @finish="enviarFormulario" :model="proyecto">
             <FormItem label="Nombre" name="nombre" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
-                <Input v-model:value="laboratorio.nombre" placeholder="Ingrese el nombre" />
+                <Input v-model:value="proyecto.nombre" placeholder="Ingrese el nombre del proyecto" />
             </FormItem>
 
             <FormItem label="Responsable" name="responsable_id">
                 <Select
-                    v-model:value="laboratorio.responsable.nombres"
+                    v-model:value="proyecto.responsable_id"
                     placeholder="Seleccione un responsable"
                     :options="opcionesResponsables"
                     show-search
@@ -21,54 +21,41 @@
                 />
             </FormItem>
 
-            <FormItem label="Código" name="codigo">
-                <Input v-model:value="laboratorio.codigo" placeholder="Ingrese el código" />
-            </FormItem>
-
             <FormItem label="Descripción" name="descripcion">
-                <Textarea v-model:value="laboratorio.descripcion" placeholder="Ingrese una descripción" auto-size />
+                <Textarea v-model:value="proyecto.descripcion" placeholder="Ingrese una descripción" auto-size />
             </FormItem>
 
-            <FormItem label="Aforo" name="aforo" >
-                <InputNumber v-model:value="laboratorio.aforo"
-                    placeholder="Ingrese el aforo" style="width: 100%;" type="number" step="1" min="0"
-                />
+            <FormItem label="Fecha de inicio" name="fecha_inicio">
+                <Input type="date" v-model:value="proyecto.fecha_inicio" style="width: 100%;" />
             </FormItem>
 
-            <FormItem label="Email" name="email" :rules="[{ type: 'email', message: 'Por favor ingrese un correo válido' }]">
-                <Input v-model:value="laboratorio.email" placeholder="Ingrese el correo electrónico" />
-            </FormItem>
-
-            <FormItem label="Fecha de inauguración" name="inauguracion">
-                <Input type="date" v-model:value="laboratorio.inauguracion" style="width: 100%;" />
+            <FormItem label="Fecha de finalización" name="fecha_fin">
+                <Input type="date" v-model:value="proyecto.fecha_fin" style="width: 100%;" />
             </FormItem>
 
             <FormItem class="flex justify-end mb-0">
                 <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
                 <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
             </FormItem>
-
         </Form>
     </Modal>
 </template>
 
 <script setup>
 import { ref, watch, defineProps, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, InputNumber, Button, Textarea, message } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, Button, Textarea, message } from 'ant-design-vue';
 import axios from 'axios';
 
 const props = defineProps({
     visible: Boolean,
     responsables: Array,
-    laboratorio: {
+    proyecto: {
         type: Object,
         default: () => ({
             nombre: '',
-            codigo: '',
             descripcion: '',
-            aforo: null,
-            email: '',
-            inauguracion: null,
+            fecha_inicio: null,
+            fecha_fin: null,
             responsable_id: '',
         }),
     },
@@ -76,7 +63,7 @@ const props = defineProps({
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
-const laboratorio = ref({ ...props.laboratorio });
+const proyecto = ref({ ...props.proyecto });
 const cargando = ref(false);
 const opcionesResponsables = ref([]);
 
@@ -90,33 +77,31 @@ const cerrarModal = () => {
     emitir('update:visible', false);
 };
 
+// Busca responsables en el select
 const buscarResponsable = (input, option) => {
     return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 };
 
-// Envía el formulario de edición del laboratorio
+// Envía el formulario de edición del proyecto
 const enviarFormulario = async () => {
     cargando.value = true;
     try {
-        // Enviar la solicitud para actualizar el laboratorio
-        const response = await axios.put(route('laboratorios.update', props.laboratorio.id), laboratorio.value);
-        message.success('Laboratorio actualizado exitosamente');
+        // Enviar la solicitud para actualizar el proyecto
+        const response = await axios.put(route('proyectos.update', props.proyecto.id), proyecto.value);
+        message.success('Proyecto actualizado exitosamente');
         cerrarModal();
-        emitir('actualizar-tabla', response.data["laboratorio"]);
+        emitir('actualizar-tabla', response.data["proyecto"]);
     } catch (error) {
-        message.error('Error al actualizar el laboratorio');
+        message.error('Error al actualizar el proyecto');
     } finally {
         cargando.value = false;
     }
 };
 
-// Verificar si el modal se abre y cargar los valores del laboratorio
+// Verificar si el modal se abre y cargar los valores del proyecto
 watch(() => props.visible, (val) => {
     if (val) {
-        console.log('watch ed: ', props.visible)
-        laboratorio.value = { ...props.laboratorio };
+        proyecto.value = { ...props.proyecto };
     }
-
 });
-
 </script>

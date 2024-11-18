@@ -21,8 +21,9 @@ class ProyectoSeeder extends Seeder
                 'descripcion' => 'Descripción del Proyecto ' . $i,
                 'fecha_inicio' => now()->subDays(rand(1, 365))->format('Y-m-d'),
                 'fecha_fin' => now()->addDays(rand(1, 365))->format('Y-m-d'),
+                'estado' => ['Sin iniciar', 'En proceso', 'Completado', 'Cancelado'][rand(0, 3)],
                 'is_active' => true,
-                'responsable_id' => $usuarios->random()->id, 
+                'responsable_id' => $usuarios->random()->id,
             ]);
         }
     }
