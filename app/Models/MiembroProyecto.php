@@ -11,13 +11,13 @@ class MiembroProyecto extends Model
 
     // Campos que se pueden asignar de forma masiva (al crear o actualizar un registro).
     protected $fillable = [
-        'miembro_id',
+        'usuario_id',
         'proyecto_id',
         'is_active',
     ];
 
     // Un miembro de proyecto pertenece a un usuario.
-    public function miembro()
+    public function usuario()
     {
         return $this->belongsTo(User::class);
     }

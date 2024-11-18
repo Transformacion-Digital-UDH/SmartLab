@@ -22,4 +22,3 @@ Route::prefix('/laboratorios')->group(function () {
     Route::post('/auth', [LaboratorioController::class, 'validar_lab']);
 
 });
- 

@@ -6,18 +6,22 @@
   import NavBar from '@/Components/App/NavBar.vue';
 
   const { props } = usePage()
-  let asistenciasPaginate = JSON.parse(JSON.stringify(props.asistencias)) 
+  const token = ref(props.token || []);
+  let asistenciasPaginate = JSON.parse(JSON.stringify(props.asistencias));
+  const inputSearchValue = ref('');
+  // console.log(asistenciasPaginate)
+  // // Damos formato de fecha de entrada y salida
+  // let asistencias = asistenciasPaginate.map((asis)=>{
+  //   asis.state = "dddd"
+  //   asis.hora_salida = formatDateTime(asis.hora_salida) ?? '-';
+  //   return {
+  //     asis.hora_entrada = formatDateTime(asis.hora_entrada)
+  //     ...asis,
 
-  // Damos formato de fecha de entrada y salida
-  // let asistencias = asistenciasPaginate.data.map((asis)=>{
-  //   asis.hora_entrada = formatDateTime(asis.hora_entrada)
-  //   asis.hora_salida = formatDateTime(asis.hora_salida) ?? '-'
-  //   return asis;
+  //   };
   // });
 
   // asistencias = ref(asistencias);
-  const token = ref(props.token || []);
-  const inputSearchValue = ref('');
 
   
 

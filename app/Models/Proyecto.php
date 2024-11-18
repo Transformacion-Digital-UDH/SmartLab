@@ -15,12 +15,13 @@ class Proyecto extends Model
         'descripcion',
         'fecha_inicio',
         'fecha_fin',
+        'estado',
         'is_active',
         'responsable_id',
     ];
 
     // Un proyecto puede tener muchos miembros.
-    public function miembros()
+    public function participantes()
     {
         return $this->hasMany(MiembroProyecto::class);
     }

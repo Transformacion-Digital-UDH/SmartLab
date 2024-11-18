@@ -57,9 +57,13 @@ const columnas = [
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 
-// Emitir eventos para editar, eliminar y ver áreas
+// Emitir eventos para editar, ver áreas y eliminar
 function editar(laboratorio) {
     emitir("editar", laboratorio);
+}
+
+function mostrarAreas(laboratorio) {
+    emitir("mostrar-areas", laboratorio);
 }
 
 const confirmarEliminacion = (laboratorio) => {
@@ -84,7 +88,4 @@ const confirmarEliminacion = (laboratorio) => {
     });
 };
 
-function mostrarAreas(laboratorio) {
-    emitir("mostrar-areas", laboratorio);
-}
 </script>

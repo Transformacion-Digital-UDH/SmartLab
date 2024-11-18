@@ -6,10 +6,20 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Laboratorio;
 use App\Models\User;
-use Carbon\Carbon;
 
 class LaboratorioController extends Controller
 {
+    protected $rules = [
+        'nombre' => 'required|max:100',
+        'codigo' => 'nullable|max:20',
+        'descripcion' => 'nullable|max:255',
+        'aforo' => 'nullable|integer',
+        'email' => 'nullable|email|max:100',
+        'inauguracion' => 'nullable|date',
+        'responsable_id' => 'nullable|exists:users,id',
+    ];
+
+    // Listar los laboratorios en la vista
     public function index()
     {
         $laboratorios = Laboratorio::with('responsable')
@@ -25,56 +35,21 @@ class LaboratorioController extends Controller
         ]);
     }
 
-
+    // Crear el laboratorio
     public function store(Request $request)
     {
-        // Validación
-        $request->validate([
-            'nombre' => 'required|max:100',
-            'codigo' => 'nullable|max:20',
-            'descripcion' => 'nullable|max:255',
-            'aforo' => 'nullable|integer',
-            'email' => 'nullable|email|max:100',
-            'inauguracion' => 'nullable|date',
-            'responsable_id' => 'nullable|exists:users,id',
-        ], [
-            'required' => 'Este campo es obligatorio.',
-            'email' => 'Ingrese un correo electrónico válido.',
-            'max' => 'Este campo no puede exceder de :max caracteres.',
-            'integer' => 'Este campo debe ser un número entero.',
-            'date' => 'Ingrese una fecha válida.',
-        ]);
-
-        // Crear el laboratorio
+        $request->validate($this->rules);
         Laboratorio::create($request->all());
     }
 
-
-
+    // Actualizar laboratorio
     public function update(Request $request, Laboratorio $laboratorio)
     {
-        // Validación
-        $request->validate([
-            'nombre' => 'required|max:100',
-            'codigo' => 'nullable|max:20',
-            'descripcion' => 'nullable|max:255',
-            'aforo' => 'nullable|integer',
-            'email' => 'nullable|email|max:100',
-            'inauguracion' => 'nullable|date',
-            'responsable_id' => 'nullable|exists:users,id',
-        ], [
-            'required' => 'Este campo es obligatorio.',
-            'email' => 'Ingrese un correo electrónico válido.',
-            'max' => 'Este campo no puede exceder de :max caracteres.',
-            'integer' => 'Este campo debe ser un número entero.',
-            'date' => 'Ingrese una fecha válida.',
-        ]);
-
-        // Actualizar laboratorio
+        $request->validate($this->rules);
         $laboratorio->update($request->all());
-
     }
 
+    // Eliminar laboratorio
     public function destroy(Laboratorio $laboratorio)
     {
         $laboratorio->is_active = false;
@@ -84,7 +59,7 @@ class LaboratorioController extends Controller
     // API
     public function info()
     {
-        $laboratorios = Laboratorio::select('id', 'nombre')->get();
+        $laboratorios = Laboratorio::select('id', 'nombre') ->where('is_active', 1)->get();
         return [
             'data' => $laboratorios
         ];
@@ -99,5 +74,11 @@ class LaboratorioController extends Controller
             return response(null);
         }
         return response('Codigo Invalido', 401);
+    }
+
+    // Obtener los miembros de un laboratorio
+    public function obtenerMiembros(Laboratorio $laboratorio)
+    {
+        return $laboratorio->miembros;
     }
 }

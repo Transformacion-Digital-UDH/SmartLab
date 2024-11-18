@@ -31,10 +31,10 @@ class AsistenciaController extends Controller
     }
     function mis_asistencias(){
         $asistencias = DB::table('asistencias')
-        ->join('users','users.id','=','asistencias.usuario_id')
-        ->where('asistencias.usuario_id', '=', '2')
-        ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
-        ->get();
+            ->join('users','users.id','=','asistencias.usuario_id')
+            ->where('asistencias.usuario_id', '=', '2')
+            ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
+            ->get();
 
         return Inertia::render('Asistencia/MiAsistencia', [
             'token' => csrf_token(),
@@ -104,12 +104,14 @@ class AsistenciaController extends Controller
     // POST - Establecer la hora de entrada
     public function registrarEntrada(Request $request){
         $request -> validate([
-            'user_id' => 'required|integer'
+            'user_id' => 'required|integer',
+            'laboratorio_id' => 'required|integer',
         ]);
 
         $data = $request->all();
         $usuario_id = $data['user_id'];
         $proyecto_id = $data['proyecto_id'];
+        $laboratorio_id = $data['laboratorio_id'];
 
         try {
             
@@ -118,7 +120,8 @@ class AsistenciaController extends Controller
                 'usuario_id'   => $usuario_id,
                 'hora_entrada' => now(),
                 'tarea'        => '',
-                'proyecto_id'  => $proyecto_id
+                'proyecto_id'  => $proyecto_id,
+                'laboratorio_id'  => $laboratorio_id,
             ]);
         } catch (\Throwable $th) {
             return response($th, 270);
