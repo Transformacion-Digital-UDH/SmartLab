@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Asistencia;
 use App\Models\MiembroProyecto;
+use App\Models\Proyecto;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -89,6 +90,11 @@ class AsistenciaController extends Controller
             ->select('proyectos.nombre', 'proyectos.descripcion', 'proyectos.id')
             ->get();
 
+        $proyectosA = Proyecto::where('responsable_id', $user->id)
+            ->select('proyectos.nombre', 'proyectos.descripcion', 'proyectos.id')
+            ->get();
+
+
         return response()->json([
             "id" => $user-> id,
             "nombres"       => $user->nombres,
@@ -96,7 +102,7 @@ class AsistenciaController extends Controller
             "rol"           => $user->rol,
             "tiene_entrada" => $user->rol,
             "asistencias"   => $asistencias,
-            "proyectos"     => $proyectos,
+            "proyectos"     => $proyectos->merge($proyectosA),
             // "\$user" => $user
         ]);
     }
