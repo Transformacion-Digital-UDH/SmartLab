@@ -4,20 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 
-class UserController extends Controller
+class MiembroController extends Controller
 {
     public function index()
     {
-        $usuarios = User::where('rol', '!=', 'Admin')
+        $miembros = User::where('rol', 'Miembro')
             ->where('is_active', true)
             ->orderBy('id', 'desc')
             ->get();
 
-        return Inertia::render('Usuarios/Index', [
-            'usuarios' => $usuarios,
+        return Inertia::render('Miembros/Index', [
+            'miembros' => $miembros,
         ]);
     }
 
@@ -48,14 +48,14 @@ class UserController extends Controller
             'celular' => $request->celular,
             'password' => Hash::make($request->password),
             'codigo' => $request->codigo,
-            'rol' => 'Libre',
+            'rol' => 'Miembro',
             'is_active' => $request->is_active ?? true,
         ]);
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente');
+        return redirect()->route('miembros.index')->with('success', 'Miembro creado exitosamente');
     }
 
-    public function update(Request $request, User $usuario)
+    public function update(Request $request, User $miembro)
     {
         $request->validate([
             'nombres' => 'required|max:255',
@@ -63,26 +63,26 @@ class UserController extends Controller
             'rol' => 'required|in:Libre,Invitado,Miembro,Coordinador',
         ]);
 
-        $usuario->update([
+        $miembro->update([
             'nombres' => $request->nombres,
             'apellidos' => $request->apellidos,
             'dni' => $request->dni,
             'email' => $request->email,
             'celular' => $request->celular,
-            'password' => $request->password ? Hash::make($request->password) : $usuario->password,
+            'password' => $request->password ? Hash::make($request->password) : $miembro->password,
             'codigo' => $request->codigo,
             'rol' => $request->rol,
             'is_active' => $request->is_active,
         ]);
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente');
+        return redirect()->route('miembros.index')->with('success', 'Miembro actualizado exitosamente');
     }
 
-    public function destroy(User $usuario)
+    public function destroy(User $miembro)
     {
-        $usuario->is_active = false;
-        $usuario->save();
+        $miembro->is_active = false;
+        $miembro->save();
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario desactivado exitosamente');
+        return redirect()->route('miembros.index')->with('success', 'Miembro desactivado exitosamente');
     }
 }
