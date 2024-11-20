@@ -1,38 +1,38 @@
 <template>
     <Modal
-        title="Agregar Usuario"
+        title="Agregar Miembro"
         :open="visible"
         @cancel="cerrarModal"
         centered
         :footer="null"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="usuario">
+        <Form layout="vertical" @finish="enviarFormulario" :model="miembro">
             <FormItem label="Nombres" name="nombres" :rules="[{ required: true, message: 'Por favor ingrese los nombres' }]">
-                <Input v-model:value="usuario.nombres" placeholder="Ingrese los nombres" class="rounded-lg" autofocus />
+                <Input v-model:value="miembro.nombres" placeholder="Ingrese los nombres" class="rounded-lg" autofocus />
             </FormItem>
 
             <FormItem label="Apellidos" name="apellidos" :rules="[{ required: true, message: 'Por favor ingrese los apellidos' }]">
-                <Input v-model:value="usuario.apellidos" placeholder="Ingrese los apellidos" class="rounded-lg"/>
+                <Input v-model:value="miembro.apellidos" placeholder="Ingrese los apellidos" class="rounded-lg"/>
             </FormItem>
 
             <FormItem label="DNI" name="dni" :rules="[{ required: true, message: 'Por favor ingrese el DNI' }]">
-                <Input v-model:value="usuario.dni" placeholder="Ingrese el DNI" class="rounded-lg " />
+                <Input v-model:value="miembro.dni" placeholder="Ingrese el DNI" class="rounded-lg " />
             </FormItem>
 
             <FormItem label="Email" name="email" :rules="[{ type: 'email', message: 'Por favor ingrese un correo válido' }]">
-                <Input v-model:value="usuario.email" placeholder="Ingrese el correo electrónico" class="rounded-lg "/>
+                <Input v-model:value="miembro.email" placeholder="Ingrese el correo electrónico" class="rounded-lg "/>
             </FormItem>
 
             <FormItem label="Celular" name="celular">
-                <Input v-model:value="usuario.celular" placeholder="Ingrese número de celular" />
+                <Input v-model:value="miembro.celular" placeholder="Ingrese número de celular" />
             </FormItem>
 
             <FormItem label="Código" name="codigo">
-                <Input v-model:value="usuario.codigo" placeholder="Ingrese el código" class="rounded-lg "/>
+                <Input v-model:value="miembro.codigo" placeholder="Ingrese el código" class="rounded-lg "/>
             </FormItem>
 
             <FormItem label="Contraseña" name="password" :rules="[{ required: true, message: 'Por favor ingrese una contraseña' }]">
-                <Input type="password" v-model:value="usuario.password" placeholder="Ingrese la contraseña"  class="rounded-lg "/>
+                <Input type="password" v-model:value="miembro.password" placeholder="Ingrese la contraseña"  class="rounded-lg "/>
             </FormItem>
 
             <FormItem class="flex justify-end mb-0">
@@ -54,11 +54,12 @@ const props = defineProps({
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
-const usuario = ref({
+const miembro = ref({
     nombres: '',
     apellidos: '',
     dni: '',
     email: '',
+    celular: '',
     rol: '',
     is_active: '1',
     codigo: '',
@@ -74,13 +75,13 @@ const cerrarModal = () => {
 const enviarFormulario = async () => {
     cargando.value = true;
     try {
-        const response = await axios.post(route('usuarios.store'), usuario.value);
-        message.success('Usuario agregado exitosamente');
+        const response = await axios.post(route('miembros.store'), miembro.value);
+        message.success('Miembro agregado exitosamente');
         cerrarModal();
-        emitir('actualizar-tabla', response.data["usuario"]);
+        emitir('actualizar-tabla', response.data["miembro"]);
     } catch (error) {
-        message.error('Error al agregar el usuario');
-        console.error('Error al guardar el usuario:', error);
+        message.error('Error al agregar el miembro');
+        console.error('Error al guardar el miembro:', error);
     } finally {
         cargando.value = false;
     }
@@ -88,11 +89,12 @@ const enviarFormulario = async () => {
 
 watch(() => props.visible, (val) => {
     if (val) {
-        usuario.value = {
+        miembro.value = {
             nombres: '',
             apellidos: '',
             dni: '',
             email: '',
+            celular: '',
             rol: '',
             is_active: '1',
             codigo: '',

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AreaController;
-use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\MiembroController;
 use App\Http\Controllers\UserController;
 
 // Las rutas que serán accedidas por aplicaciones externas se definen en api.php,
@@ -51,6 +51,12 @@ Route::middleware([
     Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
     Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
     Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+
+    // miembros
+    Route::get('/miembros', [MiembroController::class, 'index'])->name('miembros.index');
+    Route::post('/miembros', [MiembroController::class, 'store'])->name('miembros.store');
+    Route::put('/miembros/{usuario}', [MiembroController::class, 'update'])->name('miembros.update');
+    Route::delete('/miembros/{usuario}', [MiembroController::class, 'destroy'])->name('miembros.destroy');
 
 
     // Recursos
