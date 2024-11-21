@@ -1,5 +1,5 @@
 <template>
-    <Table :columns="columnas" :dataSource="usuarios" rowKey="id" :pagination="false" :scroll="{ x: 800 }">
+    <Table :columns="columnas" :dataSource="miembros" rowKey="id" :pagination="false" :scroll="{ x: 800 }">
         <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'acciones'">
                 <FormOutlined @click="editar(record)" class="text-blue-600" />
@@ -28,7 +28,7 @@ import {
 } from "@ant-design/icons-vue";
 
 const props = defineProps({
-    usuarios: Array,
+    miembros: Array,
 });
 
 const emitir = defineEmits(["editar", "mostrar-asistencias", "actualizar-tabla"]);
@@ -62,33 +62,33 @@ const columnas = [
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 
-function editar(usuario) {
-    emitir("editar", usuario);
+function editar(miembro) {
+    emitir("editar", miembro);
 }
 
-const confirmarEliminacion = (usuario) => {
+const confirmarEliminacion = (miembro) => {
     Modal.confirm({
-        title: '¿Estás seguro de eliminar este usuario?',
-        content: `${usuario.nombres} ${usuario.apellidos}`,
+        title: '¿Estás seguro de eliminar este miembro?',
+        content: `${miembro.nombres} ${miembro.apellidos}`,
         okText: 'Confirmar',
         cancelText: 'Cancelar',
         onOk() {
-            router.delete(route('usuarios.destroy', usuario), {
+            router.delete(route('miembros.destroy', miembro), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    message.success('Usuario eliminado exitosamente');
+                    message.success('Miembro eliminado exitosamente');
                     emitir('actualizar-tabla');
                 },
                 onError: (error) => {
-                    console.error('Error al eliminar el usuario:', error);
-                    message.error('Error al eliminar el usuario');
+                    console.error('Error al eliminar el miembro:', error);
+                    message.error('Error al eliminar el miembro');
                 }
             });
         },
     });
 };
 
-function mostrarAsistencias(usuario) {
-    emitir("mostrar-asistencias", usuario);
+function mostrarAsistencias(miembro) {
+    emitir("mostrar-asistencias", miembro);
 }
 </script>
