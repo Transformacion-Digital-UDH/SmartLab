@@ -20,7 +20,15 @@ class AsistenciaController extends Controller
         $asistencias = DB::table('asistencias')
             ->where('asistencias.is_active',1)
             ->join('users','users.id','=','asistencias.usuario_id')
-            ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
+            ->when(request('q'), function ($query, $busqueda) {
+                // Buscar por nombres, apellidos o DNI
+                $query->where(function ($subquery) use ($busqueda) {
+                    $subquery->where('users.dni', 'like', "%{$busqueda}%")
+                             ->orWhere('users.nombres', 'like', "%{$busqueda}%")
+                             ->orWhere('users.apellidos', 'like', "%{$busqueda}%");
+                });
+            })
+            ->select('asistencias.*', 'users.dni','users.nombres','users.apellidos','users.rol')
             ->orderBy('asistencias.hora_entrada', 'desc')
             ->paginate($cantidad);
 
@@ -30,11 +38,12 @@ class AsistenciaController extends Controller
             'asistencias' => $asistencias
         ]);
     }
+
     function mis_asistencias(){
         $asistencias = DB::table('asistencias')
             ->join('users','users.id','=','asistencias.usuario_id')
             ->where('asistencias.usuario_id', '=', '2')
-            ->select('asistencias.*', 'users.dni','users.nombres','users.rol')
+            ->select('asistencias.*', 'users.dni','users.nombres','users.apellidos', 'users.rol')
             ->get();
 
         return Inertia::render('Asistencia/MiAsistencia', [

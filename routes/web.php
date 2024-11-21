@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\MiembroController;
+use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\UserController;
 
 // Las rutas que serán accedidas por aplicaciones externas se definen en api.php,
@@ -39,7 +40,7 @@ Route::middleware([
     Route::get('/asistencias', [AsistenciaController::class, 'index'])->name('asistencias.index');
     Route::get('/mis-asistencias', [AsistenciaController::class, 'mis_asistencias']);
     Route::delete('/asistencias/eliminar/{id}', [AsistenciaController::class, 'eliminar_asistencia'])->name("asistencia.eliminar");
-    Route::put('/asistencias/editar_salida/{id}/{date}', [AsistenciaController::class, 'editar_salida'])->name('asistencia.editar.salida');
+    Route::put('/asistencias/editar-salida/{id}/{date}', [AsistenciaController::class, 'editar_salida'])->name('asistencia.editar.salida');
 
     // Laboratorios
     Route::resource('laboratorios', LaboratorioController::class)->except(['show', 'create', 'edit']);

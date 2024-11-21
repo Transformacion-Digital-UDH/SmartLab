@@ -4,7 +4,6 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-
         "serve": "php artisan serve"
     },
     "devDependencies": {
@@ -22,6 +21,7 @@
     },
     "dependencies": {
         "ant-design-vue": "^4.2.5",
-        "dayjs": "^1.11.13"
+        "dayjs": "^1.11.13",
+        "moment": "^2.30.1"
     }
 }
