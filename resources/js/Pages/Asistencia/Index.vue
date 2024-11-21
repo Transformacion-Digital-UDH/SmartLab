@@ -6,6 +6,7 @@
     import NavBar from '@/Components/App/NavBar.vue';
     import { formatDate } from '@/lib/date';
 
+
     const { props } = usePage()
     let asistenciasPaginate = JSON.parse(JSON.stringify(props.asistencias))
 
@@ -150,20 +151,24 @@
             <div>
                 <div class="border"></div>
                 <TimePicker v-model="selectedTime" format="HH:mm" placeholder="Selecciona la hora" :disabled-hours="() => [0, 1, 2, 3,4,5,6]" />
-            </div>
+                </div>
         </Modal>
         <div class="grid p-4">
             <div class="flex pb-4">
-                <h1 class="font-bold text-4xl">Asistencias</h1>
+                <h1 class="font-bold text-xl">Asistencias</h1>
             </div>
             <!-- Buscador -->
-            <div>
+            <div class="flex gap-3">
                 <InputSearch
-                v-model:value="inputSearchValue"
-                placeholder="Buscar por nombre o DNI"
+                    v-model:value="inputSearchValue"
+                    placeholder="Buscar por nombre o DNI"
+                    class="w-full"
+                    size="large"
                 />
+                <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium" >Agregar Asistencia</Button>
+
             </div>
-        <div class="pt-4"></div>
+            <div class="pt-4"></div>
             <div class="">
                 <Table :columns="columns" :data-source="asistencias" :pagination="false" :scroll="{ y: '70vh' }">
                     <!-- Head -->
@@ -195,11 +200,11 @@
                         </template>
                         <template v-if="column.key === 'salida'">
                             <span>
-                                Salida
+                            Salida
                             </span>
                         </template>
                         <template v-if="column.key === 'acciones'">
-                            <!-- Acciones -->
+                        Acciones
                         </template>
                     </template>
                     <!-- Body -->
@@ -211,15 +216,15 @@
                         </template>
                         <template v-if="column.key === 'tipo'">
                             <Tag v-if="record.hora_salida" :bordered="false" color="green">
-                                Salida
+                            Salida
                             </Tag>
                             <Tag v-else :bordered="false" color="red">
-                                Entrada
+                            Entrada
                             </Tag>
                         </template>
                         <template v-if="column.key === 'acciones'">
-                            <div class="flex gap-4 justify-end">
-                                <Button type="dashed" shape="circle" :icon="h(EditOutlined)" @click="showModal(record)" class="block"/>
+                            <div class="flex gap-2 justify-end">
+                                <Button type="" shape="circle" :icon="h(EditOutlined)" @click="showModal(record)" class="block"/>
                                 <Button type="link" shape="circle" danger :icon="h(DeleteOutlined)" @click="delete_asistencia(record)"/>
                             </div>
                         </template>

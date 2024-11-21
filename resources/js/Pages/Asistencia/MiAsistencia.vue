@@ -117,12 +117,7 @@
         <h1 class="font-bold text-4xl px-2">Mis Asistencias</h1>
       </div>
       <!-- Buscador -->
-      <div>
-         <!-- <InputSearch
-           v-model:value="inputSearchValue"
-           placeholder="Buscar por nombre o DNI"
-         /> -->
-      </div>
+   
       <div class="flex gap-2 overflow-x-scroll scrollbar-none px-2">
         <div class="flex gap-2 text-neutral-500 px-2 py-1 bg-neutral-100 rounded-full"><span class="text-green-600 font-bold">12 </span> Asistencias</div>
         <div class="flex gap-2 text-neutral-500 px-2 py-1 bg-neutral-100 rounded-full"><span class="text-blue-600 font-bold">1 </span> Completas</div>

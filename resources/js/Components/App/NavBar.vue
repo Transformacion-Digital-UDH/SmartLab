@@ -1,7 +1,7 @@
 <script setup>
   import { ref, watch, h, defineProps } from 'vue';
   import { usePage } from '@inertiajs/vue3';
-  import { HomeOutlined, UserOutlined, CalendarOutlined, ClockCircleOutlined, CodeSandboxOutlined, SettingFilled, HeartFilled, HeatMapOutlined, HeartOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue';
+  import { HomeOutlined, UserOutlined, CalendarOutlined, ClockCircleOutlined, CodeSandboxOutlined, SettingFilled, QuestionCircleOutlined } from '@ant-design/icons-vue';
   import { Button } from 'ant-design-vue';
 
   const props = defineProps({title: {type: String}})
@@ -78,12 +78,13 @@
   }
   @media (max-width:600px) {
     .containerx {
-    grid-template-columns: 1fr;
+      grid-template-columns: 1fr;
 
-  }
-  nav {
-    display: none;
-  }
+    }
+
+    nav {
+      display: none;
+    }
     
   }
 </style>
