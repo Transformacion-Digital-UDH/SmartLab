@@ -7,9 +7,9 @@
         centered
         @cancel="cerrarModal"
     >
-        <p class="text-xs text-gray-500">
-            <span class="font-medium text-udh_3">Responsable del proyecto: </span>
-            {{ proyecto.responsable.nombres }} {{ proyecto.responsable.apellidos }}
+        <p class="text-xs text-gray-500 pt-2">
+            <span class="font-medium text-udh_3">Responsable del proyecto:</span>
+            {{ proyecto.responsable.dni }} - {{ proyecto.responsable.nombres }} {{ proyecto.responsable.apellidos }} - {{ proyecto.responsable.email }} - {{ proyecto.responsable.celular }}
         </p>
 
         <!-- Select múltiple para agregar usuarios -->
@@ -119,7 +119,6 @@ const cargarParticipantes = async () => {
             apellidos: participante.usuario.apellidos,
             correo: participante.usuario.email,
             celular: participante.usuario.celular,
-            rol: participante.rol || 'Sin especificar',
         }));
         console.log("Participantes: ", participantes.value);
     } catch (error) {

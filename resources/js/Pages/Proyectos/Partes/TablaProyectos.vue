@@ -1,5 +1,5 @@
 <template>
-    <Table :columns="columnas" :dataSource="proyectos" rowKey="id" :pagination="false" :scroll="{ x: 800 }">
+    <Table :columns="columnas" :dataSource="proyectos" rowKey="id" size="larg" :pagination="false" :scroll="{ x: 800 }">
         <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'estado'">
                 <Tag :color="estadoColor(record.estado)" :bordered="false">
