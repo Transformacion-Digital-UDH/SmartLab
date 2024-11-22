@@ -39,6 +39,8 @@ const logout = () => {
                         <NavLink :href="route('recursos.index')" :active="route().current('recursos.index')">Recursos</NavLink>
                         <NavLink :href="route('usuarios.index')" :active="route().current('usuarios.index')">Usuarios</NavLink>
                         <NavLink :href="route('asistencias.index')" :active="route().current('asistencias.index')">Asistencias</NavLink>
+                        <NavLink :href="route('miembros.index')" :active="route().current('miembros.index')">Miembros</NavLink>
+                        <NavLink :href="route('proyectos.index')" :active="route().current('proyectos.index')">Proyectos</NavLink>
                     </div>
                 </div>
 
@@ -121,12 +123,8 @@ const logout = () => {
             <ResponsiveNavLink :href="route('laboratorios.index')" :active="route().current('laboratorios.index')">Laboratorios</ResponsiveNavLink>
             <ResponsiveNavLink :href="route('recursos.index')" :active="route().current('recursos.index')">Recursos</ResponsiveNavLink>
             <ResponsiveNavLink :href="route('asistencias.index')" :active="route().current('asistencias.index')">Asistencias</ResponsiveNavLink>
-            <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">Perfil</ResponsiveNavLink>
-                <form method="POST" @submit.prevent="logout">
-                    <ResponsiveNavLink as="button">Cerrar sesión</ResponsiveNavLink>
-                </form>
-            </div>
+            <ResponsiveNavLink :href="route('miembros.index')" :active="route().current('miembros.index')">Miembros</ResponsiveNavLink>
+            <ResponsiveNavLink :href="route('proyectos.index')" :active="route().current('proyectos.index')">Proyectos</ResponsiveNavLink>
         </div>
     </nav>
 </template>

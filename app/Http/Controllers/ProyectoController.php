@@ -59,38 +59,57 @@ class ProyectoController extends Controller
     public function obtenerParticipantes(Proyecto $proyecto)
     {
         $participantes = $proyecto->participantes()
-        ->with(['usuario' => function ($query) {
-            $query->select('id', 'nombres','apellidos', 'dni', 'email', 'celular');
-        }])->get();
+            ->where('is_active', true) // Filtro por is_active
+            ->with(['usuario' => function ($query) {
+                $query->select('id', 'nombres', 'apellidos', 'dni', 'email', 'celular');
+            }])
+            ->get();
 
         return response()->json($participantes);
     }
-
+    
 
     // Agregar un participante al proyecto
     public function agregarParticipante(Request $request, Proyecto $proyecto)
     {
         $request->validate([
-            'usuario_id' => 'required|exists:users,id',
+            'usuario_ids' => 'required|array',
+            'usuario_ids.*' => 'exists:users,id', // Validar que cada ID existe
         ]);
 
-        $proyecto->participantes()->create([
-            'usuario_id' => $request->usuario_id,
-        ]);
+        // Registrar múltiples participantes
+        foreach ($request->usuario_ids as $usuarioId) {
+            $proyecto->participantes()->updateOrCreate([
+                'usuario_id' => $usuarioId,
+            ]);
+        }
 
         return response()->json([
-            'message' => 'Participante agregado correctamente.',
+            'message' => 'Participantes agregados correctamente.',
         ]);
     }
+
 
     // Quitar un participante del proyecto
     public function quitarParticipante(Proyecto $proyecto, $participanteId)
     {
-        $proyecto->participantes()->where('id', $participanteId)->delete();
+        // Buscar al participante en el proyecto
+        $participante = $proyecto->participantes()->find($participanteId);
+
+        // Verificar si el participante existe
+        if (!$participante) {
+            return response()->json([
+                'message' => 'El participante no pertenece a este proyecto.',
+            ], 404);
+        }
+
+        // Eliminar al participante
+        $participante->update(['is_active' => false]);
 
         return response()->json([
-            'message' => 'Participante eliminado correctamente.',
+            'message' => 'Participante eliminado exitosamente.',
         ]);
     }
+
 
 }
