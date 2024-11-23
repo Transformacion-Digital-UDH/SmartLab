@@ -1,7 +1,7 @@
 <script setup>
   import { ref, watch, h } from 'vue';
   import { usePage } from '@inertiajs/vue3';
-  import { SmileOutlined, EditOutlined, DeleteOutlined, ClockCircleOutlined,CheckCircleFilled, CheckCircleOutlined, AppleOutlined, AndroidOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
+  import { SmileOutlined, EditOutlined, DeleteOutlined, ClockCircleOutlined,CheckCircleFilled, CheckCircleOutlined, AppleOutlined, AndroidOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons-vue';
   import { InputSearch, Table, Tag, Pagination, Button, Tabs, TabPane } from 'ant-design-vue';
   import NavBar from '@/Components/App/NavBar.vue';
   import moment from 'moment';
@@ -101,6 +101,8 @@ import CardAsistencia from './Partes/CardAsistencia.vue';
       type: ['M','N','T'][Math.round(Math.random()*3)]
     }
   }
+
+  
 </script>
 <template>
   <NavBar title="Asistencias">
@@ -115,7 +117,7 @@ import CardAsistencia from './Partes/CardAsistencia.vue';
           <template #tab>
 						<div class="flex items-center">
 
-							<AppleOutlined class="block"/>
+							<UserOutlined class="block"/>
 							Asistencias
 							<span class="text-green-600 font-bold ml-2 bg-neutral-100 px-1 rounded-full">
 									{{props.asistencias.total}} 
@@ -137,7 +139,9 @@ import CardAsistencia from './Partes/CardAsistencia.vue';
 							</span> 
 						</div>
           </template>
-            hol8a 34
+          <div class="appy gap-2">
+						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistencias" :key="asistencia.id"/>
+					</div>
 				</TabPane>
         <TabPane key="3">
 					<template #tab>
@@ -150,7 +154,9 @@ import CardAsistencia from './Partes/CardAsistencia.vue';
 							</span> 
 						</div>
           </template>
-            hola 340
+          <div class="appy gap-2">
+						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistencias" :key="asistencia.id"/>
+					</div>
 				</TabPane>
       </Tabs>
       <div class="pt-4"></div>
