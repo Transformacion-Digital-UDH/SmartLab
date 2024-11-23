@@ -12,18 +12,21 @@ defineProps({
     <div>
         <Head :title="title" />
         <Banner />
-        <div class="min-h-screen bg-gray-100 dark:!bg-gray-900">
+        <div class="min-h-screen max-h-screen bg-gray-100 dark:!bg-gray-900 sm:flex">
             <Navbar />
+            <div class="w-full max-h-screen overflow-auto">
+                <header v-if="$slots.header" class="bg-white dark:!bg-gray-800 shadow-sm">
+                    <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                        <slot name="header" />
+                    </div>
+                </header>
 
-            <header v-if="$slots.header" class="bg-white dark:!bg-gray-800 shadow">
-                <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
-
-            <main>
-                <slot />
-            </main>
+                <main >
+                    <slot />
+                </main>
+            </div>
         </div>
     </div>
 </template>
+
+

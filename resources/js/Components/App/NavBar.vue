@@ -84,6 +84,6 @@
   nav {
     display: none;
   }
-    
+
   }
 </style>
