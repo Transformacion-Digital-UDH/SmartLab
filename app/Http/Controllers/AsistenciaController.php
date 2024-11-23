@@ -24,8 +24,8 @@ class AsistenciaController extends Controller
                 // Buscar por nombres, apellidos o DNI
                 $query->where(function ($subquery) use ($busqueda) {
                     $subquery->where('users.dni', 'like', "%{$busqueda}%")
-                             ->orWhere('users.nombres', 'like', "%{$busqueda}%")
-                             ->orWhere('users.apellidos', 'like', "%{$busqueda}%");
+                        ->orWhere('users.nombres', 'like', "%{$busqueda}%")
+                        ->orWhere('users.apellidos', 'like', "%{$busqueda}%");
                 });
             })
             ->select('asistencias.*', 'users.dni','users.nombres','users.apellidos','users.rol')
@@ -41,10 +41,10 @@ class AsistenciaController extends Controller
 
     function mis_asistencias(){
         $asistencias = DB::table('asistencias')
-            ->join('users','users.id','=','asistencias.usuario_id')
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
             ->where('asistencias.usuario_id', '=', '2')
-            ->select('asistencias.*', 'users.dni','users.nombres','users.apellidos', 'users.rol')
-            ->get();
+            ->select('asistencias.*', 'users.dni', 'users.nombres', 'users.apellidos', 'users.rol')
+            ->paginate(10);
 
         return Inertia::render('Asistencia/MiAsistencia', [
             'token' => csrf_token(),
