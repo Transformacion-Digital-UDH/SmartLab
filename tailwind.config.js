@@ -23,9 +23,14 @@ export default {
                 primary: '#12A08D',
                 udh_1: '#2EBAA0',
                 udh_3: '#001B4A',
-            }
+            },
         },
     },
 
-    plugins: [forms, typography],
+    plugins: [
+        forms({
+            strategy: 'class',
+        }),
+        typography,
+    ],
 };
