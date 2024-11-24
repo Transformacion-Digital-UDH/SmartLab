@@ -68,7 +68,7 @@ const cargando = ref(false);
 const opcionesResponsables = ref([]);
 
 opcionesResponsables.value = props.responsables.map(responsable => ({
-    label: responsable.nombres,
+    label: `${responsable.dni} - ${responsable.nombres} ${responsable.apellidos} - ${responsable.email}`,
     value: responsable.id,
 }));
 

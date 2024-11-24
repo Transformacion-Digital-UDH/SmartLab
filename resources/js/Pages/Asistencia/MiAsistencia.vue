@@ -3,7 +3,7 @@
   import { usePage } from '@inertiajs/vue3';
   import { CheckCircleOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons-vue';
   import { InputSearch, Table, Tag, Pagination, Button, Tabs, TabPane } from 'ant-design-vue';
-  import NavBar from '@/Components/App/NavBar.vue';
+  import NavBar from '@/Layouts/AppLayout.vue';
   import moment from 'moment';
   import 'moment/locale/es.js'
   import CardAsistencia from './Partes/CardAsistencia.vue';
@@ -52,17 +52,7 @@
     location.href = url.toString()
   }
 
-  // Formatear la fecha
-  function formatDateTime(date) {
-    // if (!date) return null;
-    return new Intl.DateTimeFormat('es', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' ,
-      hour: '2-digit', 
-      minute: '2-digit', 
-    }).format(date);
-  }
+
 
 </script>
 <template>
@@ -85,8 +75,11 @@
 							</span> 
 						</div>
           </template>
-          <div class="appy gap-2 overflow-y-scroll">
+          <div class="appy gap-2">
 						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistencias.data" :key="asistencia.id"/>
+            <div class="grid place-items-center pt-4">
+              <Pagination v-model:current="asistencias.current_page" :total="asistencias.total" show-less-items/>
+            </div>
 					</div>
         </TabPane>
         <TabPane key="2">
@@ -102,6 +95,9 @@
           </template>
           <div class="appy gap-2">
 						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistenciasCompletas.data" :key="asistencia.id"/>
+            <div class="grid place-items-center pt-4">
+              <Pagination v-model:current="asistenciasCompletas.current_page" :total="asistenciasCompletas.total" show-less-items/>
+            </div>
 					</div>
 				</TabPane>
         <TabPane key="3">
@@ -117,6 +113,9 @@
           </template>
           <div class="appy gap-2">
 						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistenciasIncompletas.data" :key="asistencia.id"/>
+            <div class="grid place-items-center pt-4">
+              <Pagination v-model:current="asistenciasIncompletas.current_page" :total="asistenciasIncompletas.total" show-less-items/>
+            </div>
 					</div>
 				</TabPane>
       </Tabs>
@@ -124,13 +123,7 @@
       
     </div>
     <div class="grid place-items-center pb-5">
-      <Pagination
-        v-model:current="currentPage"
-        v-model:pageSize="pageSize"
-        show-size-changer
-        :total="total"
-        @showSizeChange="onShowSizeChange"
-      />
+      
     </div>
   </NavBar>
 </template>

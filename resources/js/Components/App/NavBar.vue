@@ -85,12 +85,12 @@
   @media (max-width:600px) {
     .containerx {
       grid-template-columns: 1fr;
-
     }
 
     nav {
       display: none;
     }
-    
   }
+
+
 </style>

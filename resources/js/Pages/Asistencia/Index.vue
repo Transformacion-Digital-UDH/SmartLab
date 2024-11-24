@@ -3,11 +3,11 @@
     import { router, usePage} from '@inertiajs/vue3';
     import { SmileOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
     import { InputSearch, Table, Tag, Pagination, Button, Modal, message, TimePicker } from 'ant-design-vue';
-    import NavBar from '@/Components/App/NavBar.vue';
+    import NavBar from '@/Layouts/AppLayout.vue';
     import Asistencia from '@/lib/Asistencia';
     import TablaAsistencia from './Partes/TablaAsistencia.vue';
     import ModalEditarSalida from './Partes/ModalEditarSalida.vue';
-import ModalAgregarAsistencia from './Partes/ModalAgregarAsistencia.vue';
+    import ModalAgregarAsistencia from './Partes/ModalAgregarAsistencia.vue';
 
     const { props } = usePage();
     let asistenciasPaginate = JSON.parse(JSON.stringify(props.asistencias))
@@ -17,6 +17,7 @@ import ModalAgregarAsistencia from './Partes/ModalAgregarAsistencia.vue';
         return new Asistencia(asis);
     }));
 
+    console.log(props)
     const token = ref(props.token || []);
     const loading = ref(false)
 
@@ -110,6 +111,11 @@ import ModalAgregarAsistencia from './Partes/ModalAgregarAsistencia.vue';
                     @actualizar-tabla="actualizarTabla"
                     @editar="abrirModalEditar"
                 />
+                <div class="grid place-items-center pt-4">
+
+                    <Pagination v-model:current="asistencias.current_page" :total="asistencias.total" show-less-items/>
+                </div>
+
                 <ModalEditarSalida
                     v-if="asistenciaSeleccionado"
                     v-model:visible="mostrarModalEditar"

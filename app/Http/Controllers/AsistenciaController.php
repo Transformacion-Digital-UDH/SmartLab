@@ -41,7 +41,7 @@ class AsistenciaController extends Controller
     }
 
     function mis_asistencias(){
-        $usuario_id = 2;
+        $usuario_id = 1;
 
         $asistencias = DB::table('asistencias')
             ->join('users', 'users.id', '=', 'asistencias.usuario_id')
@@ -167,12 +167,12 @@ class AsistenciaController extends Controller
 
     public function registrarAsistenciaCompleta(Request $request){
         $request -> validate([
-            'user_id' => 'required|integer',
-            'laboratorio_id' => 'required|integer',
+            'usuario_id' => 'required|integer',
+            // 'laboratorio_id' => 'required|integer',
         ]);
 
         $data = $request->all();
-        $usuario_id = $data['user_id'];
+        $usuario_id = $data['usuario_id'];
         $proyecto_id = $data['proyecto_id'];
         $laboratorio_id = $data['laboratorio_id'];
 
@@ -188,14 +188,14 @@ class AsistenciaController extends Controller
                 'hora_salida' => $hora_salida,
                 'tarea'        => '',
                 'proyecto_id'  => $proyecto_id,
-                'laboratorio_id'  => $laboratorio_id,
+                'laboratorio_id'  => 1,
             ]);
 
+            return response('SE REGISTRO LA ENTRADA', 201);
         } catch (\Throwable $th) {
             return response($th, 270);
         }
 
-        return response('SE REGISTRO LA ENTRADA', 201);
     }
 
     // PUT - Registra la salida

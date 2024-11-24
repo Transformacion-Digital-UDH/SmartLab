@@ -80,7 +80,7 @@ Route::middleware([
     // Proyectos
     Route::resource('proyectos', ProyectoController::class);
     Route::get('/proyectos/{proyecto}/participantes', [ProyectoController::class, 'obtenerParticipantes'])->name('proyectos.participantes');
-    Route::post('/proyectos/{proyecto}/participantes', [ProyectoController::class, 'agregarParticipante'])->name('proyectos.agregar-participante');
+    Route::post('/proyectos/{proyecto}/participantes', [ProyectoController::class, 'agregarParticipante'])->name('proyectos.agregar-participantes');
     Route::delete('/proyectos/{proyecto}/participantes/{participanteId}', [ProyectoController::class, 'quitarParticipante'])->name('proyectos.quitar-participante');
 
 });
