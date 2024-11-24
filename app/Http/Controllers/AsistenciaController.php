@@ -36,21 +36,41 @@ class AsistenciaController extends Controller
         return Inertia::render('Asistencia/Index', [
             'token' => csrf_token(),
             'asistencias' => $asistencias
+
         ]);
     }
 
     function mis_asistencias(){
+        $usuario_id = 2;
+
         $asistencias = DB::table('asistencias')
             ->join('users', 'users.id', '=', 'asistencias.usuario_id')
-            ->where('asistencias.usuario_id', '=', '2')
+            ->where('asistencias.usuario_id', '=', $usuario_id)
+            ->select('asistencias.*', 'users.dni', 'users.nombres', 'users.apellidos', 'users.rol')
+            ->paginate(10);
+
+        $asistencias_completas = DB::table('asistencias')
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
+            ->where('asistencias.usuario_id', '=', $usuario_id)
+            ->whereNotNull('asistencias.hora_salida') 
+            ->select('asistencias.*', 'users.dni', 'users.nombres', 'users.apellidos', 'users.rol')
+            ->paginate(10);
+
+        $asistencias_incompletas = DB::table('asistencias')
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
+            ->where('asistencias.usuario_id', '=', $usuario_id)
+            ->whereNull('asistencias.hora_salida') 
             ->select('asistencias.*', 'users.dni', 'users.nombres', 'users.apellidos', 'users.rol')
             ->paginate(10);
 
         return Inertia::render('Asistencia/MiAsistencia', [
             'token' => csrf_token(),
-            'asistencias' => $asistencias
+            'asistencias' => $asistencias,
+            'asistenciasCompletas' => $asistencias_completas,
+            'asistenciasIncompletas' => $asistencias_incompletas
         ]);
     }
+
 
     public function test() {
         return $asistencias = DB::table('asistencias')
@@ -138,6 +158,39 @@ class AsistenciaController extends Controller
                 'proyecto_id'  => $proyecto_id,
                 'laboratorio_id'  => $laboratorio_id,
             ]);
+        } catch (\Throwable $th) {
+            return response($th, 270);
+        }
+
+        return response('SE REGISTRO LA ENTRADA', 201);
+    }
+
+    public function registrarAsistenciaCompleta(Request $request){
+        $request -> validate([
+            'user_id' => 'required|integer',
+            'laboratorio_id' => 'required|integer',
+        ]);
+
+        $data = $request->all();
+        $usuario_id = $data['user_id'];
+        $proyecto_id = $data['proyecto_id'];
+        $laboratorio_id = $data['laboratorio_id'];
+
+        $hora_entrada = $data['hora_entrada'];
+        $hora_salida = $data['hora_salida'];
+
+        try {
+            
+            Asistencia::create([
+                'id'           => null,
+                'usuario_id'   => $usuario_id,
+                'hora_entrada' => $hora_entrada,
+                'hora_salida' => $hora_salida,
+                'tarea'        => '',
+                'proyecto_id'  => $proyecto_id,
+                'laboratorio_id'  => $laboratorio_id,
+            ]);
+
         } catch (\Throwable $th) {
             return response($th, 270);
         }

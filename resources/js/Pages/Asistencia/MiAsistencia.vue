@@ -1,25 +1,26 @@
 <script setup>
   import { ref, watch, h } from 'vue';
   import { usePage } from '@inertiajs/vue3';
-  import { SmileOutlined, EditOutlined, DeleteOutlined, ClockCircleOutlined,CheckCircleFilled, CheckCircleOutlined, AppleOutlined, AndroidOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons-vue';
+  import { CheckCircleOutlined, ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons-vue';
   import { InputSearch, Table, Tag, Pagination, Button, Tabs, TabPane } from 'ant-design-vue';
   import NavBar from '@/Components/App/NavBar.vue';
   import moment from 'moment';
   import 'moment/locale/es.js'
-import CardAsistencia from './Partes/CardAsistencia.vue';
+  import CardAsistencia from './Partes/CardAsistencia.vue';
 
 
   const { props } = usePage()
 
   const token = props.token || [];
-  const inputSearchValue = ref('');
 
-  console.log(props)
-  let asistenciasPaginate = props.asistencias.data;
+  const asistencias = props.asistencias;
 
+  const asistenciasCompletas = props.asistenciasCompletas
+  const asistenciasIncompletas = props.asistenciasIncompletas
 
   class Asistencia {
     constructor(props){ 
+      this.id = props.id
       this.data = props
       this.check = props.hora_salida != null;
       this.entrada = new Date(props.hora_entrada)
@@ -36,39 +37,11 @@ import CardAsistencia from './Partes/CardAsistencia.vue';
 
   
   // Damos formato de fecha de entrada y salida
-  let asistencias = asistenciasPaginate.map((asis)=>{
+  asistencias.data = asistencias.data.map((asis)=>{
     return new Asistencia(asis);
   });
 
-
-  const columns = [{
-    name: 'Name',
-    dataIndex: 'nombres',
-    key: 'nombres',
-  },{
-    name: 'Name',
-    dataIndex: 'dni',
-    key: 'dni',
-  },{
-    name: 'Name',
-    dataIndex: 'tipo',
-    key: 'tipo',
-  },{
-    name: 'Name',
-    dataIndex: 'rol',
-    key: 'rol',
-  },{
-    name: 'Name',
-    dataIndex: 'hora_entrada',
-    key: 'entrada',
-  },{
-    name: 'Name',
-    dataIndex: 'hora_salida',
-    key: 'salida',
-  },{
-    name: 'Acciones',
-    key: 'acciones',
-  }];
+  console.log(asistencias)
 
 
   // Dar la ruta de paginacion
@@ -91,18 +64,6 @@ import CardAsistencia from './Partes/CardAsistencia.vue';
     }).format(date);
   }
 
-  function day() {
-    let d = new Date(Date.now())
-    d.setDate(Math.round(Math.random()*30))
-    d.setMonth(Math.round(Math.random()*30))
-    return {
-      title: formatDateTime(d),
-      check: Math.random() > 0.5,
-      type: ['M','N','T'][Math.round(Math.random()*3)]
-    }
-  }
-
-  
 </script>
 <template>
   <NavBar title="Asistencias">
@@ -120,42 +81,42 @@ import CardAsistencia from './Partes/CardAsistencia.vue';
 							<UserOutlined class="block"/>
 							Asistencias
 							<span class="text-green-600 font-bold ml-2 bg-neutral-100 px-1 rounded-full">
-									{{props.asistencias.total}} 
+									{{asistencias.total}} 
 							</span> 
 						</div>
           </template>
-          <div class="appy gap-2">
-						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistencias" :key="asistencia.id"/>
+          <div class="appy gap-2 overflow-y-scroll">
+						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistencias.data" :key="asistencia.id"/>
 					</div>
         </TabPane>
         <TabPane key="2">
-					<template #tab>
+					<template #tab >
 						<div class="flex items-center">
 
 							<CheckCircleOutlined />
 							Completas
-							<span class="text-green-600 font-bold ml-2 bg-neutral-100 px-1 rounded-full">
-									{{props.asistencias.total}} 
+							<span class="text-blue-600 font-bold ml-2 bg-blue-100 px-1 rounded-full">
+									{{asistenciasCompletas.total}} 
 							</span> 
 						</div>
           </template>
           <div class="appy gap-2">
-						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistencias" :key="asistencia.id"/>
+						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistenciasCompletas.data" :key="asistencia.id"/>
 					</div>
 				</TabPane>
         <TabPane key="3">
 					<template #tab>
-						<div class="flex items-center">
+						<div class="flex items-center" @click="cargarAsistenciasInompletas">
 
 							<ExclamationCircleOutlined class="block" />
 							Incompletas
-							<span class="text-green-600 font-bold ml-2 bg-neutral-100 px-1 rounded-full">
-									{{props.asistencias.total}} 
+							<span class="text-red-600 font-bold ml-2 bg-red-100 px-1 rounded-full">
+									{{asistenciasIncompletas.total}} 
 							</span> 
 						</div>
           </template>
           <div class="appy gap-2">
-						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistencias" :key="asistencia.id"/>
+						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistenciasIncompletas.data" :key="asistencia.id"/>
 					</div>
 				</TabPane>
       </Tabs>

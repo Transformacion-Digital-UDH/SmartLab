@@ -42,6 +42,10 @@ Route::middleware([
     Route::delete('/asistencias/eliminar/{id}', [AsistenciaController::class, 'eliminar_asistencia'])->name("asistencia.eliminar");
     Route::put('/asistencias/editar-salida/{id}/{date}', [AsistenciaController::class, 'editar_salida'])->name('asistencia.editar.salida');
 
+    Route::get('/asistencias/completas', [AsistenciaController::class, 'asistenciasCompletas'])->name('asistencias.completas');
+    Route::get('/asistencias/incompletas', [AsistenciaController::class, 'asistenciasIncompletas'])->name('asistencias.incompletas');
+    Route::post('/asistencias/registro-completo', [AsistenciaController::class, 'registrarAsistenciaCompleta'])->name('asistencias.registroCompleto');
+
     // Laboratorios
     Route::resource('laboratorios', LaboratorioController::class)->except(['show', 'create', 'edit']);
     Route::get('/laboratorios/{laboratorio}/miembros', [LaboratorioController::class, 'obtenerMiembros'])->name('laboratorios.miembros');
