@@ -21,26 +21,28 @@
                 />
             </FormItem>
 
-            <FormItem label="Código" name="codigo">
-                <Textarea auto-size v-model:value="laboratorio.codigo" placeholder="Ingrese el código" />
-            </FormItem>
+            <div class="flex gap-x-3">
+                <FormItem label="Código" name="codigo" class="w-full" >
+                    <Input v-model:value="laboratorio.codigo" placeholder="Ingrese el código" />
+                </FormItem>
+
+                <FormItem label="Aforo" name="aforo" class="w-full">
+                    <InputNumber v-model:value="laboratorio.aforo"
+                        placeholder="Ingrese el aforo" style="width: 100%;" type="number" step="1" min="0"
+                    />
+                </FormItem>
+            </div>
 
             <FormItem label="Descripción" name="descripcion">
                 <Textarea auto-size v-model:value="laboratorio.descripcion" placeholder="Ingrese una descripción" />
             </FormItem>
 
-            <FormItem label="Aforo" name="aforo" >
-                <InputNumber v-model:value="laboratorio.aforo"
-                    placeholder="Ingrese el aforo" style="width: 100%;" type="number" step="1" min="0"
-                />
-            </FormItem>
-
             <FormItem label="Correo del laboratorio" name="email" :rules="[{ type: 'email', message: 'Por favor ingrese un correo válido' }]">
-                <Textarea auto-size v-model:value="laboratorio.email" placeholder="Ingrese el correo electrónico" />
+                <Input v-model:value="laboratorio.email" placeholder="Ingrese el correo electrónico" />
             </FormItem>
 
             <FormItem label="Fecha de inauguración" name="inauguracion">
-                <Input auto-size type="date" v-model:value="laboratorio.inauguracion" style="width: 100%;" />
+                <Input type="date" v-model:value="laboratorio.inauguracion" style="width: 100%;" />
             </FormItem>
 
             <FormItem class="flex justify-end mb-0">
@@ -53,9 +55,8 @@
 </template>
 
 <script setup>
-import 'ant-design-vue/es/input/style';
 import { ref, watch, defineProps, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, InputNumber, Button, message, Textarea } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, InputNumber, Button, message, Textarea, Space, Row } from 'ant-design-vue';
 import axios from 'axios';
 
 const props = defineProps({
