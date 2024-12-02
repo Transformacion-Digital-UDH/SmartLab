@@ -87,4 +87,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(MiembroProyecto::class);
     }
+
+    public function laboratoriosResponsable()
+    {
+        return $this->hasMany(Laboratorio::class, 'responsable_id');
+    }
+
+    public function laboratoriosCoordinador()
+    {
+        return $this->hasMany(Laboratorio::class, 'coordinador_id');
+    }
+
 }
