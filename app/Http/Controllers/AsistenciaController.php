@@ -43,25 +43,14 @@ class AsistenciaController extends Controller
     function mis_asistencias(){
         $usuario_id = 1;
 
-        $asistencias = DB::table('asistencias')
+        $baseQuery = DB::table('asistencias')
             ->join('users', 'users.id', '=', 'asistencias.usuario_id')
             ->where('asistencias.usuario_id', '=', $usuario_id)
-            ->select('asistencias.*', 'users.dni', 'users.nombres', 'users.apellidos', 'users.rol')
-            ->paginate(10);
+            ->select('asistencias.*', 'users.dni', 'users.nombres', 'users.apellidos', 'users.rol');
 
-        $asistencias_completas = DB::table('asistencias')
-            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
-            ->where('asistencias.usuario_id', '=', $usuario_id)
-            ->whereNotNull('asistencias.hora_salida') 
-            ->select('asistencias.*', 'users.dni', 'users.nombres', 'users.apellidos', 'users.rol')
-            ->paginate(10);
-
-        $asistencias_incompletas = DB::table('asistencias')
-            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
-            ->where('asistencias.usuario_id', '=', $usuario_id)
-            ->whereNull('asistencias.hora_salida') 
-            ->select('asistencias.*', 'users.dni', 'users.nombres', 'users.apellidos', 'users.rol')
-            ->paginate(10);
+        $asistencias = $baseQuery->paginate(10);
+        $asistencias_completas = (clone $baseQuery)->whereNotNull('asistencias.hora_salida')->paginate(10);
+        $asistencias_incompletas = (clone $baseQuery)->whereNull('asistencias.hora_salida')->paginate(10);
 
         return Inertia::render('Asistencia/MiAsistencia', [
             'token' => csrf_token(),

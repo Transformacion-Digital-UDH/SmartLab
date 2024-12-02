@@ -123,15 +123,16 @@
         </template>
         <template v-if="column.key === 'tipo'">
             <Tag v-if="record.hora_salida" :bordered="false" color="green">
-            Salida
+                Salida
             </Tag>
             <Tag v-else :bordered="false" color="red">
-            Entrada
+                Entrada
             </Tag>
         </template>
         <template v-if="column.key === 'acciones'">
             <div class="flex gap-2 justify-end">
               <EditOutlined
+                v-if="record.salida == null"
                 @click="editar(record)"
                 class="text-green-600 ml-2"
               />

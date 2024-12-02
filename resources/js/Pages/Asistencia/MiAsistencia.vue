@@ -13,11 +13,9 @@
 
   const token = props.token || [];
 
-  const asistencias = props.asistencias;
+  console.log(props)
 
-  const asistenciasCompletas = props.asistenciasCompletas
-  const asistenciasIncompletas = props.asistenciasIncompletas
-
+  
   class Asistencia {
     constructor(props){ 
       this.id = props.id
@@ -26,20 +24,24 @@
       this.entrada = new Date(props.hora_entrada)
       this.salida = new Date(props.hora_salida)
       this.type = this.entrada.getHours() < 12 ? 'A': this.entrada.getHours() < 18 ? 'B' : 'C';
-
+      
       const totalMinutes = moment(this.salida).diff(this.entrada, 'minutes');
       const hours = Math.floor(totalMinutes / 60);
       const minutes = totalMinutes % 60;
-
+      
       this.diff = `${hours}h ${minutes}m`;
     }
   }
 
   
   // Damos formato de fecha de entrada y salida
-  asistencias.data = asistencias.data.map((asis)=>{
-    return new Asistencia(asis);
-  });
+  const asistencias = props.asistencias;
+
+  const asistenciasCompletas = props.asistenciasCompletas
+  const asistenciasIncompletas = props.asistenciasIncompletas
+  asistencias.data = asistencias.data.map((asis) => new Asistencia(asis));
+  asistenciasCompletas.data = asistenciasCompletas.data.map((asis) => new Asistencia(asis));
+  asistenciasIncompletas.data = asistenciasIncompletas.data.map((asis) => new Asistencia(asis));
 
   console.log(asistencias)
 
@@ -94,7 +96,7 @@
 						</div>
           </template>
           <div class="appy gap-2">
-						<CardAsistencia :asistencia="asistencia" v-for="(asistencia) in asistenciasCompletas.data" :key="asistencia.id"/>
+						<CardAsistencia :asistencia="asistenciaCompleta" v-for="(asistenciaCompleta) in asistenciasCompletas.data" :key="asistenciaCompleta.id"/>
             <div class="grid place-items-center pt-4">
               <Pagination v-model:current="asistenciasCompletas.current_page" :total="asistenciasCompletas.total" show-less-items/>
             </div>

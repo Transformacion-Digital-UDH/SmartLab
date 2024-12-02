@@ -28,7 +28,8 @@ class Asistencia {
     this.fecha = formatDateTime(new Date(props.hora_entrada)).slice(0,11),
     this.check = true
     this.entrada = new Date(props.hora_entrada)
-    this.salida = new Date(props.hora_salida)
+    this.salida = props.hora_salida == null ? null : new Date(props.hora_salida);
+
     this.type = this.entrada.getHours() < 12 ? 'A': this.entrada.getHours() < 18 ? 'B' : 'C';
   
     // Props
@@ -37,9 +38,9 @@ class Asistencia {
     this.dni = props.dni
     this.rol = props.rol
     this.hora_entrada = formatTime(this.entrada)
-    this.hora_salida = formatTime(this.salida)
+    this.hora_salida = this.salida == null ? null : formatTime(this.salida)
     this.fecha_entrada = formatDateTime(new Date(props.hora_entrada))
-    this.fecha_salida = formatDateTime(new Date(props.hora_salida))
+    this.fecha_salida = this.salida == null ? null : formatDateTime(new Date(props.hora_salida))
   }
   getFecha() {
     return 'jjjjj';
