@@ -4,7 +4,6 @@ use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\LaboratorioController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\RecursoController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AreaController;
@@ -66,7 +65,7 @@ Route::middleware([
 
     // Áreas
     // Route::apiResource('areas', AreaController::class);
-    Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.index');
+    Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');
     Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
     Route::put('/areas/{area_id}', [AreaController::class, 'update'])->name('areas.update');
     Route::delete('/areas/{area_id}', [AreaController::class, 'destroy'])->name('areas.destroy');

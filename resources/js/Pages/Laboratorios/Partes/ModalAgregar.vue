@@ -56,7 +56,7 @@
 
 <script setup>
 import { ref, watch, defineProps, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, InputNumber, Button, message, Textarea, Space, Row } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, InputNumber, Button, message, Textarea } from 'ant-design-vue';
 import axios from 'axios';
 
 const props = defineProps({

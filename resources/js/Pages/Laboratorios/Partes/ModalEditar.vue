@@ -113,7 +113,6 @@ const enviarFormulario = async () => {
 // Verificar si el modal se abre y cargar los valores del laboratorio
 watch(() => props.visible, (val) => {
     if (val) {
-        console.log('watch ed: ', props.visible)
         laboratorio.value = { ...props.laboratorio };
     }
 
