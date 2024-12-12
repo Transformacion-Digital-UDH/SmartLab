@@ -1,37 +1,26 @@
 <template>
     <AppLayout title="Recursos">
         <template #header>
-            <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0"
-            >
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0">
                 Inventario
             </h2>
         </template>
 
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-6">
-                <InputSearch
-                    v-model:value="valorBuscar"
-                    placeholder="Buscar recurso por nombre"
-                    style="width: 350px"
-                    size="large"
-                />
-                <Button
-                    type="primary"
-                    @click="abrirModalCrear"
-                    size="large"
-                    class="font-medium"
-                    >Agregar recurso</Button
-                >
-            </div>
-
-            <!-- Tabla de recursos -->
-            <TablaRecursos
-                :recursos="recursosFiltrados"
-                @editar="abrirModalEditar"
-                @mostrar-areas="abrirModalAreas"
-                @actualizar-tabla="actualizarTabla"
-            />
+            <Tabs default-active-key="1" type="line" >
+                <TabPane key="1" tab="Recursos">
+                    <TablaRecursos
+                        :recursos="recursosFiltrados"
+                        @editar="abrirModalEditar"
+                        @abrir-crear="abrirModalCrear"
+                        @actualizar-tabla="actualizarTabla"
+                    />
+                </TabPane>
+                <TabPane key="2" tab="Equipos">
+                    <!-- Contenido del tab Equipos -->
+                    <p>Aquí irá el contenido relacionado a equipos.</p>
+                </TabPane>
+            </Tabs>
 
             <!-- Modal para agregar recurso -->
             <ModalAgregar
@@ -50,14 +39,6 @@
                 :equipos="equipos"
                 @actualizar-tabla="actualizarTabla"
             />
-
-            <!-- Modal de Áreas separado en AreasModal -->
-            <ModalAreas
-                v-if="recursoSeleccionadoId"
-                v-model:open="mostrarModalAreas"
-                :recurso_id="recursoSeleccionadoId"
-                @cerrar="cerrarModalAreas"
-            />
         </div>
     </AppLayout>
 </template>
@@ -66,11 +47,10 @@
 import { ref, computed } from "vue";
 import { usePage, router } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Button, InputSearch } from "ant-design-vue";
-import TablaRecursos from "./Partes/TablaRecursos.vue";
-import ModalAreas from "./Partes/ModalAreas.vue";
-import ModalAgregar from "./Partes/ModalAgregar.vue";
-import ModalEditar from "./Partes/ModalEditar.vue";
+import { Tabs, TabPane } from "ant-design-vue";
+import TablaRecursos from "./Partes/Recursos/TablaRecursos.vue";
+import ModalAgregar from "./Partes/Recursos/ModalAgregar.vue";
+import ModalEditar from "./Partes/Recursos/ModalEditar.vue";
 
 const { props } = usePage();
 const recursos = ref(props.recursos || []);
@@ -78,19 +58,17 @@ const areas = ref(props.areas || []);
 const equipos = ref(props.equipos || []);
 const mostrarModalCrear = ref(false);
 const mostrarModalEditar = ref(false);
-const mostrarModalAreas = ref(false);
-const recursoSeleccionadoId = ref(null);
 const recursoSeleccionado = ref(null);
 const valorBuscar = ref("");
 
+// Filtrar recursos por nombre o código
 const recursosFiltrados = computed(() =>
     !valorBuscar.value
         ? recursos.value
         : recursos.value.filter((recurso) =>
-              recurso.nombre
-                  .toLowerCase()
-                  .includes(valorBuscar.value.toLowerCase())
-          )
+            recurso.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
+            recurso.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
+        )
 );
 
 const actualizarTabla = () => {
@@ -108,12 +86,5 @@ const abrirModalEditar = (recurso) => {
     recursoSeleccionado.value = { ...recurso };
 };
 
-const abrirModalAreas = (recurso) => {
-    recursoSeleccionadoId.value = recurso.id;
-    mostrarModalAreas.value = true;
-};
-
-const cerrarModalAreas = () => {
-    mostrarModalAreas.value = false;
-};
 </script>
+

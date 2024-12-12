@@ -29,14 +29,14 @@ export default defineConfig({
     ],
     css: {
     preprocessorOptions: {
-      less: {
-        modifyVars: {
-          'primary-color': '#1DA57A',
-          'link-color': '#1DA57A',
-          'border-radius-base': '16px',
+        less: {
+            modifyVars: {
+            'primary-color': '#1DA57A',
+            'link-color': '#1DA57A',
+            'border-radius-base': '16px',
+            },
+            javascriptEnabled: false,
         },
-        javascriptEnabled: false,
-      },
     },
-  },
+},
 });

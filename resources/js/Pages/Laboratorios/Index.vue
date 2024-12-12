@@ -18,6 +18,7 @@
                     class="w-full"
                     size="large"
                 />
+        
                 <Button
                     type="primary"
                     @click="abrirModalCrear"
@@ -83,14 +84,14 @@ const labsFiltrados = computed(() =>
     !valorBuscar.value
         ? laboratorios.value
         : laboratorios.value.filter(
-              (lab) =>
-                  lab.nombre
-                      .toLowerCase()
-                      .includes(valorBuscar.value.toLowerCase()) ||
-                  lab.codigo
-                      .toLowerCase()
-                      .includes(valorBuscar.value.toLowerCase())
-          )
+            (lab) =>
+                lab.nombre
+                    .toLowerCase()
+                    .includes(valorBuscar.value.toLowerCase()) ||
+                lab.codigo
+                    .toLowerCase()
+                    .includes(valorBuscar.value.toLowerCase())
+        )
 );
 
 const actualizarTabla = () => {
