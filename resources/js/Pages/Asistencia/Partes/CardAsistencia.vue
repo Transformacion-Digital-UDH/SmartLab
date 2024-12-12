@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 	import moment from 'moment';
-	import { SmileOutlined, EditOutlined, DeleteOutlined, ClockCircleOutlined,CheckCircleFilled, CheckCircleOutlined, AppleOutlined, AndroidOutlined, ExclamationCircleOutlined, UserOutlined, DeploymentUnitOutlined, ExperimentOutlined } from '@ant-design/icons-vue';
+	import { CheckCircleFilled, CheckCircleOutlined, AppleOutlined, AndroidOutlined, ExclamationCircleOutlined, UserOutlined, DeploymentUnitOutlined, ExperimentOutlined } from '@ant-design/icons-vue';
 
 	const { asistencia } = defineProps({
 		asistencia: Object

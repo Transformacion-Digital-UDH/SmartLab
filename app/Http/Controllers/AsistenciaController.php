@@ -31,13 +31,11 @@ class AsistenciaController extends Controller
 			})
 			->select('asistencias.*', 'users.dni','users.nombres','users.apellidos','users.rol')
 			->orderBy('asistencias.hora_entrada', 'desc')
-			->paginate($cantidad);
-
+			->paginate(10);
 
 		return Inertia::render('Asistencia/Index', [
 			'token' => csrf_token(),
 			'asistencias' => $asistencias
-
 		]);
 	}
 

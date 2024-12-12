@@ -1,6 +1,6 @@
 <script setup>
 	import 'moment/locale/es.js'
-	import NavBar from '@/Layouts/AppLayout.vue';
+	import AppLayout from '@/Layouts/AppLayout.vue';
 	import moment from 'moment';
 	import CardAsistencia from './Partes/CardAsistencia.vue';
 	import { ref, watch } from 'vue';
@@ -54,12 +54,13 @@
 
 </script>
 <template>
-	<NavBar title="Mis Asistencias">
-		<div class="grid p-4">
-			<div class="flex pb-4">
-				<h1 class="font-bold text-xl px-2">Mis Asistencias</h1>
-			</div>
-			<!-- Tabs -->
+	<AppLayout title="Mis Asistencias">
+		<template #header>
+			<h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0">
+				Mis Asistencias
+			</h2>
+    </template>
+		<div class="max-w-7xl mx-auto pb-10 pt-3 sm:px-6 lg:px-8 px-4">
 			<Tabs v-model:activeKey="activeKey">
 				<TabPane key="1">
 					<template #tab>
@@ -106,11 +107,9 @@
 			</Tabs>
 		</div>
 		<div class="grid place-items-center pb-5">
-			<div class="grid place-items-center pt-4">
-				<Pagination v-model:current="current" :total="asistencias.total" show-less-items/>
-			</div>
+			<Pagination v-model:current="current" :total="asistencias.total" show-less-items/>
 		</div>
-	</NavBar>
+	</AppLayout>
 </template>
 <style scoped>
 	.appy {

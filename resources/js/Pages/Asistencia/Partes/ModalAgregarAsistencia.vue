@@ -108,7 +108,7 @@
         <div>
             <div v-if="asistencia.usuario_id == null">
                 
-                <Input v-model:value="dni" placeholder="Ingrese el DNI" autofocus class="rounded-xl placeholder:text-neutral-400 mb-2" />
+                <Input v-model:value="dni" placeholder="Ingrese el DNI" autofocus class=" placeholder:text-neutral-400 mb-2" />
                 <!-- Error -->
                  <div v-if="usuarioEncontrado" class="flex items-center gap-2 px-2 text-red-500 pb-4">
                     <InfoCircleOutlined class="text-red-500"/>
