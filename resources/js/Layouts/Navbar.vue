@@ -20,6 +20,7 @@ const navigationLinks = [
     { name: 'Recursos', route: 'recursos.index', icon: AppstoreOutlined },
     { name: 'Usuarios', route: 'usuarios.index', icon: TeamOutlined },
     { name: 'Asistencias', route: 'asistencias.index', icon: SolutionOutlined },
+    { name: 'Mis Asistencias', route: 'asistencias.user', icon: SolutionOutlined },
     { name: 'Miembros', route: 'miembros.index', icon: UsergroupAddOutlined },
     { name: 'Proyectos', route: 'proyectos.index', icon: ProjectOutlined },
 ];

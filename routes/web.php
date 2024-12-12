@@ -35,9 +35,9 @@ Route::middleware([
 
     // Vistas de Asistencia
     Route::get('/asistencias', [AsistenciaController::class, 'index'])->name('asistencias.index');
-    Route::get('/mis-asistencias', [AsistenciaController::class, 'mis_asistencias']);
-    Route::delete('/asistencias/eliminar/{id}', [AsistenciaController::class, 'eliminar_asistencia'])->name("asistencia.eliminar");
-    Route::put('/asistencias/editar-salida/{id}/{date}', [AsistenciaController::class, 'editar_salida'])->name('asistencia.editar.salida');
+    Route::get('/mis-asistencias', [AsistenciaController::class, 'misAsistencias'])->name('asistencias.user');
+    Route::delete('/asistencias/eliminar/{id}', [AsistenciaController::class, 'eliminarAsistencia'])->name("asistencia.eliminar");
+    Route::put('/asistencias/editar-salida/{id}/{date}', [AsistenciaController::class, 'editarSalida'])->name('asistencia.editar.salida');
 
     Route::get('/asistencias/completas', [AsistenciaController::class, 'asistenciasCompletas'])->name('asistencias.completas');
     Route::get('/asistencias/incompletas', [AsistenciaController::class, 'asistenciasIncompletas'])->name('asistencias.incompletas');
