@@ -2,7 +2,7 @@
 import InputEmail from '@/Components/Inputs/InputEmail.vue';
 import InputPassword from '@/Components/Inputs/InputPassword.vue';
 
-  
+
 </script>
 <template>
   <div class="center grid place-items-center min-h-screen">

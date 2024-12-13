@@ -51,6 +51,18 @@ class RecursoController extends Controller
     // Actualizar un recurso existente
     public function update(Request $request, Recurso $recurso)
     {
+        Log::info('Request:', [
+            'fotos' => array_map(function($foto) {
+                // Si es un objeto, lo convertimos a JSON
+                if (is_object($foto)) {
+                    return json_decode(json_encode($foto), true); // Convertir objeto a array
+                }
+                return $foto;
+            }, $request->all()['fotos']),
+        ]);
+
+
+
         $request->validate([
             'nombre' => 'required|string|max:100',
             'codigo' => 'nullable|string|max:20',
