@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $usuarios = User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular')
+        $usuarios = User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular', 'password')
             ->where('rol', '!=', 'Admin') 
             ->where('is_active', true)
             ->orderBy('id', 'desc')
@@ -80,7 +80,7 @@ class UserController extends Controller
             'password' => $request->password ? Hash::make($request->password) : $usuario->password,
             'codigo' => $request->codigo,
             'rol' => $request->rol,
-            'is_active' => $request->is_active,
+            'is_active' => $request->is_active ?? true,
             'celular' => $request->celular,
         ]);
 
@@ -99,9 +99,10 @@ class UserController extends Controller
     // Devuelve la lista de usuarios en JSON
     public function getUsuarios()
     {
-        return User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular')
+        return User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular','password')
         ->where('is_active', true)
         ->orderBy('nombres')
-        ->get();    }
+        ->get();    
+    }
 
 }
