@@ -71,7 +71,7 @@ function handleImageError() {
         <!-- Navbar -->
         <header class="flex items-center justify-between p-6">
             <div class="text-2xl font-bold">
-                <img src="../../../public/images/Logo_t.png" alt="" width="160px" class="w-16 sm:w-24 md:w-48 lg:w-48" >
+                <img src="/img/UDHdark.webp" alt="" width="160px" class="w-16 sm:w-24 md:w-48 lg:w-48" >
             </div>
             <nav>
                 <ul class="flex gap-6">
