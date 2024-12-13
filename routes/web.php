@@ -3,6 +3,7 @@
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\LaboratorioController;
 use App\Http\Controllers\RecursoController;
+use App\Http\Controllers\CatalogoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AreaController;
@@ -66,6 +67,9 @@ Route::middleware([
     Route::post('/recursos', [RecursoController::class, 'store'])->name('recursos.store');
     Route::put('/recursos/{recurso}', [RecursoController::class, 'update'])->name('recursos.update');
     Route::delete('/recursos/{recurso}', [RecursoController::class, 'destroy'])->name('recursos.destroy');
+
+    // Catalogo
+    Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
 
     // Áreas
     // Route::apiResource('areas', AreaController::class);
