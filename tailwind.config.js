@@ -17,20 +17,16 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Roboto', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                primary: '#12A08D',
-                udh_1: '#2EBAA0',
-                udh_3: '#001B4A',
+                primario: "#2EBAA0",
+                secundario: "#FBBE1D",
+                alterno: "#001B4A",
             },
         },
     },
+    darkMode: 'false',
 
-    plugins: [
-        forms({
-            strategy: 'class',
-        }),
-        typography,
-    ],
+    plugins: [forms, typography],
 };
