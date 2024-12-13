@@ -1,7 +1,7 @@
 <script setup>
   import { ref, watch, h, defineProps } from 'vue';
   import { usePage } from '@inertiajs/vue3';
-  import { HomeOutlined, UserOutlined, CalendarOutlined, ClockCircleOutlined, CodeSandboxOutlined, SettingFilled, HeartFilled, HeatMapOutlined, HeartOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue';
+  import { HomeOutlined, UserOutlined, CalendarOutlined, ClockCircleOutlined, CodeSandboxOutlined, SettingFilled, QuestionCircleOutlined, MenuOutlined } from '@ant-design/icons-vue';
   import { Button } from 'ant-design-vue';
 
   const props = defineProps({title: {type: String}})
@@ -15,14 +15,20 @@
   <div class="containerx h-screen overflow-y-hidden grid">
     <nav class="flex flex-col justify-between">
       <div>
-        <div class="flex p-3 items-center gap-3">
-          <div class="w-8 h-8 bg-neutral-400 rounded-2xl">
-            <img src="" class="" id=""/>
+
+        <div class="flex p-2 items-center gap-1 justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-neutral-400 rounded-2xl">
+              <img src="" class="" id=""/>
+            </div>
+            <div class="flex flex-col">
+              <h1 class="text-sm text-blue-500">Laboratorio</h1>
+              <p class="font-bold">Transformación Digital</p>
+            </div>
           </div>
-          <div class="flex flex-col">
-            <h1 class="text-sm text-blue-500">Laboratorio</h1>
-            <p class="font-bold">Transformación Digital</p>
-          </div>
+          <button>
+            <MenuOutlined />
+          </button>
         </div>
         <div class="flex flex-col p-3 gap-3">
           <Button :type="isActive('/asistenas')" href="/" class="flex items-center gap-2">
@@ -78,12 +84,13 @@
   }
   @media (max-width:600px) {
     .containerx {
-    grid-template-columns: 1fr;
+      grid-template-columns: 1fr;
+    }
 
-  }
-  nav {
-    display: none;
+    nav {
+      display: none;
+    }
   }
 
-  }
+
 </style>

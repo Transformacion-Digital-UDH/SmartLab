@@ -1,3 +1,4 @@
+
 function formatDate(date) {
   const year = date.getFullYear().toString().slice(-2); // Obtener los últimos 2 dígitos del año
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes (1-12), con 2 dígitos
