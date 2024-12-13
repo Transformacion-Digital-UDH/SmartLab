@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-[x-cloak] {
+svg {
+    display: block;
+}
+
+/* AntDesign Icons config
+.anticon {
+    display: block !important;
+} */
+
+.scrollbar-none::-webkit-scrollbar {
     display: none;
 }
+

@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -18,15 +19,24 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
 
+    use HasRoles;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nombres',
+        'apellidos',
+        'dni',
         'email',
+        'celular',
         'password',
+        'codigo',
+        'celular',
+        'rol',
+        'is_active',
     ];
 
     /**
@@ -62,4 +72,33 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Un usuario puede tener muchas asistencias.
+    public function asistencias()
+    {
+        return $this->hasMany(Asistencia::class);
+    }
+
+    // Un usuario puede tener muchas reservas.
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class);
+    }
+
+    // Un usuario puede participar en muchos proyectos.
+    public function miembroProyectos()
+    {
+        return $this->hasMany(MiembroProyecto::class);
+    }
+
+    public function laboratoriosResponsable()
+    {
+        return $this->hasMany(Laboratorio::class, 'responsable_id');
+    }
+
+    public function laboratoriosCoordinador()
+    {
+        return $this->hasMany(Laboratorio::class, 'coordinador_id');
+    }
+
 }

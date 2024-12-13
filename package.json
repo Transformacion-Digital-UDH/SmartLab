@@ -6,7 +6,7 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@inertiajs/vue3": "^1.0.14",
+        "@inertiajs/vue3": "^1.2.0",
         "@tailwindcss/forms": "^0.5.7",
         "@tailwindcss/typography": "^0.5.10",
         "@vitejs/plugin-vue": "^5.0.0",
@@ -15,7 +15,12 @@
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.32",
         "tailwindcss": "^3.4.0",
+        "unplugin-vue-components": "^0.27.4",
         "vite": "^5.0",
         "vue": "^3.3.13"
+    },
+    "dependencies": {
+        "ant-design-vue": "^4.2.6",
+        "dayjs": "^1.11.13"
     }
 }

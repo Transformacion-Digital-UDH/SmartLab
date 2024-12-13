@@ -5,6 +5,10 @@ import { Link } from '@inertiajs/vue3';
 const props = defineProps({
     href: String,
     active: Boolean,
+    as: {
+        type: String,
+        default: 'a', // Por defecto se renderiza como un enlace
+    },
 });
 
 const classes = computed(() => {
@@ -15,7 +19,11 @@ const classes = computed(() => {
 </script>
 
 <template>
-    <Link :href="href" :class="classes">
+    <component
+        :is="as === 'a' ? Link : as"
+        :href="as === 'a' ? href : null"
+        :class="classes"
+    >
         <slot />
-    </Link>
+    </component>
 </template>

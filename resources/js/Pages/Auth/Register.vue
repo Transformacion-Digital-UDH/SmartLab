@@ -2,14 +2,16 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Checkbox from '@/Components/Checkbox.vue';
 
 const form = useForm({
-    name: '',
+    nombres: '',
+    apellidos: '',
+    dni: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -24,35 +26,59 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Register" />
+    <Head title="Registrarse" />
 
     <AuthenticationCard>
         <template #logo>
             <AuthenticationCardLogo />
         </template>
 
+        <div class="text-center mb-3">
+            <h1 class="block text-2xl font-bold text-udh_3">Registrarse</h1>
+            <p class="mt-3 text-sm text-gray-600">
+                ¿Ya tienes una cuenta?
+                <Link class="text-udh_1 hover:underline decoration-2 font-semibold" :href="route('login')">
+                    Inicia sesión aquí
+                </Link>
+            </p>
+        </div>
+
         <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
+            <div >
+                <InputLabel for="nombres" value="Nombre" />
                 <TextInput
-                    id="name"
-                    v-model="form.name"
+                    id="nombres"
+                    v-model="form.nombres"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="block mt-1 w-full"
                     required
                     autofocus
-                    autocomplete="name"
+                    autocomplete="given-name"
                 />
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError class="mt-2" :message="form.errors.nombres" />
             </div>
 
             <div class="mt-4">
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="dni" value="DNI" />
+                <TextInput
+                    id="dni"
+                    v-model="form.dni"
+                    type="text"
+                    class="block mt-1 w-full"
+                    required
+                    maxlength="8"
+                    autocomplete="dni"
+                />
+                <InputError class="mt-2" :message="form.errors.dni" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="email" value="Correo electrónico" />
                 <TextInput
                     id="email"
                     v-model="form.email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="block mt-1 w-full"
                     required
                     autocomplete="username"
                 />
@@ -60,12 +86,12 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" value="Contraseña" />
                 <TextInput
                     id="password"
                     v-model="form.password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block mt-1 w-full"
                     required
                     autocomplete="new-password"
                 />
@@ -73,12 +99,12 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
+                <InputLabel for="password_confirmation" value="Confirmar contraseña" />
                 <TextInput
                     id="password_confirmation"
                     v-model="form.password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block mt-1 w-full"
                     required
                     autocomplete="new-password"
                 />
@@ -87,26 +113,26 @@ const submit = () => {
 
             <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
                 <InputLabel for="terms">
-                    <div class="flex items-center">
-                        <Checkbox id="terms" v-model:checked="form.terms" name="terms" required />
+                    <div class="flex items-start">
+                        <Checkbox id="terms" v-model="form.terms" name="terms" required class="hidden" />
 
-                        <div class="ms-2">
-                            I agree to the <a target="_blank" :href="route('terms.show')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">Privacy Policy</a>
+                        <div class="text-xs text-center">
+                            Al registrarte, aceptas nuestras
+                            <Link target="_blank" :href="route('terms.show')" class="underline text-gray-600 hover:text-udh_1 rounded-md focus:outline-none hover:font-bold">
+                                Términos de Servicio
+                            </Link>
+                            y nuestra
+                            <Link target="_blank" :href="route('policy.show')" class="underline text-gray-600 hover:text-udh_1 rounded-md focus:outline-none hover:font-bold">
+                                Política de Privacidad
+                            </Link>.
                         </div>
                     </div>
-                    <InputError class="mt-2" :message="form.errors.terms" />
                 </InputLabel>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link :href="route('login')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                    Already registered?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </PrimaryButton>
-            </div>
+            <PrimaryButton class="w-full mt-6 py-3 justify-center" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Registrarse
+            </PrimaryButton>
         </form>
     </AuthenticationCard>
 </template>
