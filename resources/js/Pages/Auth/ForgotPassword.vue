@@ -1,45 +1,47 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { Head, Link, useForm } from "@inertiajs/vue3";
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/Inputs/InputError.vue";
+import InputLabel from "@/Components/Inputs/InputLabel.vue";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
+import InputText from "@/Components/Inputs/InputText.vue";
 
 defineProps({
     status: String,
 });
 
 const form = useForm({
-    email: '',
+    email: "",
 });
 
 const submit = () => {
-    form.post(route('password.email'));
+    form.post(route("password.email"));
 };
 </script>
 
 <template>
-    <Head title="Reestablecer contraseña" />
+    <Head :title="$t('Olvidó')" />
 
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            ¿Olvidaste tu contraseña? Bríndenos su correo electrónico y le enviaremos un enlace para restablecer su contraseña.
+    <GuestLayout>
+        <div class="text-center mb-5">
+            <h1 class="block text-xl font-bold text-alterno">
+                ¿Olvidó su contraseña?
+            </h1>
         </div>
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
+        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+            No hay problema. Ingresa tu correo electrónico y te enviaremos un
+            enlace para que la restablezcas y elijas una nueva.
+        </div>
+
+        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
 
         <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-                <TextInput
+            <div class="mt-4">
+                <InputLabel for="email" :value="$t('Email')" />
+                <InputText
                     id="email"
                     v-model="form.email"
                     type="email"
@@ -51,11 +53,20 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Enviar
+            <div class="flex items-center justify-between mt-5">
+                <Link
+                    :href="route('login')"
+                    class="text-primario hover:underline decoration-2 font-bold"
+                >
+                    {{ $t("Log in") }}
+                </Link>
+                <PrimaryButton
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                >
+                    {{ $t("Restablecer") }}
                 </PrimaryButton>
             </div>
         </form>
-    </AuthenticationCard>
+    </GuestLayout>
 </template>
