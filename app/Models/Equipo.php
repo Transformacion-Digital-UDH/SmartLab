@@ -37,4 +37,10 @@ class Equipo extends Model
     {
         return $this->hasMany(Reserva::class);
     }
+
+    // Relación con las fotos del equipo.
+    public function fotos()
+    {
+        return $this->hasMany(FotoEquipo::class);
+    }
 }

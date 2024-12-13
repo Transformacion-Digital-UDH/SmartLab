@@ -33,7 +33,7 @@
             </FormItem>
 
             <!-- Campo Área -->
-            <FormItem label="Área" name="area_id" :rules="[{ required: false, message: 'Seleccione un área' }]">
+            <FormItem label="Área" name="area_id">
                 <Select
                     v-model:value="recurso.area_id"
                     placeholder="Seleccione un área"
@@ -54,6 +54,32 @@
                 />
             </FormItem>
 
+            <!-- Cargar fotos del recurso -->
+            <FormItem label="Fotos del recurso">
+                <Upload
+                    list-type="picture-card"
+                    :file-list="fileList"
+                    @preview="manejarPrevisualizacion"
+                    @change="manejarCambio"
+                    :before-upload="() => false"
+                >
+                    <template #default>
+                        <div v-if="fileList.length < maxFiles">
+                            <PlusOutlined />
+                            <div style="margin-top: 8px">Subir</div>
+                        </div>
+                    </template>
+                </Upload>
+                <Modal
+                    :open="previewVisible"
+                    title="Vista previa"
+                    :footer="null"
+                    @cancel="manejarCancelacion"
+                >
+                    <img alt="Vista previa" style="width: 100%" :src="previewImage" />
+                </Modal>
+            </FormItem>
+
             <FormItem class="flex justify-end mb-0">
                 <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
                 <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
@@ -64,7 +90,8 @@
 
 <script setup>
 import { ref, watch, onMounted, defineProps, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, Button, message } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, Button, message, Upload } from 'ant-design-vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 
 const props = defineProps({
@@ -80,12 +107,14 @@ const props = defineProps({
             is_active: true,
             area_id: null,
             equipo_id: null,
+            fotos: [],
         }),
     },
     areas: Array,
     equipos: Array,
 });
 
+console.log('Recurso:', props.recurso);
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
 const recurso = ref({ ...props.recurso });
@@ -119,20 +148,89 @@ const buscarEquipo = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
 };
 
+const fileList = ref([]);
+const previewVisible = ref(false);
+const previewImage = ref('');
+const maxFiles = 5; // Máximo de fotos permitidas
+
+const manejarPrevisualizacion = (file) => {
+    previewImage.value = file.url || file.thumbUrl;
+    previewVisible.value = true;
+};
+
+const manejarCancelacion = () => {
+    previewVisible.value = false;
+};
+
+const manejarCambio = ({ fileList: newFileList }) => {
+    fileList.value = newFileList;
+};
+
+const cargarFotos = () => {
+    if (recurso.value.fotos && recurso.value.fotos.length > 0) {
+        fileList.value = recurso.value.fotos.map((foto) => ({
+            uid: foto,  // Asumiendo que las rutas son únicas
+            name: foto,
+            status: 'done',
+            url: `/storage/${foto.ruta}`,
+        }));
+    }
+};
+
 const enviarFormulario = async () => {
     cargando.value = true;
     try {
-        const response = await axios.put(route('recursos.update', props.recurso.id), recurso.value);
+        // Crear un FormData para incluir archivos y datos
+        const formData = new FormData();
+
+        // Emular el método PUT con `_method`
+        formData.append('_method', 'PUT');
+
+        // Agregar datos del recurso
+        Object.keys(recurso.value).forEach((key) => {
+            const value = recurso.value[key];
+            formData.append(key, value !== null && value !== undefined && value !== '' ? value : null);
+        });
+
+        // Agregar rutas de fotos existentes
+        recurso.value.fotos.forEach((foto) => {
+            formData.append('fotos[]', foto);
+        });
+
+        // Agregar imágenes
+        fileList.value.forEach((file) => {
+            formData.append('fotos[]', file.originFileObj || file);
+        });
+
+        // Inspeccionar el FormData antes de enviarlo
+        // Convertimos FormData a un objeto para visualizar sus valores en la consola
+        const formDataEntries = [];
+        formData.forEach((value, key) => {
+            formDataEntries.push({ key, value });
+        });
+        console.log("FormData enviado:", formDataEntries);
+
+        // Enviar solicitud con el método POST, pero con `_method` indicando PUT
+        const response = await axios.post(route('recursos.update', props.recurso.id), formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+
+        // Mostrar mensaje de éxito
         message.success('Recurso actualizado exitosamente');
         cerrarModal();
-        emitir('actualizar-tabla', response.data["recurso"]);
+        emitir('actualizar-tabla', response.data.recurso);
     } catch (error) {
+        // Manejar errores
         message.error('Error al actualizar el recurso');
         console.error('Error al guardar el recurso:', error);
     } finally {
+        // Restablecer el estado de carga
         cargando.value = false;
     }
 };
+
+
+
 
 watch(() => props.visible, (val) => {
     if (val) {
@@ -149,6 +247,8 @@ onMounted(() => {
         label: equipo.nombre,
         value: equipo.id,
     }));
+
+    cargarFotos();
 });
 
 </script>
