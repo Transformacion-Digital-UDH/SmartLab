@@ -26,21 +26,21 @@ const navigationLinks = [
 </script>
 
 <template>
-    <div class="flex z-50 shadow-sm">
-        <aside class="w-64 bg-white dark:bg-gray-800 h-screen flex-col border-r border-gray-200 dark:border-gray-600 hidden sm:flex">
+    <div class="z-50 flex shadow-sm">
+        <aside class="flex-col hidden w-64 h-screen bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-600 sm:flex">
             <!-- Logo y Título -->
             <div class="flex items-center px-4 h-[74px] border-b border-gray-200 dark:border-gray-600">
                 <Link :href="route('laboratorios.index')" class="flex items-center space-x-4">
                     <ApplicationMark class="w-auto h-9" />
                     <div class="flex flex-col">
-                        <h1 class="text-sm text-blue-500">Laboratorio</h1>
+                        <h1 class="text-sm text-blue-500">Laboratorio </h1>
                         <p class="text-sm">Transformación Digital</p>
                     </div>
                 </Link>
             </div>
 
             <!-- Lista de enlaces en columna con iconos -->
-            <nav class="flex flex-col px-4 py-6 space-y-4 flex-1">
+            <nav class="flex flex-col flex-1 px-4 py-6 space-y-4">
                 <NavLink
                     v-for="link in navigationLinks"
                     :key="link.route"
@@ -72,8 +72,8 @@ const navigationLinks = [
         </aside>
 
         <!-- Responsive toggle -->
-        <div class="sm:hidden fixed top-4 right-4 z-50">
-            <button class="p-2 bg-gray-800 text-white rounded-full shadow-lg" @click="showingNavigationDropdown = !showingNavigationDropdown">
+        <div class="fixed z-50 sm:hidden top-4 right-4">
+            <button class="p-2 text-white bg-gray-800 rounded-full shadow-lg" @click="showingNavigationDropdown = !showingNavigationDropdown">
                 <svg v-if="!showingNavigationDropdown" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -100,7 +100,7 @@ const navigationLinks = [
                         <component :is="link.icon" class="text-lg me-2" />
                         {{ link.name }}
                     </ResponsiveNavLink>
-                    <div class="border-t border-gray-200 dark:border-gray-600 my-2"></div>
+                    <div class="my-2 border-t border-gray-200 dark:border-gray-600"></div>
                     <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">Perfil</ResponsiveNavLink>
                     <form @submit.prevent="logout">
                         <ResponsiveNavLink as="button">Cerrar sesión</ResponsiveNavLink>

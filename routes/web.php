@@ -15,6 +15,13 @@ use App\Http\Controllers\UserController;
 
 // Página principal
 Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+    ]);
+});
+
+// Login
+Route::get('/login', function () {
     return Inertia::render('Auth/Login', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
