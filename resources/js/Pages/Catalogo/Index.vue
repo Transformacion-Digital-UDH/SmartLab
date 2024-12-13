@@ -53,7 +53,7 @@
 					</template>
 				</CardMeta>
 				<div>
-					<Button type="primary" class="">Reservar</Button>
+					<Button type="primary" class="w-full">Reservar</Button>
 				</div>
 			</Card>
 		</div>
