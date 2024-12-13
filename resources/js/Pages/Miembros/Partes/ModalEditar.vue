@@ -35,13 +35,6 @@
                 />
             </FormItem>
 
-            <FormItem label="Activo" name="is_active">
-                <Select v-model:value="miembro.is_active" placeholder="Seleccione estado">
-                    <Select.Option value="1">Activo</Select.Option>
-                    <Select.Option value="0">Inactivo</Select.Option>
-                </Select>
-            </FormItem>
-
             <FormItem label="Código" name="codigo">
                 <Input v-model:value="miembro.codigo" placeholder="Ingrese el código" />
             </FormItem>

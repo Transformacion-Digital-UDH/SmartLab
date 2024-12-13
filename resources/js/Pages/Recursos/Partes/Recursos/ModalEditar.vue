@@ -152,6 +152,7 @@ const fileList = ref([]);
 const previewVisible = ref(false);
 const previewImage = ref('');
 const maxFiles = 5; // Máximo de fotos permitidas
+const fotosEliminadas = ref([]);
 
 const manejarPrevisualizacion = (file) => {
     previewImage.value = file.url || file.thumbUrl;
@@ -164,6 +165,7 @@ const manejarCancelacion = () => {
 
 const manejarCambio = ({ fileList: newFileList }) => {
     fileList.value = newFileList;
+    console.log('Nueva lista de archivos:', fileList.value);
 };
 
 const cargarFotos = () => {
@@ -175,7 +177,9 @@ const cargarFotos = () => {
             url: `/storage/${foto.ruta}`,
         }));
     }
+    console.log('Fotos:', fileList.value);
 };
+
 
 const enviarFormulario = async () => {
     cargando.value = true;
@@ -183,7 +187,7 @@ const enviarFormulario = async () => {
         // Crear un FormData para incluir archivos y datos
         const formData = new FormData();
 
-        // Emular el método PUT con `_method`
+        // Emular el método PUT con '_method'
         formData.append('_method', 'PUT');
 
         // Agregar datos del recurso
@@ -202,15 +206,7 @@ const enviarFormulario = async () => {
             formData.append('fotos[]', file.originFileObj || file);
         });
 
-        // Inspeccionar el FormData antes de enviarlo
-        // Convertimos FormData a un objeto para visualizar sus valores en la consola
-        const formDataEntries = [];
-        formData.forEach((value, key) => {
-            formDataEntries.push({ key, value });
-        });
-        console.log("FormData enviado:", formDataEntries);
-
-        // Enviar solicitud con el método POST, pero con `_method` indicando PUT
+        // Enviar solicitud con el método POST, pero con '_method' indicando PUT
         const response = await axios.post(route('recursos.update', props.recurso.id), formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
@@ -228,6 +224,7 @@ const enviarFormulario = async () => {
         cargando.value = false;
     }
 };
+
 
 
 

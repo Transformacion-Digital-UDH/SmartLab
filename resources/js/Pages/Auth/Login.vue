@@ -104,9 +104,8 @@ const submit = () => {
             </div>
 
             <PrimaryButton class="w-full mt-6 py-3 justify-center bg-udh_3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Iniciar sesión
+                Iniciar sesións
             </PrimaryButton>
         </form>
     </AuthenticationCard>
 </template>
-
