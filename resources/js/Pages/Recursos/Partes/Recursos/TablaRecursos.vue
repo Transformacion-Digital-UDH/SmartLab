@@ -27,6 +27,7 @@
             :dataSource="recursosFiltrados"
             rowKey="id"
             :pagination="false"
+            :scroll="{ x: 800 }"
         >
             <template #bodyCell="{ column, record }">
                 <!-- Renderizar Tags para Tipo -->
@@ -41,6 +42,17 @@
                     <Tag :color="colorEstado(record.estado)" :bordered="false">
                         {{ record.estado }}
                     </Tag>
+                </template>
+
+                <!-- Renderizar Primera Foto -->
+                <template v-if="column.key === 'foto'">
+                    <img
+                        v-if="record.fotos && record.fotos.length > 0"
+                        :src="`/storage/${record.fotos[0].ruta}`"
+                        alt="Primera foto"
+                        class="w-16 h-16 object-cover rounded"
+                    />
+                    <span v-else>No tiene</span>
                 </template>
 
                 <!-- Acciones -->
@@ -85,6 +97,7 @@ const recursosFiltrados = computed(() =>
 // Definir las columnas de la tabla
 const columnas = [
     { title: "Código", dataIndex: "codigo", key: "codigo", width: 100 },
+    { title: "Foto", key: "foto", width: 120 },
     {
         title: "Nombre",
         dataIndex: "nombre",
@@ -165,6 +178,5 @@ const confirmarEliminacion = (recurso) => {
         },
     });
 }
-
 
 </script>

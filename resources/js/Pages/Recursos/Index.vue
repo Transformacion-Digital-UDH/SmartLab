@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8 px-4">
             <Tabs default-active-key="1" type="line" >
                 <TabPane key="1" tab="Recursos">
                     <TablaRecursos
@@ -24,6 +24,7 @@
 
             <!-- Modal para agregar recurso -->
             <ModalAgregar
+                v-if="mostrarModalCrear"
                 v-model:visible="mostrarModalCrear"
                 :areas="areas"
                 :equipos="equipos"

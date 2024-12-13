@@ -101,11 +101,6 @@ const opcionesEstado = ref([
     { label: 'Prestado', value: 'Prestado' },
 ]);
 
-const opcionesActivo = ref([
-    { label: 'Sí', value: true },
-    { label: 'No', value: false },
-]);
-
 const opcionesAreas = ref([]);
 const opcionesEquipos = ref([]);
 

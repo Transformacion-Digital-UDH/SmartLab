@@ -44,4 +44,11 @@ class Recurso extends Model
     {
         return $this->hasMany(Uso::class);
     }
+
+    // Relación con las fotos del recurso.
+
+    public function fotos()
+    {
+        return $this->hasMany(FotoRecurso::class);
+    }
 }

@@ -85,3 +85,5 @@ Route::middleware([
     Route::delete('/proyectos/{proyecto}/participantes/{participanteId}', [ProyectoController::class, 'quitarParticipante'])->name('proyectos.quitar-participante');
 
 });
+
+
