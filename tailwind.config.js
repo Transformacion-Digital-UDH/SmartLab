@@ -28,5 +28,11 @@ export default {
     },
     darkMode: 'false',
 
-    plugins: [forms, typography],
+    plugins: [
+        forms({
+            strategy: 'class',
+        }),
+        typography,
+    ],
+
 };
