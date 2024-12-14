@@ -37,15 +37,16 @@
                 </FormItem>
             </div>
 
-            <div class="flex gap-x-3">
+            <div class="flex gap-x-3 w-full">
                 <!-- Campo Área -->
                 <FormItem label="Área" name="area_id" class="w-full">
                     <Select
                         v-model:value="recurso.area_id"
-                        placeholder="Seleccione un área"
+                        placeholder="Seleccionar"
                         :options="opcionesAreas"
                         show-search
                         :filter-option="buscarArea"
+                        allowClear
                     />
                 </FormItem>
 
@@ -53,13 +54,39 @@
                 <FormItem label="Equipo (opcional)" name="equipo_id" class="w-full">
                     <Select
                         v-model:value="recurso.equipo_id"
-                        placeholder="Seleccione un equipo"
+                        placeholder="Seleccionar"
                         :options="opcionesEquipos"
                         show-search
                         :filter-option="buscarEquipo"
+                        allowClear
                     />
                 </FormItem>
             </div>
+
+            <!-- Fotos del recurso -->
+            <FormItem label="Fotos del recurso">
+                <Upload
+                    list-type="picture-card"
+                    :file-list="fileList"
+                    @preview="manejarPrevisualizacion"
+                    @remove="quitarFoto"
+                    :before-upload="procesarFotoNueva"
+                    :multiple="true"
+                >
+                    <div v-if="fileList.length < maxFiles">
+                        <PlusOutlined />
+                        <div style="margin-top: 8px">Subir</div>
+                    </div>
+                </Upload>
+                <Modal
+                    :open="previewVisible"
+                    title="Vista previa"
+                    :footer="null"
+                    @cancel="cerrarModalPrevisualizacion"
+                >
+                    <img alt="Vista previa" style="width: 100%" :src="previewImage" />
+                </Modal>
+            </FormItem>
 
             <FormItem class="flex justify-end mb-0">
                 <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
@@ -72,7 +99,8 @@
 
 <script setup>
 import { ref, watch, onMounted, defineProps, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, Button, message } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, Button, message, Upload } from 'ant-design-vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 
 const props = defineProps({
@@ -86,10 +114,10 @@ const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 const recurso = ref({
     nombre: '',
     codigo: '',
-    tipo: '',
-    estado: '',
+    tipo: 'No reservable',
+    estado: 'Activo',
     descripcion: '',
-    is_active: true,
+    is_active: 'True',
     area_id: null,
     equipo_id: null,
 });
@@ -124,11 +152,57 @@ const buscarEquipo = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
 };
 
+const fileList = ref([]);
+const previewVisible = ref(false);
+const previewImage = ref('');
+const maxFiles = 5; // Máximo de fotos permitidas
+
+const manejarPrevisualizacion = (file) => {
+    previewImage.value = file.url || file.thumbUrl;
+    previewVisible.value = true;
+};
+
+// Cerrar el modal de previsualización
+const cerrarModalPrevisualizacion = () => {
+    previewVisible.value = false;
+};
+
+// Procesar foto nueva antes de subir
+const procesarFotoNueva = (file) => {
+    fileList.value.push({
+        uid: file.uid,
+        name: file.name,
+        status: 'done',
+        originFileObj: file,
+    });
+    return false; // Evita la subida automática
+};
+
+// Marcar una foto como eliminada
+const quitarFoto = (file) => {
+    fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
+};
+
 // Envía el formulario de creación del recurso
 const enviarFormulario = async () => {
     cargando.value = true;
+
+    const formData = new FormData();
+    Object.keys(recurso.value).forEach((key) => {
+        formData.append(key, recurso.value[key] || '');
+    });
+
+    // Agregar fotos nuevas
+    fileList.value.forEach((file) => {
+        if (file.originFileObj) {
+            formData.append('fotos[]', file.originFileObj);
+        }
+    });
+
     try {
-        const response = await axios.post(route('recursos.store'), recurso.value);
+        const response = await axios.post(route('recursos.store'), formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
         message.success('Recurso agregado exitosamente');
         cerrarModal();
         emitir('actualizar-tabla', response.data["recurso"]);

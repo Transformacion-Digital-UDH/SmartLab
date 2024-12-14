@@ -34,6 +34,10 @@ class RecursoController extends Controller
     // Guardar un nuevo recurso
     public function store(Request $request)
     {
+        $request->merge([
+            'is_active' => filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN)
+        ]);
+        // Validación incluyendo las imágenes
         $request->validate([
             'nombre' => 'required|string|max:100',
             'codigo' => 'nullable|string|max:20',
@@ -43,9 +47,19 @@ class RecursoController extends Controller
             'is_active' => 'boolean',
             'area_id' => 'nullable|exists:areas,id',
             'equipo_id' => 'nullable|exists:equipos,id',
+            'fotos.*' => 'image',
         ]);
 
-        Recurso::create($request->all());
+        // Crear el recurso
+        $recurso = Recurso::create($request->all());
+
+        // Procesar y guardar las imágenes si se enviaron
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $imagen) {
+                $ruta = $imagen->store('recursos', 'public');
+                $recurso->fotos()->create(['ruta' => $ruta]);
+            }
+        }
     }
 
     // Actualizar un recurso existente
@@ -61,15 +75,13 @@ class RecursoController extends Controller
             'is_active' => 'boolean',
             'area_id' => 'nullable|exists:areas,id',
             'equipo_id' => 'nullable|exists:equipos,id',
-            'fotos_nuevas.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Validar fotos nuevas
-            'fotos_eliminadas' => 'array', // Validar IDs de fotos eliminadas
+            'fotos_nuevas.*' => 'image', // Validar fotos nuevas
+            'fotos_eliminadas' => 'array',
             'fotos_eliminadas.*' => 'integer|exists:fotos_recursos,id', // Validar que existan en la BD
         ]);
 
         // Actualizar datos del recurso
-        $recurso->update($request->only([
-            'nombre', 'codigo', 'tipo', 'descripcion', 'estado', 'is_active', 'area_id', 'equipo_id',
-        ]));
+        $recurso->update($request->all());
 
         // Eliminar fotos enviadas para eliminación
         if ($request->has('fotos_eliminadas')) {
@@ -90,12 +102,6 @@ class RecursoController extends Controller
                 $recurso->fotos()->create(['ruta' => $ruta]);
             }
         }
-
-        // Responder con el recurso actualizado
-        return response()->json([
-            'mensaje' => 'Recurso actualizado exitosamente.',
-            'recurso' => $recurso->load('fotos'), // Incluye las fotos actualizadas
-        ], 200);
     }
 
 

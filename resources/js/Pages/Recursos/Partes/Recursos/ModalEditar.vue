@@ -42,10 +42,11 @@
                 <FormItem label="Área" name="area_id" class="w-full">
                     <Select
                         v-model:value="recurso.area_id"
-                        placeholder="Seleccione un área"
+                        placeholder="Seleccionar"
                         :options="opcionesAreas"
                         show-search
                         :filter-option="buscarArea"
+                        allowClear
                     />
                 </FormItem>
 
@@ -53,10 +54,11 @@
                 <FormItem label="Equipo (opcional)" name="equipo_id" class="w-full">
                     <Select
                         v-model:value="recurso.equipo_id"
-                        placeholder="Seleccione un equipo"
+                        placeholder="Seleccionar"
                         :options="opcionesEquipos"
                         show-search
                         :filter-option="buscarEquipo"
+                        allowClear
                     />
                 </FormItem>
             </div>
@@ -107,7 +109,6 @@ const props = defineProps({
     equipos: Array,
 });
 
-console.log('Recurso:', props.recurso);
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
 const recurso = ref({ ...props.recurso });
@@ -184,7 +185,6 @@ const marcarFotoEliminada = (file) => {
         fotosEliminadas.value.push(file.uid);
     }
     fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
-    console.log('Fotos eliminadas:', fotosEliminadas.value);
 };
 
 // Enviar formulario al backend
