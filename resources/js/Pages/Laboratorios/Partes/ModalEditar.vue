@@ -84,6 +84,7 @@ opcionesResponsables.value = props.responsables.map(responsable => ({
     label: responsable.nombres,
     value: responsable.id,
 }));
+console.log(opcionesResponsables.value);
 
 // Cierra el modal y emite el evento para cerrar en el componente padre
 const cerrarModal = () => {

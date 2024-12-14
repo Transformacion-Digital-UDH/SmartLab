@@ -8,7 +8,7 @@
     AppstoreAddOutlined,
     EditOutlined,
   } from "@ant-design/icons-vue";
-  
+
   const props = defineProps({
     asistencias: Array,
   });
@@ -17,35 +17,31 @@
 
   // Definir las columnas de la tabla de laboratorios
   const columnas = [
-    { 
-        title: "Nombres", 
+    {
+        title: "Nombres",
         dataIndex: "nombres",
-        key: "nombres", 
-        width: 120,
+        key: "nombres",
         sorter: (a, b) => a.nombres.localeCompare(b.nombre),
     },
     {
         title: "DNI",
         dataIndex: "dni",
         key: "dni",
-        width: 100
     },
     {
         title: "Tipo",
         dataIndex: "tipo",
         key: "tipo",
-        width: 80,
     },
     {
         title: "Rol",
         dataIndex: "rol",
         key: "rol",
         sorter: (a, b) => a.rol.localeCompare(b.nombre),
-        width: 120,
     },
-    { title: "Entrada", dataIndex: "fecha_entrada", key: "entrada", width: 100 },
-    { title: "Salida", dataIndex: "fecha_salida", key: "salida", width: 100 },
-    { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
+    { title: "Entrada", dataIndex: "fecha_entrada", key: "entrada", width: 150 },
+    { title: "Salida", dataIndex: "fecha_salida", key: "salida", width: 150 },
+    { title: "Acciones", key: "acciones", fixed: "right", width: 100 },
   ];
 
   // Emitir eventos para editar, ver áreas y eliminar
@@ -74,7 +70,7 @@
             },
     });
   };
-  
+
 </script>
 <template>
   <Table :columns="columnas" :data-source="asistencias" :pagination="false" :scroll="{ y: '70vh' }">
@@ -130,17 +126,11 @@
             </Tag>
         </template>
         <template v-if="column.key === 'acciones'">
-            <div class="flex gap-2 justify-end">
-              <EditOutlined
-                v-if="record.salida == null"
-                @click="editar(record)"
-                class="text-green-600 ml-2"
-              />
-              <DeleteOutlined
+            <FormOutlined @click="editar(record)" class="text-blue-600" />
+            <DeleteOutlined
                 @click="confirmarEliminacion(record)"
                 class="text-red-600 ml-2"
-              />
-            </div>
+            />
         </template>
     </template>
   </Table>

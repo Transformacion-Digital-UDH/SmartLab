@@ -5,54 +5,61 @@
         @cancel="cerrarModal"
         centered
         :footer="null"
+        width="650px"
     >
         <Form layout="vertical" @finish="enviarFormulario" :model="recurso">
-            <!-- Campo Nombre -->
-            <FormItem label="Nombre" name="nombre" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
-                <Input v-model:value="recurso.nombre" placeholder="Ingrese el nombre" autofocus />
-            </FormItem>
+            <div class="flex gap-x-3">
+                <!-- Campo Código -->
+                <FormItem label="Código" name="codigo" class="w-1/5">
+                    <Input v-model:value="recurso.codigo" placeholder="Ingrese el código" />
+                </FormItem>
 
-            <!-- Campo Código -->
-            <FormItem label="Código" name="codigo">
-                <Input v-model:value="recurso.codigo" placeholder="Ingrese el código" />
-            </FormItem>
-
-            <!-- Campo Tipo -->
-            <FormItem label="Tipo" name="tipo" :rules="[{ required: true, message: 'Seleccione el tipo' }]">
-                <Select v-model:value="recurso.tipo" placeholder="Seleccione el tipo" :options="opcionesTipo" />
-            </FormItem>
-
-            <!-- Campo Estado -->
-            <FormItem label="Estado" name="estado" :rules="[{ required: true, message: 'Seleccione el estado' }]">
-                <Select v-model:value="recurso.estado" placeholder="Seleccione el estado" :options="opcionesEstado" />
-            </FormItem>
+                <!-- Campo Nombre -->
+                <FormItem label="Nombre" name="nombre" class="w-4/5" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
+                    <Input v-model:value="recurso.nombre" placeholder="Ingrese el nombre" />
+                </FormItem>
+            </div>
 
             <!-- Campo Descripción -->
             <FormItem label="Descripción" name="descripcion">
-                <Input v-model:value="recurso.descripcion" placeholder="Ingrese una descripción" />
+                <Input.TextArea v-model:value="recurso.descripcion" placeholder="Ingrese una descripción" />
             </FormItem>
 
-            <!-- Campo Área -->
-            <FormItem label="Área" name="area_id" :rules="[{ required: false, message: 'Seleccione un área' }]">
-                <Select
-                    v-model:value="recurso.area_id"
-                    placeholder="Seleccione un área"
-                    :options="opcionesAreas"
-                    show-search
-                    :filter-option="buscarArea"
-                />
-            </FormItem>
+            <div class="flex gap-x-3">
+                <!-- Campo Tipo -->
+                <FormItem label="Tipo" name="tipo" class="w-full" :rules="[{ required: true, message: 'Seleccione el tipo' }]">
+                    <Select v-model:value="recurso.tipo" placeholder="Seleccione el tipo" :options="opcionesTipo" />
+                </FormItem>
 
-            <!-- Campo Equipo -->
-            <FormItem label="Equipo (opcional)" name="equipo_id">
-                <Select
-                    v-model:value="recurso.equipo_id"
-                    placeholder="Seleccione un equipo"
-                    :options="opcionesEquipos"
-                    show-search
-                    :filter-option="buscarEquipo"
-                />
-            </FormItem>
+                <!-- Campo Estado -->
+                <FormItem label="Estado actual" name="estado" class="w-full" :rules="[{ required: true, message: 'Seleccione el estado' }]">
+                    <Select v-model:value="recurso.estado" placeholder="Seleccione el estado" :options="opcionesEstado" />
+                </FormItem>
+            </div>
+
+            <div class="flex gap-x-3">
+                <!-- Campo Área -->
+                <FormItem label="Área" name="area_id" class="w-full">
+                    <Select
+                        v-model:value="recurso.area_id"
+                        placeholder="Seleccione un área"
+                        :options="opcionesAreas"
+                        show-search
+                        :filter-option="buscarArea"
+                    />
+                </FormItem>
+
+                <!-- Campo Equipo -->
+                <FormItem label="Equipo (opcional)" name="equipo_id" class="w-full">
+                    <Select
+                        v-model:value="recurso.equipo_id"
+                        placeholder="Seleccione un equipo"
+                        :options="opcionesEquipos"
+                        show-search
+                        :filter-option="buscarEquipo"
+                    />
+                </FormItem>
+            </div>
 
             <FormItem class="flex justify-end mb-0">
                 <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>

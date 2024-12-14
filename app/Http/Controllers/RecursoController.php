@@ -51,18 +51,7 @@ class RecursoController extends Controller
     // Actualizar un recurso existente
     public function update(Request $request, Recurso $recurso)
     {
-        Log::info('Request:', [
-            'fotos' => array_map(function($foto) {
-                // Si es un objeto, lo convertimos a JSON
-                if (is_object($foto)) {
-                    return json_decode(json_encode($foto), true); // Convertir objeto a array
-                }
-                return $foto;
-            }, $request->all()['fotos']),
-        ]);
-
-
-
+        // Validación de los datos del recurso
         $request->validate([
             'nombre' => 'required|string|max:100',
             'codigo' => 'nullable|string|max:20',
@@ -72,34 +61,43 @@ class RecursoController extends Controller
             'is_active' => 'boolean',
             'area_id' => 'nullable|exists:areas,id',
             'equipo_id' => 'nullable|exists:equipos,id',
-            // 'imagenes.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validación de imágenes
+            'fotos_nuevas.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Validar fotos nuevas
+            'fotos_eliminadas' => 'array', // Validar IDs de fotos eliminadas
+            'fotos_eliminadas.*' => 'integer|exists:fotos_recursos,id', // Validar que existan en la BD
         ]);
 
         // Actualizar datos del recurso
-        $recurso->update($request->all());
+        $recurso->update($request->only([
+            'nombre', 'codigo', 'tipo', 'descripcion', 'estado', 'is_active', 'area_id', 'equipo_id',
+        ]));
 
-        // Fotos enviadas desde el frontend
-        $fotosNuevas = $request->file('fotos', []);
-        $fotosExistentes = $request->input('fotos', []);
-
-        // Eliminar las fotos que ya no están presentes en la lista
-        foreach ($recurso->fotos as $foto) {
-            if (!in_array($foto->ruta, $fotosExistentes)) {
-                // Eliminar foto del almacenamiento
-                Storage::disk('public')->delete($foto->ruta);
-                // Eliminar foto de la base de datos
-                $foto->delete();
+        // Eliminar fotos enviadas para eliminación
+        if ($request->has('fotos_eliminadas')) {
+            foreach ($request->fotos_eliminadas as $fotoId) {
+                $foto = $recurso->fotos()->find($fotoId);
+                if ($foto) {
+                    // Eliminar archivo físico y el registro en la base de datos
+                    Storage::disk('public')->delete($foto->ruta);
+                    $foto->delete();
+                }
             }
         }
 
-        // Agregar las fotos nuevas
-        foreach ($fotosNuevas as $imagen) {
-            $ruta = $imagen->store('recursos', 'public');
-            $recurso->fotos()->create([
-                'ruta' => $ruta,
-            ]);
+        // Agregar fotos nuevas
+        if ($request->hasFile('fotos_nuevas')) {
+            foreach ($request->file('fotos_nuevas') as $imagen) {
+                $ruta = $imagen->store('recursos', 'public');
+                $recurso->fotos()->create(['ruta' => $ruta]);
+            }
         }
+
+        // Responder con el recurso actualizado
+        return response()->json([
+            'mensaje' => 'Recurso actualizado exitosamente.',
+            'recurso' => $recurso->load('fotos'), // Incluye las fotos actualizadas
+        ], 200);
     }
+
 
     // Eliminar un recurso
     public function destroy(Recurso $recurso)

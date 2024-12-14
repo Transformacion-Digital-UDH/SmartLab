@@ -21,6 +21,15 @@
                 />
             </FormItem>
 
+            <FormItem label="Estado" name="estado" :rules="[{ required: true, message: 'Por favor seleccione un estado' }]">
+                <Select v-model:value="proyecto.estado" placeholder="Seleccione un estado">
+                    <Select.Option value="Sin iniciar">Sin iniciar</Select.Option>
+                    <Select.Option value="En proceso">En proceso</Select.Option>
+                    <Select.Option value="Completado">Completado</Select.Option>
+                    <Select.Option value="Cancelado">Cancelado</Select.Option>
+                </Select>
+            </FormItem>
+
             <FormItem label="Descripción" name="descripcion">
                 <Textarea v-model:value="proyecto.descripcion" placeholder="Ingrese una descripción" auto-size />
             </FormItem>
@@ -57,6 +66,7 @@ const props = defineProps({
             fecha_inicio: null,
             fecha_fin: null,
             responsable_id: '',
+            estado: 'Sin iniciar',
         }),
     },
 });
