@@ -21,7 +21,10 @@ class RecursoController extends Controller
             ->get();
 
         $areas = Area::orderBy('id', 'desc')->get();
-        $equipos = Equipo::orderBy('id', 'desc')->get();
+        $equipos = Equipo::with('area', 'recursos',  'fotos')
+            ->where('is_active', true)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return Inertia::render('Recursos/Index', [
             'recursos' => $recursos,

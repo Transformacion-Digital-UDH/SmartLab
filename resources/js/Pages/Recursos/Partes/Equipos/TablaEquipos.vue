@@ -1,12 +1,12 @@
 <template>
     <div>
-        <!-- Buscar y Agregar recurso -->
+        <!-- Buscar y Agregar equipo -->
         <div
             class="flex flex-col-reverse justify-end gap-y-4 mb-6 sm:flex-row sm:justify-between sm:items-center gap-x-4"
         >
             <InputSearch
                 v-model:value="valorBuscar"
-                placeholder="Buscar recurso por nombre o código"
+                placeholder="Buscar equipo por nombre o código"
                 class="w-full"
                 size="large"
             />
@@ -17,16 +17,17 @@
                 size="large"
                 class="font-medium"
             >
-                Agregar recurso
+                Agregar equipo
             </Button>
         </div>
 
-        <!-- Tabla de recursos -->
+        <!-- Tabla de equipos -->
         <Table
             :columns="columnas"
-            :dataSource="recursosFiltrados"
+            :dataSource="equiposFiltrados"
             rowKey="id"
             :pagination="false"
+            :scroll="{ x: 800 }"
         >
             <template #bodyCell="{ column, record }">
                 <!-- Renderizar Tags para Tipo -->
@@ -41,6 +42,17 @@
                     <Tag :color="colorEstado(record.estado)" :bordered="false">
                         {{ record.estado }}
                     </Tag>
+                </template>
+
+                <!-- Renderizar Primera Foto -->
+                <template v-if="column.key === 'foto'">
+                    <img
+                        v-if="record.fotos && record.fotos.length > 0"
+                        :src="`/storage/${record.fotos[0].ruta}`"
+                        alt="Primera foto"
+                        class="w-16 h-16 object-cover rounded"
+                    />
+                    <span v-else>No tiene</span>
                 </template>
 
                 <!-- Acciones -->
@@ -64,7 +76,7 @@ import { router } from "@inertiajs/vue3";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps({
-    recursos: Array,
+    equipos: Array,
 });
 
 const emitir = defineEmits(["editar", "actualizar-tabla", "abrir-crear"]);
@@ -72,19 +84,20 @@ const emitir = defineEmits(["editar", "actualizar-tabla", "abrir-crear"]);
 // Estado para el buscador
 const valorBuscar = ref("");
 
-// Recursos filtrados por nombre o código
-const recursosFiltrados = computed(() =>
+// Equipos filtrados por nombre o código
+const equiposFiltrados = computed(() =>
     !valorBuscar.value
-        ? props.recursos
-        : props.recursos.filter((recurso) =>
-            recurso.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
-            recurso.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
+        ? props.equipos
+        : props.equipos.filter((equipo) =>
+            equipo.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
+            equipo.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
         )
 );
 
 // Definir las columnas de la tabla
 const columnas = [
     { title: "Código", dataIndex: "codigo", key: "codigo", width: 100 },
+    { title: "Foto", key: "foto", width: 120 },
     {
         title: "Nombre",
         dataIndex: "nombre",
@@ -95,6 +108,7 @@ const columnas = [
         title: "Área",
         dataIndex: ["area", "nombre"],
         key: "area",
+        sorter: (a, b) => a.area.nombre.localeCompare(b.area.nombre)
     },
     {
         title: "Tipo",
@@ -134,34 +148,34 @@ const colorEstado = (estado) => {
     return colores[estado] || "default";
 }
 
-// Funciones para manejar eventos
-function editar(recurso) {
-    emitir("editar", recurso);
+function abrirModalCrear() {
+    emitir("abrir-crear");
 }
 
-const confirmarEliminacion = (recurso) => {
+// Funciones para manejar eventos
+function editar(equipo) {
+    emitir("editar", equipo);
+}
+
+const confirmarEliminacion = (equipo) => {
     Modal.confirm({
-        title: "¿Estás seguro de eliminar este recurso?",
-        content: `${recurso.nombre}`,
+        title: "¿Estás seguro de eliminar este equipo?",
+        content: `${equipo.nombre}`,
         okText: "Confirmar",
         cancelText: "Cancelar",
         onOk() {
-            router.delete(route("recursos.destroy", recurso), {
+            router.delete(route("equipos.destroy", equipo), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    message.success("Recurso eliminado exitosamente");
+                    message.success("Equipo eliminado exitosamente");
                     emitir("actualizar-tabla");
                 },
                 onError: (error) => {
-                    console.error("Error al eliminar el recurso:", error);
-                    message.error("Error al eliminar el recurso");
+                    console.error("Error al eliminar el equipo:", error);
+                    message.error("Error al eliminar el equipo");
                 },
             });
         },
     });
-}
-
-function abrirModalCrear() {
-    emitir("abrir-crear");
 }
 </script>
