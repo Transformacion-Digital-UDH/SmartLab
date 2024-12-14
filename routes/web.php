@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\LaboratorioController;
-use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\RecursoController;
+use App\Http\Controllers\CatalogoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\MiembroController;
+use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\UserController;
 
 // Las rutas que serán accedidas por aplicaciones externas se definen en api.php,
@@ -50,9 +51,13 @@ Route::middleware([
 
     // Vistas de Asistencia
     Route::get('/asistencias', [AsistenciaController::class, 'index'])->name('asistencias.index');
-    Route::get('/mis_asistencias', [AsistenciaController::class, 'mis_asistencias']);
-    Route::delete('/asistencias/eliminar/{id}', [AsistenciaController::class, 'eliminar_asistencia'])->name("asistencia.eliminar");
-    Route::put('/asistencias/editar_salida/{id}/{date}', [AsistenciaController::class, 'editar_salida'])->name('asistencia.editar.salida');
+    Route::get('/mis-asistencias', [AsistenciaController::class, 'misAsistencias'])->name('asistencias.user');
+    Route::delete('/asistencias/eliminar/{id}', [AsistenciaController::class, 'eliminarAsistencia'])->name("asistencia.eliminar");
+    Route::put('/asistencias/editar-salida/{id}/{date}', [AsistenciaController::class, 'editarSalida'])->name('asistencia.editar.salida');
+
+    Route::get('/asistencias/completas', [AsistenciaController::class, 'asistenciasCompletas'])->name('asistencias.completas');
+    Route::get('/asistencias/incompletas', [AsistenciaController::class, 'asistenciasIncompletas'])->name('asistencias.incompletas');
+    Route::post('/asistencias/registro-completo', [AsistenciaController::class, 'registrarAsistenciaCompleta'])->name('asistencias.registroCompleto');
 
     // Laboratorios
     Route::resource('laboratorios', LaboratorioController::class)->except(['show', 'create', 'edit']);
@@ -77,6 +82,9 @@ Route::middleware([
     Route::post('/recursos', [RecursoController::class, 'store'])->name('recursos.store');
     Route::put('/recursos/{recurso}', [RecursoController::class, 'update'])->name('recursos.update');
     Route::delete('/recursos/{recurso}', [RecursoController::class, 'destroy'])->name('recursos.destroy');
+
+    // Catalogo
+    Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
 
     // Áreas
     // Route::apiResource('areas', AreaController::class);
