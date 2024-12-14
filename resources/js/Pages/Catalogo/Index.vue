@@ -41,7 +41,7 @@
 		<div class="catalogos grid gap-4 p-4">
 			<Card hoverable v-for="recurso in recursos">
 				<template #cover>
-				
+
 				<img alt="example" src="https://www.pcspecialist.es/images/landing/pcs/gaming-pc/bundle.jpg" />
 				</template>
 				<div class="">
@@ -49,7 +49,7 @@
 				</div>
 				<CardMeta :title="recurso.nombre">
 					<template #description>
-						<p>{{recurso.area ?? 'Sin definir'}}</p>
+						<p>{{recurso.area.nombre ?? 'Sin definir'}}</p>
 					</template>
 				</CardMeta>
 				<div>

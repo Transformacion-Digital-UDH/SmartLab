@@ -27,7 +27,7 @@ class CatalogoController extends Controller
 		]);
 	}
 
-
+ 
 	// Guardar un nuevo recurso
 	public function store(Request $request)
 	{
