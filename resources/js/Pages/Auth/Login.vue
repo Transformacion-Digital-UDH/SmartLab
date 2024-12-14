@@ -53,7 +53,7 @@ const submit = () => {
             </p>
         </div>
 
-        <a
+        <a :href="route('google')"
             type="button"
             class="w-full py-2 px-3 inline-flex justify-center items-center gap-2 rounded-sm border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-0 focus:ring-offset-0 focus:ring-offset-white focus:ring-primary transition-all text-sm"
         >

@@ -1,4 +1,3 @@
-
 <script setup>
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
@@ -13,9 +12,14 @@ const props = defineProps({
 });
 
 const form = useForm({
-    name: props.user.name,
-    phone: props.user.phone,
+    dni: props.user.dni,
+    codigo: props.user.codigo,
+    nombres: props.user.nombres,
+    apellidos: props.user.apellidos,
+    celular: props.user.celular,
 });
+
+const esEstudiante = () => !!form.codigo?.trim();
 
 const submit = () => {
     form.errors = {};
@@ -27,7 +31,9 @@ const submit = () => {
     <Head title="Completar Registro" />
     <GuestLayout>
         <div class="text-center mb-5">
-            <h1 class="block text-xl font-bold text-alterno">Datos Personales</h1>
+            <h1 class="block text-xl font-bold text-alterno">
+                Datos Personales
+            </h1>
         </div>
 
         <div class="mb-6">
@@ -39,29 +45,65 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="name" :value="$t('Name')" />
+                <InputLabel for="dni" :value="$t('DNI')" />
                 <InputText
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="name"
-                />
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div class="mt-5">
-                <InputLabel for="phone" :value="$t('Phone')" />
-                <InputText
-                    id="phone"
-                    v-model="form.phone"
+                    id="dni"
+                    v-model="form.dni"
                     type="text"
                     class="mt-1 block w-full"
                     required
                     autocomplete="off"
                 />
-                <InputError class="mt-2" :message="form.errors.phone" />
+                <InputError class="mt-2" :message="form.errors.dni" />
+            </div>
+            <div class="mt-4" v-if="esEstudiante()">
+                <InputLabel for="codigo" :value="$t('Código de estudiante')" />
+                <InputText
+                    id="codigo"
+                    v-model="form.codigo"
+                    type="text"
+                    class="mt-1 block w-full"
+                    required
+                    autocomplete="off"
+                />
+                <InputError class="mt-2" :message="form.errors.codigo" />
+            </div>
+            <div class="mt-4">
+                <InputLabel for="nombres" :value="$t('Names')" />
+                <InputText
+                    id="nombres"
+                    v-model="form.nombres"
+                    type="text"
+                    class="mt-1 block w-full"
+                    required
+                    autocomplete="nombres"
+                />
+                <InputError class="mt-2" :message="form.errors.nombres" />
+            </div>
+            <div class="mt-4">
+                <InputLabel for="apellidos" :value="$t('Surnames')" />
+                <InputText
+                    id="apellidos"
+                    v-model="form.apellidos"
+                    type="text"
+                    class="mt-1 block w-full"
+                    required
+                    autocomplete="apellidos"
+                />
+                <InputError class="mt-2" :message="form.errors.apellidos" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="celular" :value="$t('Cellular')" />
+                <InputText
+                    id="celular"
+                    v-model="form.celular"
+                    type="text"
+                    class="mt-1 block w-full"
+                    required
+                    autocomplete="off"
+                />
+                <InputError class="mt-2" :message="form.errors.celular" />
             </div>
 
             <div class="mt-8 flex items-center justify-between">
