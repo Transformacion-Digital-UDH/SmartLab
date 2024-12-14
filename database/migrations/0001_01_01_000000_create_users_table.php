@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('nombres')->nullable();
             $table->string('apellidos')->nullable();
-            $table->string('dni', 8)->unique();
+            $table->string('dni', 8)->unique()->nullable();
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
+            $table->string('celular')->nullable();
             $table->string('codigo', 20)->nullable();
             $table->enum('rol', ['Libre', 'Invitado', 'Miembro', 'Coordinador', 'Responsable', 'Admin']);
             $table->string('profile_photo_path', 2048)->nullable();
