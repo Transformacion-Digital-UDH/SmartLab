@@ -17,21 +17,6 @@ use Inertia\Inertia;
 // las que se usarán internamente en esta app laravel se definen en web.php
 
 // Página principal
-// Route::get('/', function () {
-//     return Inertia::render('Welcome', [
-//         'canLogin' => Route::has('login'),
-//     ]);
-// });
-
-// Login
-// Route::get('/login', function () {
-//     return Inertia::render('Auth/Login', [
-//         'canLogin' => Route::has('login'),
-//         'canRegister' => Route::has('register'),
-//     ]);
-// });
-
-// Página principal
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
