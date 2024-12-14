@@ -1,33 +1,20 @@
 <?php
 
+use App\Actions\Fortify\CompletarRegistro;
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\LaboratorioController;
 use App\Http\Controllers\RecursoController;
 use App\Http\Controllers\CatalogoController;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 use App\Http\Controllers\AreaController;
+use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\MiembroController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 // Las rutas que serán accedidas por aplicaciones externas se definen en api.php,
 // las que se usarán internamente en esta app laravel se definen en web.php
-
-// Página principal
-// Route::get('/', function () {
-//     return Inertia::render('Welcome', [
-//         'canLogin' => Route::has('login'),
-//     ]);
-// });
-
-// Login
-// Route::get('/login', function () {
-//     return Inertia::render('Auth/Login', [
-//         'canLogin' => Route::has('login'),
-//         'canRegister' => Route::has('register'),
-//     ]);
-// });
 
 // Página principal
 Route::get('/', function () {
@@ -37,10 +24,21 @@ Route::get('/', function () {
     ]);
 });
 
+Route::middleware('guest')->controller(GoogleController::class)->group(function () {
+    Route::get('/google/redirect', 'redirect')->name('google');
+    Route::get('/google/callback', 'callback');
+});
+
+Route::middleware('auth')->controller(CompletarRegistro::class)->group(function () {
+    Route::get('/completar-registro', 'create')->name('completar.registro');
+    Route::post('/completar-registro', 'store');
+});
+
 // Grupo de rutas con middleware de autenticación (sesión interna)
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
+    'registro',
     'verified',
 ])->group(function () {
 
@@ -103,7 +101,4 @@ Route::middleware([
     Route::get('/proyectos/{proyecto}/participantes', [ProyectoController::class, 'obtenerParticipantes'])->name('proyectos.participantes');
     Route::post('/proyectos/{proyecto}/participantes', [ProyectoController::class, 'agregarParticipante'])->name('proyectos.agregar-participantes');
     Route::delete('/proyectos/{proyecto}/participantes/{participanteId}', [ProyectoController::class, 'quitarParticipante'])->name('proyectos.quitar-participante');
-
 });
-
-

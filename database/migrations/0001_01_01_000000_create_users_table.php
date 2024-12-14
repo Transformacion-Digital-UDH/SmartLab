@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('nombres')->nullable();
             $table->string('apellidos')->nullable();
-            $table->string('dni', 8)->unique()->nullable();
+            $table->string('dni', 8)->nullable();
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
             $table->string('celular')->nullable();
             $table->string('codigo', 20)->nullable();
+            $table->integer('se_registro')->default(0);
             $table->enum('rol', ['Libre', 'Invitado', 'Miembro', 'Coordinador', 'Responsable', 'Admin']);
             $table->string('profile_photo_path', 2048)->nullable();
             $table->boolean('is_active')->default(true);
