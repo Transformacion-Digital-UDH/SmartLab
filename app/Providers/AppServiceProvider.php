@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        Route::middleware(config('jetstream.middleware', ['web']))
+            ->group(base_path('routes/jetstream.php'));
+        Route::middleware(config('fortify.middleware', ['web']))
+            ->group(base_path('routes/fortify.php'));
     }
 
     /**
@@ -22,7 +26,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        /**/Inertia::share([
+        /**/
+        Inertia::share([
             'auth' => function () {
                 if (Auth::check()) {
                     return [

@@ -1,4 +1,5 @@
 {
+    "Cellular": "Celular",
     "(and :count more error)": "(y :count error más)",
     "(and :count more errors)": "(y :count error más)|(y :count errores más)|(y :count errores más)",
     "A decryption key is required.": "Se requiere una clave de descifrado.",
@@ -178,6 +179,8 @@
     "Multi-Status": "Multiestado",
     "Multiple Choices": "Múltiples opciones",
     "Name": "Nombre",
+    "Names": "Nombres",
+    "Surnames": "Apellidos",
     "Network Authentication Required": "Se requiere autenticación de red",
     "Network Connect Timeout Error": "Error de tiempo de espera de conexión de red",
     "Network Read Timeout Error": "Error de tiempo de espera de lectura de red",
