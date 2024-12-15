@@ -28,7 +28,7 @@ class CompletarRegistro
             'dni' => ['required', 'integer', 'min:8'],
             'nombres' => ['required', 'string', 'max:255'],
             'apellidos' => ['required', 'string', 'max:255'],
-            'codigo' => ['required', 'integer', 'min:8'],
+            'codigo' => ['nullable', 'integer', 'min:8'],
             'celular' => ['required', 'integer', 'digits:9'],
         ])->validate();
 
