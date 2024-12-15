@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, watch, onMounted } from 'vue';
+import { ref, defineEmits, watch, onMounted } from 'vue';
 import { Modal, Table, message, Select, Button, Popconfirm } from 'ant-design-vue';
 import axios from 'axios';
 

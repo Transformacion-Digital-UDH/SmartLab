@@ -58,7 +58,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { defineProps, defineEmits } from "vue";
+import { defineEmits } from "vue";
 import { Table, Modal, message, InputSearch, Button, Tag } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons-vue";

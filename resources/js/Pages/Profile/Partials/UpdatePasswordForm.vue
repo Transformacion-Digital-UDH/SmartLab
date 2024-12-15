@@ -3,10 +3,10 @@ import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/Inputs/InputError.vue';
+import InputLabel from '@/Components/Inputs/InputLabel.vue';
+import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
+import InputText from '@/Components/Inputs/InputText.vue';
 
 const passwordInput = ref(null);
 const currentPasswordInput = ref(null);
@@ -48,9 +48,9 @@ const updatePassword = () => {
         </template>
 
         <template #form>
-            <div class="col-span-6 sm:col-span-4">
+            <div class="col-span-6 sm:col-span-3">
                 <InputLabel for="current_password" value="Contraseña Actual" />
-                <TextInput
+                <InputText
                     id="current_password"
                     ref="currentPasswordInput"
                     v-model="form.current_password"
@@ -61,9 +61,11 @@ const updatePassword = () => {
                 <InputError :message="form.errors.current_password" class="mt-2" />
             </div>
 
-            <div class="col-span-6 sm:col-span-4">
+            <br class="hidden md:block">
+
+            <div class="col-span-6 sm:col-span-3">
                 <InputLabel for="password" value="Nueva Contraseña" />
-                <TextInput
+                <InputText
                     id="password"
                     ref="passwordInput"
                     v-model="form.password"
@@ -74,9 +76,9 @@ const updatePassword = () => {
                 <InputError :message="form.errors.password" class="mt-2" />
             </div>
 
-            <div class="col-span-6 sm:col-span-4">
+            <div class="col-span-6 sm:col-span-3">
                 <InputLabel for="password_confirmation" value="Confirmar Contraseña" />
-                <TextInput
+                <InputText
                     id="password_confirmation"
                     v-model="form.password_confirmation"
                     type="password"

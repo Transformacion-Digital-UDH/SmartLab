@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, watch, defineProps, defineEmits } from 'vue';
+    import { ref, watch, defineEmits } from 'vue';
     import { Modal, Form, FormItem, Input, Select, InputNumber, Button, message, SelectOption } from 'ant-design-vue';
     import { CheckCircleFilled, CheckCircleOutlined, AppleOutlined, AndroidOutlined, ExclamationCircleOutlined, UserOutlined, InfoCircleOutlined } from '@ant-design/icons-vue';
     

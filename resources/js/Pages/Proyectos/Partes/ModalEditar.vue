@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref, watch, defineEmits } from 'vue';
 import { Modal, Form, FormItem, Input, Select, Button, Textarea, message } from 'ant-design-vue';
 import axios from 'axios';
 
