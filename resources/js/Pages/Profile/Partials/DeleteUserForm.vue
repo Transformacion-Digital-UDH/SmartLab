@@ -4,9 +4,9 @@ import { useForm } from '@inertiajs/vue3';
 import ActionSection from '@/Components/ActionSection.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
-import InputError from '@/Components/InputError.vue';
+import InputError from '@/Components/Inputs/InputError.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import InputText from '@/Components/Inputs/InputText.vue';
 
 const confirmingUserDeletion = ref(false);
 const passwordInput = ref(null);
@@ -68,7 +68,7 @@ const closeModal = () => {
                     ¿Estás seguro de que deseas eliminar tu cuenta? Una vez que tu cuenta sea eliminada, todos sus recursos y datos se eliminarán de forma permanente. Por favor, ingresa tu contraseña para confirmar que deseas eliminar tu cuenta de forma permanente.
 
                     <div class="mt-4">
-                        <TextInput
+                        <InputText
                             ref="passwordInput"
                             v-model="form.password"
                             type="password"

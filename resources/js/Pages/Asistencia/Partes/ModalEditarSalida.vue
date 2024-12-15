@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, defineProps, defineEmits, watch } from 'vue';
+  import { ref, defineEmits, watch } from 'vue';
   import { Modal, Form, FormItem, Input, Button, message } from 'ant-design-vue';
   import axios from 'axios';
   import moment from 'moment'

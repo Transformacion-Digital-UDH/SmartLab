@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref, watch, defineEmits } from 'vue';
 import { Modal, Form, FormItem, Input, Select, Button, message, Upload } from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';

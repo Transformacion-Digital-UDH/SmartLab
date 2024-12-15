@@ -126,7 +126,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits, onMounted } from "vue";
+import { ref, watch, defineEmits, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import {
     Modal,

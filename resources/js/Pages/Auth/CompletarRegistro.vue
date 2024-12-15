@@ -6,6 +6,7 @@ import InputError from "@/Components/Inputs/InputError.vue";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import InputText from "@/Components/Inputs/InputText.vue";
+import { isCodigo } from "@/helpers";
 
 const props = defineProps({
     user: Object,
@@ -19,7 +20,7 @@ const form = useForm({
     celular: props.user.celular,
 });
 
-const esEstudiante = () => !!form.codigo?.trim();
+const esEstudiante = isCodigo(form.codigo);
 
 const submit = () => {
     form.errors = {};
@@ -56,7 +57,7 @@ const submit = () => {
                 />
                 <InputError class="mt-2" :message="form.errors.dni" />
             </div>
-            <div class="mt-4" v-if="esEstudiante()">
+            <div class="mt-4" v-if="esEstudiante">
                 <InputLabel for="codigo" :value="$t('Código de estudiante')" />
                 <InputText
                     id="codigo"

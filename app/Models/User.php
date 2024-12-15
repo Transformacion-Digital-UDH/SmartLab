@@ -101,4 +101,34 @@ class User extends Authenticatable
         return $this->hasMany(Laboratorio::class, 'coordinador_id');
     }
 
+    // Setters
+    public function setDniAttribute($value)
+    {
+        $this->attributes['dni'] = trim($value);
+    }
+
+    public function setCelularAttribute($value)
+    {
+        $this->attributes['celular'] = trim($value);
+    }
+
+    public function setCodigoAttribute($value)
+    {
+        $this->attributes['codigo'] = trim($value);
+    }
+
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = mb_strtolower(trim($value), 'UTF-8');
+    }
+
+    public function setNombresAttribute($value)
+    {
+        $this->attributes['nombres'] = mb_strtoupper(trim($value), 'UTF-8');
+    }
+
+    public function setApellidosAttribute($value)
+    {
+        $this->attributes['apellidos'] = mb_strtoupper(trim($value), 'UTF-8');
+    }
 }
