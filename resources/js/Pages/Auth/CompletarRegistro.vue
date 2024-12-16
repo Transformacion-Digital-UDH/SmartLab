@@ -75,7 +75,7 @@ const submit = () => {
                     id="nombres"
                     v-model="form.nombres"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full uppercase"
                     required
                     autocomplete="nombres"
                 />
@@ -87,7 +87,7 @@ const submit = () => {
                     id="apellidos"
                     v-model="form.apellidos"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full uppercase"
                     required
                     autocomplete="apellidos"
                 />
