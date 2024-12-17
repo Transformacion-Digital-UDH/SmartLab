@@ -11,7 +11,6 @@
                 <Input
                     v-model:value="laboratorio.nombre"
                     placeholder="Ingrese el nombre"
-                    autofocus
                     autocomplete="off"
                 />
                 <InputError :message="errors.nombre?.[0]" />
