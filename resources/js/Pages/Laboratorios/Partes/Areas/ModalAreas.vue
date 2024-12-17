@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import {
     Modal,
     Table,

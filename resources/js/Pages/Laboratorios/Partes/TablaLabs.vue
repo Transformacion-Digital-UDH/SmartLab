@@ -17,7 +17,6 @@
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
 import { Table, Modal, message } from "ant-design-vue";
 import { router } from '@inertiajs/vue3';
 import {
@@ -43,7 +42,7 @@ const columnas = [
     },
     {
         title: "Responsable",
-        dataIndex: ["responsable", "nombres"],
+        customRender: ({ record }) => `${record.responsable.nombres} ${record.responsable.apellidos}`,
         key: "nombres",
     },
     {
