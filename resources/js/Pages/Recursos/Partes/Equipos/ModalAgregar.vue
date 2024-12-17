@@ -49,6 +49,21 @@
                 />
             </FormItem>
 
+            <!-- Transfer para asignar recursos -->
+            <FormItem label="Recursos que componen este equipo">
+                <Transfer
+                    v-model:targetKeys="recursosAsignados"
+                    :data-source="listaRecursos"
+                    :render="renderRecurso"
+                    :titles="['Disponibles', 'Asignados']"
+                    show-search
+                    @change="cambiarRecursos"
+                    :list-style="{ width: '100%',}"
+
+                />
+            </FormItem>
+
+
             <!-- Fotos del equipo -->
             <FormItem label="Fotos del equipo">
                 <Upload
@@ -85,14 +100,16 @@
 
 <script setup>
 import { ref, watch, defineEmits, onMounted } from 'vue';
-import { Modal, Form, FormItem, Input, Select, Button, message, Upload } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, Button, message, Upload, Transfer } from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 
 const props = defineProps({
     visible: Boolean,
     areas: Array,
+    recursos: Array,
 });
+
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
@@ -118,11 +135,27 @@ const opcionesEstado = ref([
     { label: 'Inactivo', value: 'Inactivo' },
 ]);
 
+// Variables
 const opcionesAreas = ref([]);
+const listaRecursos = ref([]);
+const recursosAsignados = ref([]);
+
 
 const cerrarModal = () => {
     emitir('update:visible', false);
 };
+
+// Cambiar recursos asignados
+const cambiarRecursos = (keys) => {
+    recursosAsignados.value = keys;
+};
+
+// Renderizar recursos en el Transfer
+const renderRecurso = (item) => {
+    return `${item.codigo} - ${item.nombre}`;
+};
+
+
 
 const buscarArea = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
@@ -155,6 +188,8 @@ const procesarFotoNueva = (file) => {
 const quitarFoto = (file) => {
     fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
 };
+
+
 
 const enviarFormulario = async () => {
     cargando.value = true;
@@ -202,6 +237,15 @@ onMounted(() => {
         label: area.nombre,
         value: area.id,
     }));
+
+    listaRecursos.value = props.recursos.map((recurso) => ({
+        key: recurso.id.toString(),
+        codigo: recurso.codigo || 'Sin código',
+        nombre: recurso.nombre,
+        foto: recurso.foto,
+    }));
+
+    console.log(listaRecursos.value);
 });
 
 </script>

@@ -32,6 +32,7 @@
                 v-model:visible="mostrarModalCrearRecurso"
                 :areas="areas"
                 :equipos="equipos"
+                :recursos="recursos"
                 @actualizar-tabla="actualizarTablaRecursos"
             />
 
