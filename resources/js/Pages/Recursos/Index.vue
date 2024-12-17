@@ -112,7 +112,7 @@ const equipoSeleccionado = ref(null);
 const actualizarTablaEquipos = () => {
     mostrarModalCrearEquipo.value = false;
     mostrarModalEditarEquipo.value = false;
-    router.visit(route("equipos.index"), { preserveScroll: true });
+    router.visit(route("recursos.index"), { preserveScroll: true });
 };
 
 const abrirModalCrearEquipo = () => {

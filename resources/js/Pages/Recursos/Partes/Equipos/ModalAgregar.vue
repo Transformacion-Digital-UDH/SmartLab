@@ -37,6 +37,18 @@
                 </FormItem>
             </div>
 
+            <!-- Campo Área -->
+            <FormItem label="Área" name="area_id" class="w-full">
+                <Select
+                    v-model:value="equipo.area_id"
+                    placeholder="Seleccionar"
+                    :options="opcionesAreas"
+                    show-search
+                    :filter-option="buscarArea"
+                    allowClear
+                />
+            </FormItem>
+
             <!-- Fotos del equipo -->
             <FormItem label="Fotos del equipo">
                 <Upload
@@ -72,13 +84,14 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits } from 'vue';
+import { ref, watch, defineEmits, onMounted } from 'vue';
 import { Modal, Form, FormItem, Input, Select, Button, message, Upload } from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 
 const props = defineProps({
     visible: Boolean,
+    areas: Array,
 });
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
@@ -89,9 +102,12 @@ const equipo = ref({
     tipo: 'No reservable',
     estado: 'Activo',
     descripcion: '',
+    area_id: null,
+    is_active: true,
 });
 
 const cargando = ref(false);
+
 const opcionesTipo = ref([
     { label: 'Reservable', value: 'Reservable' },
     { label: 'No reservable', value: 'No reservable' },
@@ -102,8 +118,14 @@ const opcionesEstado = ref([
     { label: 'Inactivo', value: 'Inactivo' },
 ]);
 
+const opcionesAreas = ref([]);
+
 const cerrarModal = () => {
     emitir('update:visible', false);
+};
+
+const buscarArea = (input, option) => {
+    return option.label.toLowerCase().includes(input.toLowerCase());
 };
 
 const fileList = ref([]);
@@ -174,4 +196,12 @@ watch(() => props.visible, (val) => {
         };
     }
 });
+
+onMounted(() => {
+    opcionesAreas.value = props.areas.map(area => ({
+        label: area.nombre,
+        value: area.id,
+    }));
+});
+
 </script>
