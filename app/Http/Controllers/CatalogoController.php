@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Equipo;
+use App\Models\Laboratorio;
 use App\Models\Recurso;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -12,18 +13,23 @@ class CatalogoController extends Controller
 {
 	public function index()
 	{
-		$recursos = Recurso::with('area', 'equipo')
+		$recursos = Recurso::with('area','area.laboratorio', 'equipo',  'fotos')
 			->where('is_active', true)
+			->where('tipo', 'Reservable')
 			->orderBy('id', 'desc')
 			->get();
 
+		$equipos = Equipo::orderBy('id', 'desc')
+			->where('tipo', 'Reservable')
+			->get();
 		$areas = Area::orderBy('id', 'desc')->get();
-		$equipos = Equipo::orderBy('id', 'desc')->get();
+		$laboratorios = Laboratorio::all();
 
 		return Inertia::render('Catalogo/Index', [
 			'recursos' => $recursos,
 			'areas' => $areas,
 			'equipos' => $equipos,
+			'laboratorios' => $laboratorios
 		]);
 	}
 

@@ -89,6 +89,9 @@ Route::middleware([
     // Catalogo
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
 
+    // Reserva
+    Route::get('/reserva/create', [CatalogoController::class, 'create'])->name('reserva.create');
+
     // Áreas
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');
     Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
