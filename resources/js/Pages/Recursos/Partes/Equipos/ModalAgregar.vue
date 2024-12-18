@@ -37,6 +37,33 @@
                 </FormItem>
             </div>
 
+            <!-- Campo Área -->
+            <FormItem label="Área" name="area_id" class="w-full">
+                <Select
+                    v-model:value="equipo.area_id"
+                    placeholder="Seleccionar"
+                    :options="opcionesAreas"
+                    show-search
+                    :filter-option="buscarArea"
+                    allowClear
+                />
+            </FormItem>
+
+            <!-- Transfer para asignar recursos -->
+            <FormItem label="Recursos que componen este equipo">
+                <Transfer
+                    v-model:targetKeys="recursosAsignados"
+                    :data-source="listaRecursos"
+                    :render="renderRecurso"
+                    :titles="['Disponibles', 'Asignados']"
+                    show-search
+                    @change="cambiarRecursos"
+                    :list-style="{ width: '100%',}"
+
+                />
+            </FormItem>
+
+
             <!-- Fotos del equipo -->
             <FormItem label="Fotos del equipo">
                 <Upload
@@ -72,14 +99,17 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, Button, message, Upload } from 'ant-design-vue';
+import { ref, watch, onMounted } from 'vue';
+import { Modal, Form, FormItem, Input, Select, Button, message, Upload, Transfer } from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 
 const props = defineProps({
     visible: Boolean,
+    areas: Array,
+    recursos: Array,
 });
+
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
@@ -89,9 +119,12 @@ const equipo = ref({
     tipo: 'No reservable',
     estado: 'Activo',
     descripcion: '',
+    area_id: null,
+    is_active: true,
 });
 
 const cargando = ref(false);
+
 const opcionesTipo = ref([
     { label: 'Reservable', value: 'Reservable' },
     { label: 'No reservable', value: 'No reservable' },
@@ -102,8 +135,30 @@ const opcionesEstado = ref([
     { label: 'Inactivo', value: 'Inactivo' },
 ]);
 
+// Variables
+const opcionesAreas = ref([]);
+const listaRecursos = ref([]);
+const recursosAsignados = ref([]);
+
+
 const cerrarModal = () => {
     emitir('update:visible', false);
+};
+
+// Cambiar recursos asignados
+const cambiarRecursos = (keys) => {
+    recursosAsignados.value = keys;
+};
+
+// Renderizar recursos en el Transfer
+const renderRecurso = (item) => {
+    return `${item.codigo} - ${item.nombre}`;
+};
+
+
+
+const buscarArea = (input, option) => {
+    return option.label.toLowerCase().includes(input.toLowerCase());
 };
 
 const fileList = ref([]);
@@ -133,6 +188,8 @@ const procesarFotoNueva = (file) => {
 const quitarFoto = (file) => {
     fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
 };
+
+
 
 const enviarFormulario = async () => {
     cargando.value = true;
@@ -174,4 +231,21 @@ watch(() => props.visible, (val) => {
         };
     }
 });
+
+onMounted(() => {
+    opcionesAreas.value = props.areas.map(area => ({
+        label: area.nombre,
+        value: area.id,
+    }));
+
+    listaRecursos.value = props.recursos.map((recurso) => ({
+        key: recurso.id.toString(),
+        codigo: recurso.codigo || 'Sin código',
+        nombre: recurso.nombre,
+        foto: recurso.foto,
+    }));
+
+    console.log(listaRecursos.value);
+});
+
 </script>

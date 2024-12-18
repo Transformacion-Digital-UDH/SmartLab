@@ -4,6 +4,7 @@ use App\Actions\Fortify\CompletarRegistro;
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\LaboratorioController;
 use App\Http\Controllers\RecursoController;
+use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\GoogleController;
@@ -82,10 +83,11 @@ Route::middleware([
     Route::put('/recursos/{recurso}', [RecursoController::class, 'update'])->name('recursos.update');
     Route::delete('/recursos/{recurso}', [RecursoController::class, 'destroy'])->name('recursos.destroy');
 
-    // Recursos
-    Route::post('/equipos', [RecursoController::class, 'store'])->name('equipos.store');
-    Route::put('/equipos/{equipo}', [RecursoController::class, 'update'])->name('equipos.update');
-    Route::delete('/equipos/{equipo}', [RecursoController::class, 'destroy'])->name('equipos.destroy');
+    // Equipos
+    Route::post('/equipos', [EquipoController::class, 'store'])->name('equipos.store');
+    Route::put('/equipos/{equipo}', [EquipoController::class, 'update'])->name('equipos.update');
+    Route::delete('/equipos/{equipo}', [EquipoController::class, 'destroy'])->name('equipos.destroy');
+
 
     // Catalogo
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');

@@ -1,12 +1,12 @@
 <template>
     <div>
-        <!-- Buscar y Agregar equipo -->
+        <!-- Buscar y Agregar recurso -->
         <div
             class="flex flex-col-reverse justify-end gap-y-4 mb-6 sm:flex-row sm:justify-between sm:items-center gap-x-4"
         >
             <InputSearch
                 v-model:value="valorBuscar"
-                placeholder="Buscar equipo por nombre o código"
+                placeholder="Buscar recurso por nombre o código"
                 class="w-full"
                 size="large"
             />
@@ -17,17 +17,16 @@
                 size="large"
                 class="font-medium"
             >
-                Agregar equipo
+                Agregar recurso
             </Button>
         </div>
 
-        <!-- Tabla de equipos -->
+        <!-- Tabla de recursos -->
         <Table
             :columns="columnas"
-            :dataSource="equiposFiltrados"
+            :dataSource="recursosFiltrados"
             rowKey="id"
             :pagination="false"
-            :scroll="{ x: 800 }"
         >
             <template #bodyCell="{ column, record }">
                 <!-- Renderizar Tags para Tipo -->
@@ -42,17 +41,6 @@
                     <Tag :color="colorEstado(record.estado)" :bordered="false">
                         {{ record.estado }}
                     </Tag>
-                </template>
-
-                <!-- Renderizar Primera Foto -->
-                <template v-if="column.key === 'foto'">
-                    <img
-                        v-if="record.fotos && record.fotos.length > 0"
-                        :src="`/storage/${record.fotos[0].ruta}`"
-                        alt="Primera foto"
-                        class="w-16 h-16 object-cover rounded"
-                    />
-                    <span v-else>No tiene</span>
                 </template>
 
                 <!-- Acciones -->
@@ -75,7 +63,7 @@ import { router } from "@inertiajs/vue3";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps({
-    equipos: Array,
+    recursos: Array,
 });
 
 const emitir = defineEmits(["editar", "actualizar-tabla", "abrir-crear"]);
@@ -83,20 +71,19 @@ const emitir = defineEmits(["editar", "actualizar-tabla", "abrir-crear"]);
 // Estado para el buscador
 const valorBuscar = ref("");
 
-// Equipos filtrados por nombre o código
-const equiposFiltrados = computed(() =>
+// Recursos filtrados por nombre o código
+const recursosFiltrados = computed(() =>
     !valorBuscar.value
-        ? props.equipos
-        : props.equipos.filter((equipo) =>
-            equipo.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
-            equipo.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
+        ? props.recursos
+        : props.recursos.filter((recurso) =>
+            recurso.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
+            recurso.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
         )
 );
 
 // Definir las columnas de la tabla
 const columnas = [
     { title: "Código", dataIndex: "codigo", key: "codigo", width: 100 },
-    { title: "Foto", key: "foto", width: 120 },
     {
         title: "Nombre",
         dataIndex: "nombre",
@@ -107,7 +94,7 @@ const columnas = [
         title: "Área",
         dataIndex: ["area", "nombre"],
         key: "area",
-        sorter: (a, b) => a.area.nombre.localeCompare(b.area.nombre)
+        sorter: (a, b) => a.tipo.localeCompare(b.tipo)
     },
     {
         title: "Tipo",
@@ -152,29 +139,31 @@ function abrirModalCrear() {
 }
 
 // Funciones para manejar eventos
-function editar(equipo) {
-    emitir("editar", equipo);
+function editar(recurso) {
+    emitir("editar", recurso);
 }
 
-const confirmarEliminacion = (equipo) => {
+const confirmarEliminacion = (recurso) => {
     Modal.confirm({
-        title: "¿Estás seguro de eliminar este equipo?",
-        content: `${equipo.nombre}`,
+        title: "¿Estás seguro de eliminar este recurso?",
+        content: `${recurso.nombre}`,
         okText: "Confirmar",
         cancelText: "Cancelar",
         onOk() {
-            router.delete(route("equipos.destroy", equipo), {
+            router.delete(route("recursos.destroy", recurso), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    message.success("Equipo eliminado exitosamente");
+                    message.success("Recurso eliminado exitosamente");
                     emitir("actualizar-tabla");
                 },
                 onError: (error) => {
-                    console.error("Error al eliminar el equipo:", error);
-                    message.error("Error al eliminar el equipo");
+                    console.error("Error al eliminar el recurso:", error);
+                    message.error("Error al eliminar el recurso");
                 },
             });
         },
     });
 }
+
+
 </script>

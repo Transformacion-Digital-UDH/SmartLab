@@ -13,6 +13,43 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+
+        // Crear un usuario con rol Admin
+        User::factory()->create([
+            'dni' => '33445566',
+            'nombres' => 'Jorge',
+            'apellidos' => 'Ramírez',
+            'email' => 'admin@smartlab.udh',
+            'rol' => 'Admin',
+        ]);
+
+        // Crear un usuario con rol Responsable
+        User::factory()->create([
+            'dni' => '74937272',
+            'nombres' => 'Abimael',
+            'apellidos' => 'Fernandez Ventura',
+            'email' => 'abimaelfv@hotmail.com',
+            'rol' => 'Responsable',
+        ]);
+
+        User::factory()->create([
+            'dni' => '71658076',
+            'nombres' => 'Axel Texu',
+            'apellidos' => 'Perez Lazarte',
+            'email' => 'havook01@gmail.com',
+            'rol' => 'Responsable',
+            'celular' => '917289674',
+        ]);
+
+        // Crear un usuario con rol Coordinador
+        User::factory()->create([
+            'dni' => '11223355',
+            'nombres' => 'Abimael',
+            'apellidos' => 'Saenz',
+            'email' => 'coordinador@smartlab.udh',
+            'rol' => 'Coordinador',
+        ]);
+
         // Crear un usuario con rol Libre
         User::factory()->create([
             'dni' => '12345688',
@@ -38,33 +75,6 @@ class UserSeeder extends Seeder
             'apellidos' => 'González',
             'email' => 'miembro@smartlab.udh',
             'rol' => 'Miembro',
-        ]);
-
-        // Crear un usuario con rol Coordinador
-        User::factory()->create([
-            'dni' => '11223355',
-            'nombres' => 'Abimael',
-            'apellidos' => 'Saenz',
-            'email' => 'coordinador@smartlab.udh',
-            'rol' => 'Coordinador',
-        ]);
-
-        // Crear un usuario con rol Responsable
-        User::factory()->create([
-            'dni' => '22334455',
-            'nombres' => 'María',
-            'apellidos' => 'Martínez',
-            'email' => 'responsable@smartlab.udh',
-            'rol' => 'Responsable',
-        ]);
-
-        // Crear un usuario con rol Admin
-        User::factory()->create([
-            'dni' => '33445566',
-            'nombres' => 'Jorge',
-            'apellidos' => 'Ramírez',
-            'email' => 'admin@smartlab.udh',
-            'rol' => 'Admin',
         ]);
     }
 }

@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('equipos', function (Blueprint $table) {
-            $table->id(); 
+            $table->id();
             $table->string('nombre', 100);
-            $table->string('codigo', 20);
+            $table->string('codigo', 20)->nullable();
             $table->enum('tipo', ['Reservable', 'No reservable', 'Suministro']);
             $table->text('descripcion')->nullable();
             $table->enum('estado', ['Activo', 'Inactivo', 'Reservado', 'Prestado']);
             $table->boolean('is_active')->default(true);
 
-            $table->foreignId('area_id')->constrained('areas')->onDelete('restrict');
+            $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('restrict');
 
             $table->timestamps();
         });
