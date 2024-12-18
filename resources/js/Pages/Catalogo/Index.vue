@@ -6,7 +6,7 @@
 	import {  } from '@ant-design/icons-vue';
 
 	import CardRecurso from "./Partes/CardRecurso.vue";
-import ModalReservar from "./Partes/ModalReservar.vue";
+	import ModalReservar from "./Partes/ModalReservar.vue";
 
 	const { props } = usePage();
 	const recursos = ref(props.recursos || []);
@@ -18,6 +18,7 @@ import ModalReservar from "./Partes/ModalReservar.vue";
 	const loading = ref(false)
 	const idLabSelected = ref(-1);
 	const options = [{value: -1, label: 'Todo'},...laboratorios.value.map((lab)=>({value: lab.id, label: lab.nombre}))];
+	const tipo = ref('')
 
 	// Filtrar recursos por nombre o código
 	const equiposFiltrados = computed(() => equipos.value.filter((equipo) => {
@@ -36,21 +37,10 @@ import ModalReservar from "./Partes/ModalReservar.vue";
 		})
 	);
 
-	function filtrador(r) {
-		r.filter((recurso) => {
-			const a = recurso?.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) 
-			const b = recurso.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
-			const c = idLabSelected.value === -1 ? true : recurso?.area?.laboratorio.id === idLabSelected.value
-			return (a || b ) && c
-		})
-	}
-
-	function handleOk() {
-		
-	}
-	function handleSelect(recurso) {
+	function handleSelect(recurso,tipex) {
 		recursoSeleccionado.value = recurso
 		open.value = true
+		tipo.value = tipex;
 	}
 
 	function buscar() {		
@@ -100,14 +90,14 @@ import ModalReservar from "./Partes/ModalReservar.vue";
 			<!-- Catalogos -->
 			<section>
 				<div class="catalogos grid gap-4">
-					<CardRecurso v-for="equipo in equiposFiltrados" :key="equipo.id" :recurso="equipo" @open-modal="handleSelect"/>
-					<CardRecurso v-for="recurso in recursosFiltrados" :key="recurso.id" :recurso="recurso" @open-modal="handleSelect"/>
+					<CardRecurso v-for="equipo in equiposFiltrados" :key="equipo.id" :recurso="equipo" @open-modal="handleSelect(equipo, 'equipo')"/>
+					<CardRecurso v-for="recurso in recursosFiltrados" :key="recurso.id" :recurso="recurso" @open-modal="handleSelect(recurso, 'recurso')"/>
 				</div>
 			</section>
 			<!-- <div class="grid place-items-center pt-4">
 				<Pagination v-model:current="current" :total="total" show-less-items/>
 			</div> -->
-			<ModalReservar :recurso="recursoSeleccionado" v-model:open="open" @close="open=false"/>
+			<ModalReservar :recurso="recursoSeleccionado" :tipo="tipo" v-model:open="open" @close="open=false"/>
 		</div>
 		
 	</AppLayout>

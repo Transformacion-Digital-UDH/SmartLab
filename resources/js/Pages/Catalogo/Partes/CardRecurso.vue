@@ -10,17 +10,20 @@
 	function nombreDeLaboratorio() {
 		
 	}
+	console.log(recurso);
 
 </script>
 <template>
 	<Card hoverable>
 		<template #cover>
-			<img
-				v-if="recurso.fotos && recurso.fotos.length > 0"
-				:src="`/storage/${record.fotos[0].ruta}`"
-				class="w-16 h-16 object-cover rounded"
-			/>
-			<img v-else alt="example" src="https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png" />
+			<div class="aspect-square">
+				<img
+					v-if="recurso?.fotos && recurso.fotos.length > 0"
+					:src="`/storage/${recurso.fotos[0].ruta}`"
+					class="w-16 h-16 object-cover rounded"
+				/>
+				<img v-else alt="example" src="https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png" />
+			</div>
 		</template>
 		<div class="">
 			<p class="mb-0">{{recurso.codigo}}</p>
