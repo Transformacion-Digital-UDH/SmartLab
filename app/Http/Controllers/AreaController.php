@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 
 class AreaController extends Controller
 {
+    protected $reglas = [
+        'nombre' => ['required', 'string', 'max:80'],
+        'descripcion' => ['nullable', 'string', 'max:160'],
+        'aforo' => ['nullable', 'integer'],
+        'laboratorio_id' => ['nullable', 'exists:laboratorios,id'],
+    ];
+
     /**
      * API: Obtener todas las áreas activas de un laboratorio.
      */
@@ -30,19 +37,14 @@ class AreaController extends Controller
     public function store(Request $request)
     {
         // Validación de los datos
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:100',
-            'descripcion' => 'nullable|string',
-            'aforo' => 'nullable|integer',
-            'laboratorio_id' => 'required|exists:laboratorios,id',
-        ]);
+        $request->validate($this->reglas);
 
         // Crear el área
         Area::create([
-            'nombre' => $validated['nombre'],
-            'descripcion' => $validated['descripcion'] ?? null,
-            'aforo' => $validated['aforo'] ?? null,
-            'laboratorio_id' => $validated['laboratorio_id'],
+            'nombre' => $request->nombre ?? null,
+            'descripcion' => $request->descripcion ?? null,
+            'aforo' => $request->aforo ?? null,
+            'laboratorio_id' => $request->laboratorio_id ?? null,
             'is_active' => true,
         ]);
     }
@@ -61,15 +63,14 @@ class AreaController extends Controller
     public function update(Request $request, $area_id)
     {
         // Validación de los datos recibidos
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'aforo' => 'nullable|integer',
-        ]);
+        $request->validate($this->reglas);
 
         // Buscar el área por ID y actualizarla
         $area = Area::findOrFail($area_id);
-        $area->update($request->only(['nombre', 'descripcion', 'aforo']));
+        $area->nombre = $request->nombre;
+        $area->descripcion = $request->descripcion;
+        $area->aforo = $request->aforo;
+        $area->save();
     }
 
     /**
@@ -80,5 +81,4 @@ class AreaController extends Controller
         $area = Area::findOrFail($area_id);
         $area->update(['is_active' => false]);
     }
-
 }

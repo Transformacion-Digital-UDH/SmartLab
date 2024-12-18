@@ -11,58 +11,36 @@ class LaboratorioSeeder extends Seeder
     public function run(): void
     {
         Laboratorio::create([
-            'nombre' => 'Laboratorio de Química',
-            'codigo' => 'LAB-Q123',
-            'descripcion' => 'Laboratorio especializado en análisis químicos.',
-            'aforo' => 30,
-            'email' => 'quimica@ejemplo.com',
-            'inauguracion' => '2020-03-15',
-            'is_active' => true,
-            'responsable_id' => 4,
-        ]);
-
-        Laboratorio::create([
-            'nombre' => 'Laboratorio de Biología',
-            'codigo' => 'LAB-B456',
-            'descripcion' => 'Laboratorio para investigaciones biológicas.',
-            'aforo' => 25,
-            'email' => 'biologia@ejemplo.com',
-            'inauguracion' => '2019-08-20',
-            'is_active' => true,
-            'responsable_id' => 4,
-        ]);
-
-        Laboratorio::create([
-            'nombre' => 'Laboratorio de Física',
-            'codigo' => 'LAB-F789',
-            'descripcion' => 'Laboratorio con equipos para experimentos físicos.',
+            'nombre' => 'Star Lab UDH',
+            'codigo' => 'LAB01-STR',
+            'descripcion' => 'Laboratorio de prototipado y creación de productos mínimos viables.',
             'aforo' => 40,
-            'email' => 'fisica@ejemplo.com',
-            'inauguracion' => '2018-11-05',
+            'email' => 'starlab@udh.edu.pe',
+            'inauguracion' => '2024-05-13',
             'is_active' => true,
-            'responsable_id' => 4,
+            'responsable_id' => 3,
         ]);
 
         Laboratorio::create([
-            'nombre' => 'Laboratorio de Informática',
-            'codigo' => 'LAB-I101',
-            'descripcion' => 'Laboratorio equipado con computadoras de última generación.',
-            'aforo' => 50,
-            'email' => 'informatica@ejemplo.com',
-            'inauguracion' => '2021-06-10',
+            'nombre' => 'Visual Art Estudio',
+            'codigo' => 'LAB02-VAE',
+            'descripcion' => 'laboratorio de creación de contenido digital.',
+            'aforo' => 10,
+            'email' => 'starlab@udh.edu.pe',
+            'inauguracion' => '2024-05-13',
             'is_active' => true,
-            'responsable_id' => 4,
+            'responsable_id' => 3,
         ]);
 
         Laboratorio::create([
-            'nombre' => 'Laboratorio de Electrónica',
-            'codigo' => 'LAB-E202',
-            'descripcion' => 'Laboratorio con dispositivos electrónicos avanzados.',
-            'aforo' => 35,
-            'email' => 'electronica@ejemplo.com',
-            'inauguracion' => '2022-01-25',
-            'is_active' => false,
-            'responsable_id' => 4,
+            'nombre' => 'Transformación Digital',
+            'codigo' => 'LAB03-LTD',
+            'descripcion' => 'Laboratorio de desarollo de software, inteligencia artificial y tecnologías innovadoras.',
+            'aforo' => 60,
+            'email' => 'transformaciondigital@udh.edu.pe',
+            'inauguracion' => '2024-05-13',
+            'is_active' => true,
+            'responsable_id' => 2,
         ]);
     }
 }
