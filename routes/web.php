@@ -102,3 +102,9 @@ Route::middleware([
     Route::post('/proyectos/{proyecto}/participantes', [ProyectoController::class, 'agregarParticipante'])->name('proyectos.agregar-participantes');
     Route::delete('/proyectos/{proyecto}/participantes/{participanteId}', [ProyectoController::class, 'quitarParticipante'])->name('proyectos.quitar-participante');
 });
+
+
+// Landing page
+Route::get('/galeria', function () {
+    return Inertia::render('Landing/Galeria');
+})->name('galeria');
