@@ -16,6 +16,7 @@ import {
     ProjectOutlined, CalendarOutlined,
     UserOutlined,
     LogoutOutlined,
+    FormatPainterOutlined
 } from "@ant-design/icons-vue";
 
 const showingNavigationDropdown = ref(false);

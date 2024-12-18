@@ -10,6 +10,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\MiembroController;
 use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReservaController;
 use Illuminate\Support\Facades\Route;
@@ -91,6 +92,9 @@ Route::middleware([
     // Catalogo
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
 
+    // Reserva
+    Route::post('/reserva/create', [ReservaController::class, 'create'])->name('reserva.create');
+
     // Áreas
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');
     Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
@@ -109,3 +113,9 @@ Route::middleware([
     Route::post('/proyectos/{proyecto}/participantes', [ProyectoController::class, 'agregarParticipante'])->name('proyectos.agregar-participantes');
     Route::delete('/proyectos/{proyecto}/participantes/{participanteId}', [ProyectoController::class, 'quitarParticipante'])->name('proyectos.quitar-participante');
 });
+
+
+// Landing page
+Route::get('/galeria', function () {
+    return Inertia::render('Landing/Galeria');
+})->name('galeria');
