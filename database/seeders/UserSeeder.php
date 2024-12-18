@@ -52,7 +52,7 @@ class UserSeeder extends Seeder
 
         // Crear un usuario con rol Libre
         User::factory()->create([
-            'dni' => '12345678',
+            'dni' => '12345688',
             'nombres' => 'Carlos',
             'apellidos' => 'Pérez',
             'email' => 'libre@smartlab.udh',

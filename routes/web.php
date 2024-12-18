@@ -10,6 +10,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\MiembroController;
 use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -90,6 +91,9 @@ Route::middleware([
 
     // Catalogo
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
+
+    // Reserva
+    Route::post('/reserva/create', [ReservaController::class, 'create'])->name('reserva.create');
 
     // Áreas
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');
