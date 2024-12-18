@@ -1,7 +1,7 @@
 <template>
     <Modal
         :open="visible"
-        :title="`Áreas del ${laboratorio.nombre}`"
+        :title="`Áreas del laboratorio ${laboratorio.nombre}`"
         :footer="null"
         width="800px"
         @cancel="cerrarModal"
@@ -11,67 +11,77 @@
                 Agregar área
             </Button>
         </div>
+        <div class="table-responsive">
+            <Table
+                :columns="columnasAreas"
+                :dataSource="areas"
+                :scroll="{ x: 'max-content' }"
+                :pagination="false"
+                :loading="isLoading"
+                rowKey="id"
+            >
+                <template #bodyCell="{ column, text, record }">
+                    <template
+                        v-if="
+                            ['nombre', 'descripcion', 'aforo'].includes(
+                                column.dataIndex
+                            )
+                        "
+                    >
+                        <div>
+                            <template v-if="datosEditables[record.key]">
+                                <Input
+                                    v-model:value="
+                                        datosEditables[record.key][
+                                            column.dataIndex
+                                        ]
+                                    "
+                                    style="margin: -5px 0"
+                                    size="small"
+                                />
+                                <InputError
+                                    :message="
+                                        errors[record.key]?.[column.dataIndex]
+                                    "
+                                />
+                            </template>
 
-        <Table
-            :columns="columnasAreas"
-            :dataSource="areas"
-            :pagination="false"
-            :scroll="{ x: 500 }"
-            rowKey="id"
-        >
-            <template #bodyCell="{ column, text, record }">
-                <template
-                    v-if="
-                        ['nombre', 'descripcion', 'aforo'].includes(
-                            column.dataIndex
-                        )
-                    "
-                >
-                    <div>
-                        <Input
-                            v-if="datosEditables[record.key]"
-                            v-model:value="
-                                datosEditables[record.key][column.dataIndex]
-                            "
-                            style="margin: -5px 0"
-                            size="small"
-                        />
-                        <template v-else>
-                            {{ text }}
-                        </template>
-                    </div>
+                            <template v-else>
+                                {{ text }}
+                            </template>
+                        </div>
+                    </template>
+                    <template v-else-if="column.dataIndex === 'operation'">
+                        <div>
+                            <span v-if="datosEditables[record.key]">
+                                <CheckOutlined
+                                    @click="guardar(record.key, record.id)"
+                                    class="text-green-600 mr-2"
+                                />
+                                <CloseOutlined
+                                    @click="cancelar(record.key)"
+                                    class="text-red-600"
+                                />
+                            </span>
+                            <span v-else>
+                                <FormOutlined
+                                    @click="editar(record.key)"
+                                    class="text-blue-600 mr-2"
+                                />
+                                <Popconfirm
+                                    title="Confirmar acción"
+                                    okText="Sí"
+                                    cancelText="No"
+                                    @confirm="eliminarArea(record.id)"
+                                >
+                                    <DeleteOutlined class="text-red-600" />
+                                </Popconfirm>
+                            </span>
+                        </div>
+                    </template>
                 </template>
-                <template v-else-if="column.dataIndex === 'operation'">
-                    <div>
-                        <span v-if="datosEditables[record.key]">
-                            <CheckOutlined
-                                @click="guardar(record.key, record.id)"
-                                class="text-green-600 mr-2"
-                            />
-                            <CloseOutlined
-                                @click="cancelar(record.key)"
-                                class="text-red-600"
-                            />
-                        </span>
-                        <span v-else>
-                            <FormOutlined
-                                @click="editar(record.key)"
-                                class="text-blue-600 mr-2"
-                            />
-                            <Popconfirm
-                                title="Confirmar acción"
-                                okText="Sí"
-                                cancelText="No"
-                                @confirm="eliminarArea(record.id)"
-                            >
-                                <DeleteOutlined class="text-red-600" />
-                            </Popconfirm>
-                        </span>
-                    </div>
-                </template>
-            </template>
-        </Table>
-
+            </Table>
+        </div>
         <AgregarArea
             :visible="modalAgregarVisible"
             :laboratorio_id="laboratorio.id"
@@ -82,7 +92,8 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
+import InputError from "@/Components/Inputs/InputError.vue";
 import {
     Modal,
     Table,
@@ -127,8 +138,11 @@ const columnasAreas = [
 const areas = ref([]);
 const modalAgregarVisible = ref(false);
 const datosEditables = ref({});
+const isLoading = ref(false);
+const errors = ref({});
 
 const cerrarModal = () => {
+    errors.value = {};
     emit("update:visible", false);
 };
 
@@ -143,6 +157,7 @@ const cerrarModalAgregar = () => {
 };
 
 const cargarAreas = async () => {
+    isLoading.value = true;
     try {
         const response = await axios.get(
             route("areas.json", { laboratorio_id: props.laboratorio.id })
@@ -153,6 +168,8 @@ const cargarAreas = async () => {
         }));
     } catch (error) {
         console.error("Error al cargar las áreas:", error);
+    } finally {
+        isLoading.value = false;
     }
 };
 
@@ -163,6 +180,7 @@ const editar = (key) => {
 };
 
 const guardar = async (key, areaId) => {
+    errors.value = {};
     const index = areas.value.findIndex((area) => area.key === key);
     if (index !== -1 && datosEditables.value[key]) {
         try {
@@ -175,7 +193,14 @@ const guardar = async (key, areaId) => {
             delete datosEditables.value[key];
             message.success("Área actualizada exitosamente");
         } catch (error) {
-            console.error("Error al actualizar el área:", error);
+            if (error.response && error.response.data.errors) {
+                const validationErrors = error.response.data.errors;
+                Object.keys(validationErrors).forEach((field) => {
+                    errors.value[key] = errors.value[key] || {};
+                    errors.value[key][field] = validationErrors[field][0];
+                });
+            }
+            message.error("Hay errores al actualizar el área.");
         }
     }
 };
