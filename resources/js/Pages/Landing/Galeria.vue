@@ -2,6 +2,30 @@
 import { Head, Link } from '@inertiajs/vue3';
 
 </script>
+<style>
+@keyframes float {
+        0% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-15px);
+        }
+        100% {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes particle {
+        0% {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100vh) scale(0.5);
+            opacity: 0;
+        }
+    }
+</style>
 <template>
     <Head title="SmartLabs" />
     <div class="font-sans text-white bg-gradient-to-b from-blue-900 to-gray-900">
@@ -15,12 +39,12 @@ import { Head, Link } from '@inertiajs/vue3';
             <div class="absolute top-0 w-1 h-1 particle left-5/6 animate-particle" style="animation-delay: 1s;"></div>
         </div>
         <!-- Navbar -->
-        <header class="flex items-center justify-between p-6">
+        <header class="flex items-center justify-between p-6 ">
             <div class="text-2xl font-bold">
                 <img src="/img/UDHdark.webp" alt="" width="160px" class="w-16 sm:w-24 md:w-48 lg:w-48" >
             </div>
             <nav>
-                <ul class="flex gap-6">
+                <ul class="flex gap-4 pt-4">
                     <li><a href="/" class="hover:text-green-400">Inicio</a></li>
                     <li><a href="/galeria" class="hover:text-green-400">Galeria</a></li>
                 </ul>

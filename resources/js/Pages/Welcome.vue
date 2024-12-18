@@ -154,7 +154,7 @@ function prev() {
                 <img src="/img/UDHdark.webp" alt="" width="160px" class="w-16 sm:w-24 md:w-48 lg:w-48" >
             </div>
             <nav>
-                <ul class="flex gap-6">
+                <ul class="flex gap-6 pt-4">
                     <li><a href="/" class="hover:text-green-400">Inicio</a></li>
                     <li><a href="/galeria" class="hover:text-green-400">Galeria</a></li>
                 </ul>
