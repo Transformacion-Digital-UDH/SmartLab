@@ -13,6 +13,7 @@ class Reserva extends Model
     protected $fillable = [
         'hora_inicio',
         'hora_fin',
+        'estado',
         'is_active',
         'usuario_id',
         'equipo_id',

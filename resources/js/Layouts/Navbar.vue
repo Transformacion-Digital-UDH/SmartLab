@@ -7,7 +7,7 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 
 // Iconos de Ant Design
-import { ExperimentOutlined, AppstoreOutlined, TeamOutlined, SolutionOutlined, UsergroupAddOutlined, ProjectOutlined } from '@ant-design/icons-vue';
+import { ExperimentOutlined, AppstoreOutlined, TeamOutlined, SolutionOutlined, UsergroupAddOutlined, ProjectOutlined, CalendarOutlined } from '@ant-design/icons-vue';
 
 const showingNavigationDropdown = ref(false);
 
@@ -17,12 +17,13 @@ const logout = () => {
 
 const navigationLinks = [
     { name: 'Laboratorios', route: 'laboratorios.index', icon: ExperimentOutlined },
-    { name: 'Recursos', route: 'recursos.index', icon: AppstoreOutlined },
+    { name: 'Inventario', route: 'recursos.index', icon: AppstoreOutlined },
     { name: 'Usuarios', route: 'usuarios.index', icon: TeamOutlined },
     { name: 'Asistencias', route: 'asistencias.index', icon: SolutionOutlined },
     { name: 'Mis Asistencias', route: 'asistencias.user', icon: SolutionOutlined },
     { name: 'Miembros', route: 'miembros.index', icon: UsergroupAddOutlined },
     { name: 'Proyectos', route: 'proyectos.index', icon: ProjectOutlined },
+    { name: 'Reservas', route: 'reservas.index', icon: CalendarOutlined },
 ];
 </script>
 

@@ -16,9 +16,9 @@ class AreaController extends Controller
         if (Laboratorio::where('id', $laboratorio_id)->exists()) {
 
             $areas = Area::where('laboratorio_id', $laboratorio_id)
-                    ->where('is_active', true)
-                    ->orderBy('id', 'desc')
-                    ->get();
+                ->where('is_active', true)
+                ->orderBy('id', 'desc')
+                ->get();
 
             return response()->json($areas);
         }

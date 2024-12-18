@@ -6,25 +6,29 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Storage;
 use App\Models\Equipo;
+use App\Models\Recurso;
+use Illuminate\Support\Facades\Log;
 
 class EquipoController extends Controller
 {
-        // Guardar un nuevo equipo
+    // Guardar un nuevo equipo
     public function store(Request $request)
     {
         $request->merge([
-            'is_active' => filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN)
+            'is_active' => filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN),
         ]);
 
         // Validación incluyendo las imágenes
         $request->validate([
             'nombre' => 'required|string|max:100',
-            'codigo' => 'nullable|string|max:20',  // Cambié a required ya que en el schema es obligatorio
+            'codigo' => 'nullable|string|max:20',
             'tipo' => 'required|in:Reservable,No reservable,Suministro',
             'descripcion' => 'nullable|string',
             'estado' => 'required|in:Activo,Inactivo,Reservado,Prestado',
             'is_active' => 'boolean',
-            'area_id' => 'nullable|exists:areas,id', // Cambié a required ya que en el schema es obligatorio
+            'area_id' => 'nullable|exists:areas,id',
+            'recursos' => 'array',
+            'recursos.*' => 'integer|exists:recursos,id',
             'fotos.*' => 'image',
         ]);
 
@@ -34,11 +38,23 @@ class EquipoController extends Controller
         // Procesar y guardar las imágenes si se enviaron
         if ($request->hasFile('fotos')) {
             foreach ($request->file('fotos') as $imagen) {
-                $ruta = $imagen->store('equipos', 'public'); // Cambié la carpeta a 'equipos'
+                $ruta = $imagen->store('equipos', 'public');
                 $equipo->fotos()->create(['ruta' => $ruta]);
             }
         }
+
+        // Actualizar los recursos asignados al equipo
+        if ($request->has('recursos')) {
+            Recurso::whereIn('id', $request->recursos)
+                ->update(['equipo_id' => $equipo->id]);
+        }
+
+        return response()->json([
+            'message' => 'Equipo creado exitosamente.',
+            'equipo' => $equipo,
+        ]);
     }
+
 
     // Actualizar un equipo existente
     public function update(Request $request, Equipo $equipo)
