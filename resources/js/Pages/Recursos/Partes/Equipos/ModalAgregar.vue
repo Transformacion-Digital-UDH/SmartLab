@@ -7,37 +7,60 @@
         :footer="null"
         width="650px"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="equipo">
+        <Form
+            layout="vertical"
+            @finish="enviarFormulario"
+            :model="equipo"
+            class="mt-4"
+        >
             <div class="flex gap-x-3">
-                <!-- Campo Código -->
-                <FormItem label="Código" name="codigo" class="w-1/5">
-                    <Input v-model:value="equipo.codigo" placeholder="Ingrese el código" />
+                <FormItem label="Código *" name="codigo" class="w-2/5">
+                    <Input
+                        v-model:value="equipo.codigo"
+                        placeholder="Ingrese el código"
+                        autocomplete="off"
+                    />
+                    <InputError :message="errors.codigo?.[0]" />
                 </FormItem>
 
-                <!-- Campo Nombre -->
-                <FormItem label="Nombre" name="nombre" class="w-4/5" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
-                    <Input v-model:value="equipo.nombre" placeholder="Ingrese el nombre" />
+                <FormItem label="Nombre *" name="nombre" class="w-3/5">
+                    <Input
+                        v-model:value="equipo.nombre"
+                        placeholder="Ingrese el nombre"
+                        autocomplete="off"
+                    />
+                    <InputError :message="errors.nombre?.[0]" />
                 </FormItem>
             </div>
 
-            <!-- Campo Descripción -->
             <FormItem label="Descripción" name="descripcion">
-                <Input.TextArea v-model:value="equipo.descripcion" placeholder="Ingrese una descripción" />
+                <Input.TextArea
+                    v-model:value="equipo.descripcion"
+                    placeholder="Ingrese una descripción"
+                />
+                <InputError :message="errors.descripcion?.[0]" />
             </FormItem>
 
             <div class="flex gap-x-3">
-                <!-- Campo Tipo -->
-                <FormItem label="Tipo" name="tipo" class="w-full" :rules="[{ required: true, message: 'Seleccione el tipo' }]">
-                    <Select v-model:value="equipo.tipo" placeholder="Seleccione el tipo" :options="opcionesTipo" />
+                <FormItem label="Tipo" name="tipo" class="w-full">
+                    <Select
+                        v-model:value="equipo.tipo"
+                        placeholder="Seleccione el tipo"
+                        :options="opcionesTipo"
+                    />
+                    <InputError :message="errors.tipo?.[0]" />
                 </FormItem>
 
-                <!-- Campo Estado -->
-                <FormItem label="Estado actual" name="estado" class="w-full" :rules="[{ required: true, message: 'Seleccione el estado' }]">
-                    <Select v-model:value="equipo.estado" placeholder="Seleccione el estado" :options="opcionesEstado" />
+                <FormItem label="Estado actual" name="estado" class="w-full">
+                    <Select
+                        v-model:value="equipo.estado"
+                        placeholder="Seleccione el estado"
+                        :options="opcionesEstado"
+                    />
+                    <InputError :message="errors.estado?.[0]" />
                 </FormItem>
             </div>
 
-            <!-- Campo Área -->
             <FormItem label="Área" name="area_id" class="w-full">
                 <Select
                     v-model:value="equipo.area_id"
@@ -47,25 +70,24 @@
                     :filter-option="buscarArea"
                     allowClear
                 />
+                <InputError :message="errors.area_id?.[0]" />
             </FormItem>
 
             <!-- Transfer para asignar recursos -->
             <FormItem label="Recursos que componen este equipo" name="recursos">
+
                 <Transfer
                     v-model:targetKeys="recursosAsignados"
                     v-model:value="equipo.recursos"
                     :data-source="listaRecursos"
                     :render="renderRecurso"
-                    :titles="['Disponibles', 'Asignados']"
+                    :titles="[' disponibles', ' asignados']"
                     show-search
                     @change="cambiarRecursos"
-                    :list-style="{ width: '100%',}"
-
+                    :list-style="{ width: '100%' }"
                 />
             </FormItem>
 
-
-            <!-- Fotos del equipo -->
             <FormItem label="Fotos del equipo">
                 <Upload
                     list-type="picture-card"
@@ -77,7 +99,7 @@
                 >
                     <div v-if="fileList.length < maxFiles">
                         <PlusOutlined />
-                        <div style="margin-top: 8px">Subir</div>
+                        <div class="mt-2">Subir</div>
                     </div>
                 </Upload>
                 <Modal
@@ -86,24 +108,40 @@
                     :footer="null"
                     @cancel="cerrarModalPrevisualizacion"
                 >
-                    <img alt="Vista previa" style="width: 100%" :src="previewImage" />
+                    <img
+                        alt="Vista previa"
+                        class="w-full"
+                        :src="previewImage"
+                    />
                 </Modal>
             </FormItem>
 
             <FormItem class="flex justify-end mb-0">
-                <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
-                <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
+                <Button class="mr-3" @click="cerrarModal"> Cancelar </Button>
+                <Button type="primary" htmlType="submit" :loading="cargando">
+                    Guardar
+                </Button>
             </FormItem>
-
         </Form>
     </Modal>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
-import { Modal, Form, FormItem, Input, Select, Button, message, Upload, Transfer } from 'ant-design-vue';
-import { PlusOutlined } from '@ant-design/icons-vue';
-import axios from 'axios';
+import { ref, watch, onMounted } from "vue";
+import InputError from "@/Components/Inputs/InputError.vue";
+import { PlusOutlined } from "@ant-design/icons-vue";
+import axios from "axios";
+import {
+    Modal,
+    Form,
+    FormItem,
+    Input,
+    Select,
+    Button,
+    message,
+    Upload,
+    Transfer,
+} from "ant-design-vue";
 
 const props = defineProps({
     visible: Boolean,
@@ -111,30 +149,30 @@ const props = defineProps({
     recursos: Array,
 });
 
-
-const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
+const emitir = defineEmits(["update:visible", "actualizar-tabla"]);
 
 const equipo = ref({
-    nombre: '',
-    codigo: '',
-    tipo: 'No reservable',
-    estado: 'Activo',
-    descripcion: '',
+    nombre: "",
+    codigo: "",
+    tipo: "No reservable",
+    estado: "Activo",
+    descripcion: "",
     area_id: null,
     is_active: true,
     recursos: [],
 });
 
 const cargando = ref(false);
+const errors = ref({});
 
 const opcionesTipo = ref([
-    { label: 'Reservable', value: 'Reservable' },
-    { label: 'No reservable', value: 'No reservable' },
+    { label: "Reservable", value: "Reservable" },
+    { label: "No reservable", value: "No reservable" },
 ]);
 
 const opcionesEstado = ref([
-    { label: 'Activo', value: 'Activo' },
-    { label: 'Inactivo', value: 'Inactivo' },
+    { label: "Activo", value: "Activo" },
+    { label: "Inactivo", value: "Inactivo" },
 ]);
 
 // Variables
@@ -142,9 +180,8 @@ const opcionesAreas = ref([]);
 const listaRecursos = ref([]);
 const recursosAsignados = ref([]);
 
-
 const cerrarModal = () => {
-    emitir('update:visible', false);
+    emitir("update:visible", false);
 };
 
 // Cambiar recursos asignados
@@ -157,15 +194,13 @@ const renderRecurso = (item) => {
     return `${item.codigo} - ${item.nombre}`;
 };
 
-
-
 const buscarArea = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
 };
 
 const fileList = ref([]);
 const previewVisible = ref(false);
-const previewImage = ref('');
+const previewImage = ref("");
 const maxFiles = 5;
 
 const manejarPrevisualizacion = (file) => {
@@ -181,7 +216,7 @@ const procesarFotoNueva = (file) => {
     fileList.value.push({
         uid: file.uid,
         name: file.name,
-        status: 'done',
+        status: "done",
         originFileObj: file,
     });
     return false;
@@ -191,13 +226,12 @@ const quitarFoto = (file) => {
     fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
 };
 
-
 const enviarFormulario = async () => {
     cargando.value = true;
 
     const formData = new FormData();
     Object.keys(equipo.value).forEach((key) => {
-        formData.append(key, equipo.value[key] || '');
+        formData.append(key, equipo.value[key] || "");
     });
 
     // Agregar los recursos asignados al FormData
@@ -208,51 +242,53 @@ const enviarFormulario = async () => {
     // Agregar las fotos al FormData
     fileList.value.forEach((file) => {
         if (file.originFileObj) {
-            formData.append('fotos[]', file.originFileObj);
+            formData.append("fotos[]", file.originFileObj);
         }
     });
 
     try {
-        const response = await axios.post(route('equipos.store'), formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
+        const response = await axios.post(route("equipos.store"), formData, {
+            headers: { "Content-Type": "multipart/form-data" },
         });
-        message.success('Equipo agregado exitosamente');
+        message.success("Equipo agregado exitosamente");
         cerrarModal();
-        emitir('actualizar-tabla', response.data);
+        emitir("actualizar-tabla", response.data);
     } catch (error) {
-        message.error('Error al agregar el equipo');
-        console.error('Error al guardar el equipo:', error);
+        message.error("Error al agregar el equipo");
+        if (error.response && error.response.data.errors) {
+            errors.value = error.response.data.errors;
+        }
     } finally {
         cargando.value = false;
     }
 };
 
-watch(() => props.visible, (val) => {
-    if (val) {
-        equipo.value = {
-            nombre: '',
-            codigo: '',
-            tipo: '',
-            estado: '',
-            descripcion: '',
-        };
+watch(
+    () => props.visible,
+    (val) => {
+        if (val) {
+            equipo.value = {
+                nombre: "",
+                codigo: "",
+                tipo: "",
+                estado: "",
+                descripcion: "",
+            };
+        }
     }
-});
+);
 
 onMounted(() => {
-    opcionesAreas.value = props.areas.map(area => ({
+    opcionesAreas.value = props.areas.map((area) => ({
         label: area.nombre,
         value: area.id,
     }));
 
     listaRecursos.value = props.recursos.map((recurso) => ({
         key: recurso.id.toString(),
-        codigo: recurso.codigo || 'Sin código',
+        codigo: recurso.codigo || "Sin código",
         nombre: recurso.nombre,
         foto: recurso.foto,
     }));
-
-    console.log(listaRecursos.value);
 });
-
 </script>
