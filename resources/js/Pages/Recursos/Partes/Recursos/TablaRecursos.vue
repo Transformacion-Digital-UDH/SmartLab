@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, h, computed } from "vue";
 import { Table, Modal, message, InputSearch, Button, Tag } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons-vue";
@@ -158,8 +158,15 @@ function editar(recurso) {
 
 const confirmarEliminacion = (recurso) => {
     Modal.confirm({
-        title: "¿Estás seguro de eliminar este recurso?",
-        content: `${recurso.nombre}`,
+        title: "Eliminar recurso",
+        content: () =>
+            h("div", [
+                "Estas a punto de eliminar",
+                " al recurso ",
+                h("br"),
+                h("b",recurso.codigo + " - " + recurso.nombre),
+                ".",
+            ]),
         okText: "Confirmar",
         cancelText: "Cancelar",
         onOk() {
