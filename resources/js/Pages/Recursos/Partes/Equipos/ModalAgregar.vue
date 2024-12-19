@@ -73,9 +73,12 @@
                 <InputError :message="errors.area_id?.[0]" />
             </FormItem>
 
-            <FormItem label="Recursos que componen este equipo">
+            <!-- Transfer para asignar recursos -->
+            <FormItem label="Recursos que componen este equipo" name="recursos">
+
                 <Transfer
                     v-model:targetKeys="recursosAsignados"
+                    v-model:value="equipo.recursos"
                     :data-source="listaRecursos"
                     :render="renderRecurso"
                     :titles="[' disponibles', ' asignados']"
@@ -156,6 +159,7 @@ const equipo = ref({
     descripcion: "",
     area_id: null,
     is_active: true,
+    recursos: [],
 });
 
 const cargando = ref(false);
@@ -230,6 +234,12 @@ const enviarFormulario = async () => {
         formData.append(key, equipo.value[key] || "");
     });
 
+    // Agregar los recursos asignados al FormData
+    recursosAsignados.value.forEach((recursoId) => {
+        formData.append('recursos[]', recursoId);
+    });
+
+    // Agregar las fotos al FormData
     fileList.value.forEach((file) => {
         if (file.originFileObj) {
             formData.append("fotos[]", file.originFileObj);

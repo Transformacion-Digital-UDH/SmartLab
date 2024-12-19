@@ -78,7 +78,7 @@ Route::middleware([
 
 
     // Recursos
-    Route::get('/recursos', [RecursoController::class, 'index'])->name('recursos.index');
+    Route::get('/inventario', [RecursoController::class, 'index'])->name('recursos.index');
     Route::post('/recursos', [RecursoController::class, 'store'])->name('recursos.store');
     Route::put('/recursos/{recurso}', [RecursoController::class, 'update'])->name('recursos.update');
     Route::delete('/recursos/{recurso}', [RecursoController::class, 'destroy'])->name('recursos.destroy');
@@ -88,12 +88,8 @@ Route::middleware([
     Route::put('/equipos/{equipo}', [EquipoController::class, 'update'])->name('equipos.update');
     Route::delete('/equipos/{equipo}', [EquipoController::class, 'destroy'])->name('equipos.destroy');
 
-
     // Catalogo
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
-
-    // Reserva
-    Route::post('/reserva/create', [ReservaController::class, 'create'])->name('reserva.create');
 
     // Áreas
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');
@@ -101,6 +97,12 @@ Route::middleware([
     Route::put('/areas/{area_id}', [AreaController::class, 'update'])->name('areas.update');
     Route::delete('/areas/{area_id}', [AreaController::class, 'destroy'])->name('areas.destroy');
 
+    // Reservas
+    Route::get('/reservas', [ReservaController::class, 'index'])->name('reservas.index');
+    Route::post('/reserva/create', [ReservaController::class, 'create'])->name('reserva.create');
+    Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
+    Route::put('/reservas/{reserva}', [ReservaController::class, 'update'])->name('reservas.update');
+    Route::delete('/reservas/{reserva}', [ReservaController::class, 'destroy'])->name('reservas.destroy');
 
     // Proyectos
     Route::resource('proyectos', ProyectoController::class);

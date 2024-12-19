@@ -37,7 +37,7 @@
 			<div class="flex flex-col items-end justify-between gap-1">
 				<span v-if="asistencia.check" class="text-blue-600">{{ asistencia.diff }}</span>
 				<span v-else class="text-blue-600">0h 0m</span>
-				<div class="flex font-bold text-nowrap">
+				<div class="flex font-semibold text-nowrap text-gray-500">
 					{{ moment(asistencia.entrada).locale('es').format('LT') }}
 					<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="hsl(12,0%,80%)"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
 					<span v-if="asistencia.check">{{ moment(asistencia.salida).format('LT') }}</span>

@@ -13,7 +13,7 @@ import {
     TeamOutlined,
     SolutionOutlined,
     UsergroupAddOutlined,
-    ProjectOutlined,
+    ProjectOutlined, CalendarOutlined,
     UserOutlined,
     LogoutOutlined,
     FormatPainterOutlined
@@ -32,7 +32,7 @@ const navigationLinks = [
         icon: ExperimentOutlined,
     },
     {
-        name: "Recursos",
+        name: "Inventario",
         route: "recursos.index",
         icon: AppstoreOutlined,
     },
@@ -61,6 +61,7 @@ const navigationLinks = [
         route: "proyectos.index",
         icon: ProjectOutlined,
     },
+    { name: 'Reservas', route: 'reservas.index', icon: CalendarOutlined },
 ];
 </script>
 
