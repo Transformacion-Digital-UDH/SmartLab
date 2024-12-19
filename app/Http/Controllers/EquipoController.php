@@ -9,26 +9,31 @@ use App\Models\Equipo;
 
 class EquipoController extends Controller
 {
-        // Guardar un nuevo equipo
+
+    protected $rules = [
+        'nombre' => ['required', 'string', 'max:100'],
+        'codigo' => ['required', 'string', 'max:20'],
+        'tipo' => ['required', 'in:Reservable,No reservable,Suministro'],
+        'descripcion' => ['nullable', 'string'],
+        'estado' => ['required', 'in:Activo,Inactivo,Reservado,Prestado'],
+        'area_id' => ['nullable', 'exists:areas,id'],
+        'equipo_id' => ['nullable', 'exists:equipos,id'],
+        'is_active' => ['boolean'],
+        'fotos.*' => ['image'],
+
+        'fotos_nuevas.*' => ['image'],
+        'fotos_eliminadas' => ['array'],
+        'fotos_eliminadas.*' => ['integer', 'exists:fotos_recursos,id'],
+    ];
+
+    // Guardar un nuevo equipo
     public function store(Request $request)
     {
         $request->merge([
             'is_active' => filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN)
         ]);
 
-        // Validación incluyendo las imágenes
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'codigo' => 'nullable|string|max:20',  // Cambié a required ya que en el schema es obligatorio
-            'tipo' => 'required|in:Reservable,No reservable,Suministro',
-            'descripcion' => 'nullable|string',
-            'estado' => 'required|in:Activo,Inactivo,Reservado,Prestado',
-            'is_active' => 'boolean',
-            'area_id' => 'nullable|exists:areas,id', // Cambié a required ya que en el schema es obligatorio
-            'fotos.*' => 'image',
-        ]);
-
-        // Crear el equipo
+        $request->validate($this->rules);
         $equipo = Equipo::create($request->all());
 
         // Procesar y guardar las imágenes si se enviaron
