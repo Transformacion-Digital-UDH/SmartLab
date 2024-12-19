@@ -1,122 +1,130 @@
 <template>
     <Modal
-    title="Editar laboratorio"
+        title="Editar reserva"
         :open="visible"
         @cancel="cerrarModal"
         centered
         :footer="null"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="laboratorio">
-            <FormItem label="Nombre" name="nombre" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
-                <Input v-model:value="laboratorio.nombre" placeholder="Ingrese el nombre" />
+        <Form layout="vertical" @finish="enviarFormulario" :model="reserva">
+            <FormItem label="Hora de inicio" name="hora_inicio" :rules="[{ required: true, message: 'Por favor ingrese la hora de inicio' }]">
+                <Input v-model:value="reserva.hora_inicio" type="datetime-local" placeholder="Seleccione la hora de inicio" />
             </FormItem>
 
-            <FormItem label="Responsable" name="responsable_id">
+            <FormItem label="Hora de fin" name="hora_fin" :rules="[{ required: true, message: 'Por favor ingrese la hora de fin' }]">
+                <Input v-model:value="reserva.hora_fin" type="datetime-local" placeholder="Seleccione la hora de fin" />
+            </FormItem>
+
+            <FormItem label="Estado" name="estado" :rules="[{ required: true, message: 'Por favor seleccione un estado' }]">
+                <Select v-model:value="reserva.estado" placeholder="Seleccione el estado">
+                    <Select.Option value="Por aprobar">Por aprobar</Select.Option>
+                    <Select.Option value="Aprobada">Aprobada</Select.Option>
+                    <Select.Option value="No aprobada">No aprobada</Select.Option>
+                    <Select.Option value="Finalizada">Finalizada</Select.Option>
+                </Select>
+            </FormItem>
+
+            <FormItem label="Equipo" name="equipo_id">
                 <Select
-                    v-model:value="laboratorio.responsable.nombres"
-                    placeholder="Seleccione un responsable"
-                    :options="opcionesResponsables"
+                    v-model:value="reserva.equipo_id"
+                    placeholder="Seleccione un equipo"
+                    :options="opcionesEquipos"
                     show-search
-                    :filter-option="buscarResponsable"
+                    :filter-option="buscarEquipo"
                 />
             </FormItem>
 
-            <FormItem label="Código" name="codigo">
-                <Input v-model:value="laboratorio.codigo" placeholder="Ingrese el código" />
-            </FormItem>
-
-            <FormItem label="Descripción" name="descripcion">
-                <Textarea v-model:value="laboratorio.descripcion" placeholder="Ingrese una descripción" auto-size />
-            </FormItem>
-
-            <FormItem label="Aforo" name="aforo" >
-                <InputNumber v-model:value="laboratorio.aforo"
-                    placeholder="Ingrese el aforo" style="width: 100%;" type="number" step="1" min="0"
+            <FormItem label="Recurso" name="recurso_id">
+                <Select
+                    v-model:value="reserva.recurso_id"
+                    placeholder="Seleccione un recurso"
+                    :options="opcionesRecursos"
+                    show-search
+                    :filter-option="buscarRecurso"
                 />
-            </FormItem>
-
-            <FormItem label="Email" name="email" :rules="[{ type: 'email', message: 'Por favor ingrese un correo válido' }]">
-                <Input v-model:value="laboratorio.email" placeholder="Ingrese el correo electrónico" />
-            </FormItem>
-
-            <FormItem label="Fecha de inauguración" name="inauguracion">
-                <Input type="date" v-model:value="laboratorio.inauguracion" style="width: 100%;" />
             </FormItem>
 
             <FormItem class="flex justify-end mb-0">
                 <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
                 <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
             </FormItem>
-
         </Form>
     </Modal>
 </template>
 
+
 <script setup>
 import { ref, watch, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, InputNumber, Button, Textarea, message } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, Button, message } from 'ant-design-vue';
 import axios from 'axios';
 
 const props = defineProps({
     visible: Boolean,
-    responsables: Array,
-    laboratorio: {
+    reserva: {
         type: Object,
         default: () => ({
-            nombre: '',
-            codigo: '',
-            descripcion: '',
-            aforo: null,
-            email: '',
-            inauguracion: null,
-            responsable_id: '',
+            hora_inicio: '',
+            hora_fin: '',
+            estado: 'Por aprobar',
+            equipo_id: null,
+            recurso_id: null,
         }),
     },
+    equipos: Array,
+    recursos: Array,
 });
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
-const laboratorio = ref({ ...props.laboratorio });
+const reserva = ref({ ...props.reserva });
 const cargando = ref(false);
-const opcionesResponsables = ref([]);
+const opcionesEquipos = ref([]);
+const opcionesRecursos = ref([]);
 
-opcionesResponsables.value = props.responsables.map(responsable => ({
-    label: responsable.nombres,
-    value: responsable.id,
+opcionesEquipos.value = props.equipos.map(equipo => ({
+    label: equipo.nombre,
+    value: equipo.id,
 }));
-console.log(opcionesResponsables.value);
+
+opcionesRecursos.value = props.recursos.map(recurso => ({
+    label: recurso.nombre,
+    value: recurso.id,
+}));
 
 // Cierra el modal y emite el evento para cerrar en el componente padre
 const cerrarModal = () => {
     emitir('update:visible', false);
 };
 
-const buscarResponsable = (input, option) => {
+// Funciones de búsqueda para equipos y recursos
+const buscarEquipo = (input, option) => {
     return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 };
 
-// Envía el formulario de edición del laboratorio
+const buscarRecurso = (input, option) => {
+    return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+};
+
+// Envía el formulario de edición de la reserva
 const enviarFormulario = async () => {
     cargando.value = true;
     try {
-        // Enviar la solicitud para actualizar el laboratorio
-        const response = await axios.put(route('laboratorios.update', props.laboratorio.id), laboratorio.value);
-        message.success('Laboratorio actualizado exitosamente');
+        // Enviar la solicitud para actualizar la reserva
+        const response = await axios.put(route('reservas.update', props.reserva.id), reserva.value);
+        message.success('Reserva actualizada exitosamente');
         cerrarModal();
-        emitir('actualizar-tabla', response.data["laboratorio"]);
+        emitir('actualizar-tabla', response.data["reserva"]);
     } catch (error) {
-        message.error('Error al actualizar el laboratorio');
+        message.error('Error al actualizar la reserva');
     } finally {
         cargando.value = false;
     }
 };
 
-// Verificar si el modal se abre y cargar los valores del laboratorio
+// Verificar si el modal se abre y cargar los valores de la reserva
 watch(() => props.visible, (val) => {
     if (val) {
-        laboratorio.value = { ...props.laboratorio };
+        reserva.value = { ...props.reserva };
     }
-
 });
-
 </script>

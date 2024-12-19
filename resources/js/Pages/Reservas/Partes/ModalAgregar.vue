@@ -1,131 +1,122 @@
 <template>
     <Modal
-        title="Agregar laboratorio"
+        title="Agregar Reserva"
         :open="visible"
         @cancel="cerrarModal"
         centered
         :footer="null"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="laboratorio">
-            <FormItem label="Nombre" name="nombre" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
-                <Input v-model:value="laboratorio.nombre" placeholder="Ingrese el nombre" autofocus />
-            </FormItem>
-
-            <FormItem label="Responsable" name="responsable_id">
+        <Form layout="vertical" @finish="enviarFormulario" :model="reserva">
+            <!-- Campos del formulario -->
+            <FormItem label="Recurso" name="recurso_id">
                 <Select
-                    v-model:value="laboratorio.responsable_id"
-                    placeholder="Seleccione un responsable"
-                    :options="opcionesResponsables"
+                    v-model:value="reserva.recurso_id"
+                    placeholder="Seleccione un recurso"
+                    :options="opcionesRecursos"
                     show-search
-                    :filter-option="buscarResponsable"
+                    :filter-option="buscarRecurso"
                 />
             </FormItem>
 
-            <div class="flex gap-x-3">
-                <FormItem label="Código" name="codigo" class="w-full" >
-                    <Input v-model:value="laboratorio.codigo" placeholder="Ingrese el código" />
-                </FormItem>
-
-                <FormItem label="Aforo" name="aforo" class="w-full">
-                    <InputNumber v-model:value="laboratorio.aforo"
-                        placeholder="Ingrese el aforo" style="width: 100%;" type="number" step="1" min="0"
-                    />
-                </FormItem>
-            </div>
-
-            <FormItem label="Descripción" name="descripcion">
-                <Textarea auto-size v-model:value="laboratorio.descripcion" placeholder="Ingrese una descripción" />
+            <FormItem label="Equipo" name="equipo_id">
+                <Select
+                    v-model:value="reserva.equipo_id"
+                    placeholder="Seleccione un equipo"
+                    :options="opcionesEquipos"
+                    show-search
+                    :filter-option="buscarEquipo"
+                />
             </FormItem>
 
-            <FormItem label="Correo del laboratorio" name="email" :rules="[{ type: 'email', message: 'Por favor ingrese un correo válido' }]">
-                <Input v-model:value="laboratorio.email" placeholder="Ingrese el correo electrónico" />
+            <FormItem label="Hora de Inicio" name="hora_inicio">
+                <Input type="datetime-local" v-model:value="reserva.hora_inicio" />
             </FormItem>
 
-            <FormItem label="Fecha de inauguración" name="inauguracion">
-                <Input type="date" v-model:value="laboratorio.inauguracion" style="width: 100%;" />
+            <FormItem label="Hora de Fin" name="hora_fin">
+                <Input type="datetime-local" v-model:value="reserva.hora_fin" />
+            </FormItem>
+
+            <FormItem label="Estado" name="estado">
+                <Select v-model:value="reserva.estado" :options="estadoOptions" />
             </FormItem>
 
             <FormItem class="flex justify-end mb-0">
                 <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
                 <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
             </FormItem>
-
         </Form>
     </Modal>
 </template>
 
 <script setup>
 import { ref, watch, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, InputNumber, Button, message, Textarea } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, Button, message } from 'ant-design-vue';
 import axios from 'axios';
 
 const props = defineProps({
     visible: Boolean,
-    responsables: Array,
+    recursos: Array,
+    equipos: Array,
 });
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
-const laboratorio = ref({
-    nombre: '',
-    codigo: '',
-    descripcion: '',
-    aforo: null,
-    email: '',
-    inauguracion: null,
-    responsable_id: null,
+const reserva = ref({
+    recurso_id: null,
+    equipo_id: null,
+    hora_inicio: '',
+    hora_fin: '',
+    estado: 'Por aprobar',
 });
 
 const cargando = ref(false);
-const opcionesResponsables = ref([]);
 
+// Opciones de recursos y equipos
+const opcionesRecursos = ref(props.recursos.map(r => ({ label: r.nombre, value: r.id })));
+const opcionesEquipos = ref(props.equipos.map(e => ({ label: e.nombre, value: e.id })));
 
-// Cierra el modal y emite el evento para cerrar en el componente padre
+const estadoOptions = ref([
+    { label: 'Por aprobar', value: 'Por aprobar' },
+    { label: 'Aprobada', value: 'Aprobada' },
+    { label: 'No aprobada', value: 'No aprobada' },
+    { label: 'Finalizada', value: 'Finalizada' },
+]);
+
+// Cerrar modal
 const cerrarModal = () => {
     emitir('update:visible', false);
 };
 
-const buscarResponsable = (input, option) => {
-    return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-};
+// Funciones de búsqueda para los selects
+const buscarRecurso = (input, option) => option.label.toLowerCase().includes(input.toLowerCase());
+const buscarEquipo = (input, option) => option.label.toLowerCase().includes(input.toLowerCase());
 
-// Envía el formulario de creación del laboratorio
+// Enviar el formulario
 const enviarFormulario = async () => {
     cargando.value = true;
     try {
-        // Enviar la solicitud para crear el laboratorio
-        const response = await axios.post(route('laboratorios.store'), laboratorio.value);
-        message.success('Laboratorio agregado exitosamente');
+        const response = await axios.post(route('reservas.store'), reserva.value);
+        message.success('Reserva creada exitosamente');
         cerrarModal();
-        emitir('actualizar-tabla', response.data["laboratorio"]);
+        emitir('actualizar-tabla', response.data);
     } catch (error) {
-        message.error('Error al agregar el laboratorio');
-        console.error('Error al guardar el laboratorio:', error);
+        message.error('Error al crear la reserva');
+        console.error(error);
     } finally {
         cargando.value = false;
     }
 };
 
-// Verificar si el modal se abre por primera vez y cargar responsables
+// Inicializar las opciones de recursos y equipos
 watch(() => props.visible, (val) => {
     if (val) {
-        console.log('watch ag: ', val)
-
-        laboratorio.value = {
-            nombre: '',
-            codigo: '',
-            descripcion: '',
-            aforo: null,
-            email: '',
-            inauguracion: '',
-            responsable_id: null,
+        reserva.value = {
+            recurso_id: null,
+            equipo_id: null,
+            hora_inicio: '',
+            hora_fin: '',
+            estado: 'Por aprobar',
         };
-
-        // Cargar las opciones de los responsables
-        opcionesResponsables.value = props.responsables.map(responsable => ({
-            label: responsable.nombres,
-            value: responsable.id,
-        }));
     }
 });
 </script>

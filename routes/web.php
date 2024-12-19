@@ -12,7 +12,6 @@ use App\Http\Controllers\MiembroController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ReservaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -92,9 +91,6 @@ Route::middleware([
     // Catalogo
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
 
-    // Reserva
-    Route::post('/reserva/create', [ReservaController::class, 'create'])->name('reserva.create');
-
     // Áreas
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');
     Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
@@ -103,6 +99,7 @@ Route::middleware([
 
     // Reservas
     Route::get('/reservas', [ReservaController::class, 'index'])->name('reservas.index');
+    Route::post('/reserva/create', [ReservaController::class, 'create'])->name('reserva.create');
     Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
     Route::put('/reservas/{reserva}', [ReservaController::class, 'update'])->name('reservas.update');
     Route::delete('/reservas/{reserva}', [ReservaController::class, 'destroy'])->name('reservas.destroy');
