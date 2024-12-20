@@ -46,7 +46,7 @@ Route::middleware([
 ])->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', [PanelController::class, 'index'])->name('dashboard');
+    Route::get('/panel', [PanelController::class, 'index'])->name('dashboard');
 
     // Vistas de Asistencia
     Route::get('/asistencias', [AsistenciaController::class, 'index'])->name('asistencias.index');
