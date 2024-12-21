@@ -63,6 +63,8 @@ class EquipoController extends Controller
     // Actualizar un equipo existente
     public function update(Request $request, Equipo $equipo)
     {
+        Log::info('Request recibido para actualizar el equipo:', $request->all());
+
         // Validación de los datos del equipo
         $request->validate([
             'nombre' => 'required|string|max:100',
@@ -102,8 +104,17 @@ class EquipoController extends Controller
 
         // Actualizar los recursos asignados al equipo
         if ($request->has('recursos')) {
-            Recurso::whereIn('id', $request->recursos)
-                ->update(['equipo_id' => $equipo->id]);
+            if (is_array($request->recursos) && count($request->recursos) > 0) {
+                // Desasociar los recursos que no están seleccionados (equipo_id = null)
+                $equipo->recursos()->whereNotIn('id', $request->recursos)->update(['equipo_id' => null]);
+
+                // Asociar los nuevos recursos (asegurándose de que cada recurso tenga el equipo_id correcto)
+                Recurso::whereIn('id', $request->recursos)
+                    ->update(['equipo_id' => $equipo->id]);
+            } else {
+                // Si no hay recursos, desasociamos todos los recursos del equipo
+                $equipo->recursos()->update(['equipo_id' => null]);
+            }
         }
     }
 
