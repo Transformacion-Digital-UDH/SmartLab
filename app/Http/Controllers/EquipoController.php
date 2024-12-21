@@ -99,6 +99,12 @@ class EquipoController extends Controller
                 $equipo->fotos()->create(['ruta' => $ruta]);
             }
         }
+
+        // Actualizar los recursos asignados al equipo
+        if ($request->has('recursos')) {
+            Recurso::whereIn('id', $request->recursos)
+                ->update(['equipo_id' => $equipo->id]);
+        }
     }
 
     // Eliminar un equipo

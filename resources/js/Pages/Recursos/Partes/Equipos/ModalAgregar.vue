@@ -70,15 +70,15 @@
 
             <!-- Transfer para asignar recursos -->
             <FormItem label="Recursos que componen este equipo" name="recursos">
-
+                <p class="text-xs text-gray-400 mb-4">Los recursos en naranja ya pertenecen a un equipo. Si lo asigna a este equipo, se quitará del otro.</p>
                 <Transfer
                     v-model:targetKeys="recursosAsignados"
                     v-model:value="equipo.recursos"
                     :data-source="listaRecursos"
-                    :render="renderRecurso"
                     :titles="[' disponibles', ' asignados']"
                     show-search
                     @change="cambiarRecursos"
+                    :filter-option="filtrarRecursos"
                     :list-style="{ width: '100%', height: '300px' }"
                     :locale="{
                         searchPlaceholder: 'Buscar aquí',
@@ -87,16 +87,21 @@
                         notFoundContent: 'No hay datos disponibles'
                     }"
                 >
-                <template #render="item">
-                    <div class="flex items-center gap-x-3">
-                        <img
-                            :src="`${item.foto}`"
-                            alt="Foto del recurso"
-                            class="w-8 h-8 object-cover rounded-sm"
-                        />
-                        <span>{{ item.codigo }} - {{ item.nombre }}</span>
-                    </div>
-                </template>
+                    <template #render="item">
+                        <div
+                            class="flex items-center gap-x-3 max-w-12"
+                            :class="{'text-amber-500': item.equipo_id !== null, '': item.equipo_id === null}"
+                        >                            <img
+                                :src="`${item.foto}`"
+                                alt="Foto del recurso"
+                                class="w-8 h-8 object-cover rounded-sm"
+                            />
+                            <div class="flex flex-col w-full">
+                                <small class="text-xs font-medium">{{ item.codigo }}</small>
+                                <small>{{ item.nombre }}</small>
+                            </div>
+                        </div>
+                    </template>
                 </Transfer>
             </FormItem>
 
@@ -145,6 +150,7 @@ import InputError from "@/Components/Inputs/InputError.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import axios from "axios";
 import {
+    Modal,
     Drawer,
     Form,
     FormItem,
@@ -201,6 +207,14 @@ const cerrarModal = () => {
 const cambiarRecursos = (keys) => {
     recursosAsignados.value = keys;
 };
+
+const filtrarRecursos = (inputValue, option) => {
+    return (
+        option.codigo.toLowerCase().includes(inputValue.toLowerCase()) ||
+        option.nombre.toLowerCase().includes(inputValue.toLowerCase())
+    );
+};
+
 
 const buscarArea = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
@@ -296,6 +310,7 @@ onMounted(() => {
         key: recurso.id.toString(),
         codigo: recurso.codigo || "Sin código",
         nombre: recurso.nombre,
+        equipo_id: recurso.equipo_id || null,
         foto: recurso.fotos.length > 0 ? `/storage/${recurso.fotos[0].ruta}` : '/img/default-placeholder.webp',
     }));
 });

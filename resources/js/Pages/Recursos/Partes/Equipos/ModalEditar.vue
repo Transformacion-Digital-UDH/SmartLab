@@ -1,11 +1,11 @@
 <template>
-    <Modal
+    <Drawer
         title="Editar equipo"
         :open="visible"
-        @cancel="cerrarModal"
-        centered
+        @close="cerrarModal"
+        placement="right"
         :footer="null"
-        width="650px"
+        width="100&"
     >
         <Form layout="vertical" @finish="enviarFormulario" :model="equipo">
             <div class="flex gap-x-3">
@@ -49,6 +49,46 @@
                 />
             </FormItem>
 
+            <!-- Transfer para asignar recursos -->
+            <FormItem label="Recursos que componen este equipo" name="recursos">
+                <p class="text-xs text-gray-400 mb-4">Los recursos en naranja ya pertenecen a un equipo. Si lo asigna a este equipo, se quitará del otro.</p>
+                <Transfer
+                    v-model:targetKeys="recursosAsignados"
+                    v-model:value="equipo.recursos"
+                    :data-source="listaRecursos"
+                    :titles="[' disponibles', ' asignados']"
+                    show-search
+                    @change="cambiarRecursos"
+                    :filter-option="filtrarRecursos"
+                    :list-style="{ width: '100%', height: '300px' }"
+                    :locale="{
+                        searchPlaceholder: 'Buscar aquí',
+                        itemUnit: '',
+                        itemsUnit: '',
+                        notFoundContent: 'No hay datos disponibles'
+                    }"
+                >
+                    <template #render="item">
+                        <div
+                            class="flex items-center gap-x-3 max-w-12"
+                            :class="{'text-amber-500': item.equipo_id !== null, '': item.equipo_id === null}"
+                        >
+                            <img
+                                :src="`${item.foto}`"
+                                alt="Foto del recurso"
+                                class="w-8 h-8 object-cover rounded-sm"
+                            />
+                            <div class="flex flex-col w-full">
+                                <small class="text-xs font-medium">
+                                    {{ item.codigo }}
+                                </small>
+                                <small>{{ item.nombre }}</small>
+                            </div>
+                        </div>
+                    </template>
+                </Transfer>
+            </FormItem>
+
             <!-- Fotos del equipo -->
             <FormItem label="Fotos del equipo">
                 <Upload
@@ -73,18 +113,18 @@
                     <img alt="Vista previa" style="width: 100%" :src="previewImage" />
                 </Modal>
             </FormItem>
-
-            <FormItem class="flex justify-end mb-0">
-                <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
-                <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
-            </FormItem>
         </Form>
-    </Modal>
+
+        <template #extra>
+            <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
+            <Button type="primary" v-on:click="enviarFormulario" :loading="cargando">Guardar</Button>
+        </template>
+    </Drawer>
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { Modal, Form, FormItem, Input, Select, Button, message, Upload } from 'ant-design-vue';
+import { Modal, Drawer, Transfer, Form, FormItem, Input, Select, Button, message, Upload } from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 
@@ -92,14 +132,15 @@ const props = defineProps({
     visible: Boolean,
     equipo: Object,
     areas: Array,
+    recursos: Array,
 });
-
-console.log(props.equipo);
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
 const equipo = ref({ ...props.equipo });
 const cargando = ref(false);
+
+console.log(equipo.value);
 
 const opcionesTipo = ref([
     { label: 'Reservable', value: 'Reservable' },
@@ -115,6 +156,25 @@ const opcionesEstado = ref([
 ]);
 
 const opcionesAreas = ref([]);
+const listaRecursos = ref([]);
+const recursosAsignados = ref([]);
+
+// Cambiar recursos asignados
+const cambiarRecursos = (keys) => {
+    recursosAsignados.value = keys;
+    equipo.value.recursos = keys.map(key => ({
+        id: key,
+        nombre: listaRecursos.value.find(item => item.key === key)?.nombre
+    }));
+};
+
+const filtrarRecursos = (inputValue, option) => {
+    return (
+        option.codigo.toLowerCase().includes(inputValue.toLowerCase()) ||
+        option.nombre.toLowerCase().includes(inputValue.toLowerCase())
+    );
+};
+
 
 const cerrarModal = () => {
     emitir('update:visible', false);
@@ -174,6 +234,11 @@ const enviarFormulario = async () => {
         formData.append(key, equipo.value[key] || '');
     });
 
+    // Agregar los recursos asignados al FormData
+        recursosAsignados.value.forEach((recursoId) => {
+        formData.append('recursos[]', recursoId);
+    });
+
     // Agregar fotos eliminadas
     fotosEliminadas.value.forEach((id) => formData.append('fotos_eliminadas[]', id));
 
@@ -210,6 +275,29 @@ onMounted(() => {
         label: area.nombre,
         value: area.id,
     }));
+
+    listaRecursos.value = props.recursos.map((recurso) => ({
+        key: recurso.id.toString(),
+        codigo: recurso.codigo || "Sin código",
+        nombre: recurso.nombre,
+        equipo_id: recurso.equipo_id || null,
+        foto: recurso.fotos.length > 0 ? `/storage/${recurso.fotos[0].ruta}` : '/img/default-placeholder.webp',
+    }));
+
+    console.log("Recursos", listaRecursos.value);
+
+    // Cargar recursos asignados al equipo al montar el componente
+    recursosAsignados.value = props.equipo.recursos.map(recurso => recurso.id.toString());
+
     cargarFotos();
+});
+
+watch(() => props.visible, (val) => {
+    if (val) {
+        equipo.value = { ...props.equipo };
+
+        // Actualizar recursos asignados al abrir el Drawer
+        recursosAsignados.value = props.equipo.recursos.map(recurso => recurso.id.toString());
+    }
 });
 </script>
