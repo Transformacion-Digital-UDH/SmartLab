@@ -49,10 +49,13 @@
                     <img
                         v-if="record.fotos && record.fotos.length > 0"
                         :src="`/storage/${record.fotos[0].ruta}`"
-                        alt="Primera foto"
+                        alt="Foto del equipo del laboratorio"
                         class="w-16 h-16 object-cover rounded"
                     />
-                    <span v-else>No tiene</span>
+                    <img v-else
+                        :src="`/img/default-placeholder.webp`"
+                        class="w-16 h-16 object-cover rounded"
+                    />
                 </template>
 
                 <!-- Acciones -->

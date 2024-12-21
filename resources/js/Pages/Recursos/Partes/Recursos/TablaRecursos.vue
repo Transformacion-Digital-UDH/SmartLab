@@ -52,7 +52,10 @@
                         alt="Primera foto"
                         class="w-16 h-16 object-cover rounded"
                     />
-                    <span v-else>No tiene</span>
+                    <img v-else
+                        :src="`/img/default-placeholder.webp`"
+                        class="w-16 h-16 object-cover rounded"
+                    />
                 </template>
 
                 <!-- Acciones -->

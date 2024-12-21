@@ -1,13 +1,13 @@
 <template>
-    <Modal
+    <Drawer
         title="Agregar equipo"
         :open="visible"
-        @cancel="cerrarModal"
-        centered
+        @close="cerrarModal"
+        placement="right"
         :footer="null"
-        width="650px"
+        width="100&"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="equipo">
+        <Form layout="vertical" :model="equipo">
             <div class="flex gap-x-3">
                 <!-- Campo Código -->
                 <FormItem label="Código" name="codigo" class="w-1/5">
@@ -55,13 +55,28 @@
                     v-model:targetKeys="recursosAsignados"
                     v-model:value="equipo.recursos"
                     :data-source="listaRecursos"
-                    :render="renderRecurso"
                     :titles="['Disponibles', 'Asignados']"
                     show-search
                     @change="cambiarRecursos"
-                    :list-style="{ width: '100%',}"
-
-                />
+                    :list-style="{ width: '100%', height: '300px' }"
+                    :locale="{
+                        searchPlaceholder: 'Buscar aquí',
+                        itemUnit: '',
+                        itemsUnit: '',
+                        notFoundContent: 'No hay datos disponibles'
+                    }"
+                >
+                <template #render="item">
+                    <div class="flex items-center gap-x-3">
+                        <img
+                            :src="`${item.foto}`"
+                            alt="Foto del recurso"
+                            class="w-8 h-8 object-cover rounded-sm"
+                        />
+                        <span>{{ item.codigo }} - {{ item.nombre }}</span>
+                    </div>
+                </template>
+                </Transfer>
             </FormItem>
 
 
@@ -90,20 +105,22 @@
                 </Modal>
             </FormItem>
 
-            <FormItem class="flex justify-end mb-0">
-                <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
-                <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
-            </FormItem>
 
         </Form>
-    </Modal>
+
+        <template #extra>
+            <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
+            <Button type="primary" v-on:click="enviarFormulario" :loading="cargando">Guardar</Button>
+        </template>
+
+    </Drawer>
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { Modal, Form, FormItem, Input, Select, Button, message, Upload, Transfer } from 'ant-design-vue';
+import { Modal, Form, FormItem, Input, Select, Button, message, Upload, Transfer, Drawer } from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import axios from 'axios';
+import axios, { formToJSON } from 'axios';
 
 const props = defineProps({
     visible: Boolean,
@@ -111,6 +128,7 @@ const props = defineProps({
     recursos: Array,
 });
 
+console.log(props);
 
 const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
@@ -151,13 +169,6 @@ const cerrarModal = () => {
 const cambiarRecursos = (keys) => {
     recursosAsignados.value = keys;
 };
-
-// Renderizar recursos en el Transfer
-const renderRecurso = (item) => {
-    return `${item.codigo} - ${item.nombre}`;
-};
-
-
 
 const buscarArea = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
@@ -249,7 +260,7 @@ onMounted(() => {
         key: recurso.id.toString(),
         codigo: recurso.codigo || 'Sin código',
         nombre: recurso.nombre,
-        foto: recurso.foto,
+        foto: recurso.fotos.length > 0 ? `/storage/${recurso.fotos[0].ruta}` : '/img/default-placeholder.webp',
     }));
 
     console.log(listaRecursos.value);
