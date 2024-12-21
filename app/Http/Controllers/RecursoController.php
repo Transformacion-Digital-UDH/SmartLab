@@ -5,14 +5,28 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use App\Models\Equipo;
 use App\Models\Recurso;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class RecursoController extends Controller
 {
+
+    protected $rules = [
+        'nombre' => ['required', 'string', 'max:100'],
+        'codigo' => ['required', 'string', 'max:20'],
+        'tipo' => ['required', 'in:Reservable,No reservable,Suministro'],
+        'descripcion' => ['nullable', 'string'],
+        'estado' => ['required', 'in:Activo,Inactivo,Reservado,Prestado'],
+        'area_id' => ['nullable', 'exists:areas,id'],
+        'equipo_id' => ['nullable', 'exists:equipos,id'],
+        'is_active' => ['boolean'],
+        'fotos.*' => ['image'],
+        'fotos_nuevas.*' => ['image'],
+        'fotos_eliminadas' => ['array'],
+        'fotos_eliminadas.*' => ['integer', 'exists:fotos_recursos,id'],
+    ];
+
     public function index(Request $request)
     {
         $recursos = Recurso::with('area', 'equipo',  'fotos')
@@ -27,7 +41,7 @@ class RecursoController extends Controller
 
         $areas = Area::orderBy('id', 'desc')->get();
 
-        $tab = $request->query('tab', 1); 
+        $tab = $request->query('tab', 1);
 
         return Inertia::render('Recursos/Index', [
             'recursos' => $recursos,
@@ -44,20 +58,8 @@ class RecursoController extends Controller
         $request->merge([
             'is_active' => filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN)
         ]);
-        // Validación incluyendo las imágenes
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'codigo' => 'nullable|string|max:20',
-            'tipo' => 'required|in:Reservable,No reservable,Suministro',
-            'descripcion' => 'nullable|string',
-            'estado' => 'required|in:Activo,Inactivo,Reservado,Prestado',
-            'is_active' => 'boolean',
-            'area_id' => 'nullable|exists:areas,id',
-            'equipo_id' => 'nullable|exists:equipos,id',
-            'fotos.*' => 'image',
-        ]);
 
-        // Crear el recurso
+        $request->validate($this->rules);
         $recurso = Recurso::create($request->all());
 
         // Procesar y guardar las imágenes si se enviaron
@@ -72,22 +74,7 @@ class RecursoController extends Controller
     // Actualizar un recurso existente
     public function update(Request $request, Recurso $recurso)
     {
-        // Validación de los datos del recurso
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'codigo' => 'nullable|string|max:20',
-            'tipo' => 'required|in:Reservable,No reservable,Suministro',
-            'descripcion' => 'nullable|string',
-            'estado' => 'required|in:Activo,Inactivo,Reservado,Prestado',
-            'is_active' => 'boolean',
-            'area_id' => 'nullable|exists:areas,id',
-            'equipo_id' => 'nullable|exists:equipos,id',
-            'fotos_nuevas.*' => 'image', // Validar fotos nuevas
-            'fotos_eliminadas' => 'array',
-            'fotos_eliminadas.*' => 'integer|exists:fotos_recursos,id', // Validar que existan en la BD
-        ]);
-
-        // Actualizar datos del recurso
+        $request->validate($this->rules);
         $recurso->update($request->all());
 
         // Eliminar fotos enviadas para eliminación

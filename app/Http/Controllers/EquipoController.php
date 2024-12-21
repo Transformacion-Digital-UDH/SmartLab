@@ -11,6 +11,24 @@ use Illuminate\Support\Facades\Log;
 
 class EquipoController extends Controller
 {
+    protected $rules = [
+        'nombre' => ['required', 'string', 'max:100'],
+        'codigo' => ['required', 'string', 'max:20'],
+        'tipo' => ['required', 'in:Reservable,No reservable,Suministro'],
+        'descripcion' => ['nullable', 'string'],
+        'estado' => ['required', 'in:Activo,Inactivo,Reservado,Prestado'],
+        'area_id' => ['nullable', 'exists:areas,id'],
+        'equipo_id' => ['nullable', 'exists:equipos,id'],
+        'is_active' => ['boolean'],
+        'fotos.*' => ['image'],
+        'recursos' => 'array',
+        'recursos.*' => 'integer|exists:recursos,id',
+
+        'fotos_nuevas.*' => ['image'],
+        'fotos_eliminadas' => ['array'],
+        'fotos_eliminadas.*' => ['integer', 'exists:fotos_recursos,id'],
+    ];
+
     // Guardar un nuevo equipo
     public function store(Request $request)
     {
@@ -18,21 +36,7 @@ class EquipoController extends Controller
             'is_active' => filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN),
         ]);
 
-        // Validación incluyendo las imágenes
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'codigo' => 'nullable|string|max:20',
-            'tipo' => 'required|in:Reservable,No reservable,Suministro',
-            'descripcion' => 'nullable|string',
-            'estado' => 'required|in:Activo,Inactivo,Reservado,Prestado',
-            'is_active' => 'boolean',
-            'area_id' => 'nullable|exists:areas,id',
-            'recursos' => 'array',
-            'recursos.*' => 'integer|exists:recursos,id',
-            'fotos.*' => 'image',
-        ]);
-
-        // Crear el equipo
+        $request->validate($this->rules);
         $equipo = Equipo::create($request->all());
 
         // Procesar y guardar las imágenes si se enviaron
