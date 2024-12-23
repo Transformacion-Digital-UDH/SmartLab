@@ -27,7 +27,7 @@ class RecursoController extends Controller
         'fotos_eliminadas.*' => ['integer', 'exists:fotos_recursos,id'],
     ];
 
-    public function index()
+    public function index(Request $request)
     {
         $recursos = Recurso::with('area', 'equipo',  'fotos')
             ->where('is_active', true)
@@ -41,10 +41,13 @@ class RecursoController extends Controller
 
         $areas = Area::orderBy('id', 'desc')->get();
 
+        $tab = $request->query('tab', 1);
+
         return Inertia::render('Recursos/Index', [
             'recursos' => $recursos,
             'areas' => $areas,
             'equipos' => $equipos,
+            'tab' => $tab,
         ]);
     }
 

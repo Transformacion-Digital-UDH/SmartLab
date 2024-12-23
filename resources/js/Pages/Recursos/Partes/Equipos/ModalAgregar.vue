@@ -1,11 +1,11 @@
 <template>
-    <Modal
+    <Drawer
         title="Agregar equipo"
         :open="visible"
-        @cancel="cerrarModal"
-        centered
+        @close="cerrarModal"
+        placement="right"
         :footer="null"
-        width="1150px"
+        width="100&"
     >
         <Form
             layout="vertical"
@@ -13,138 +13,119 @@
             :model="equipo"
             class="mt-4"
         >
-            <a-row :gutter="[16, 16]">
-                <a-col :span="24" :md="24" :lg="12">
-                    <div class="flex flex-col gap-y-2">
-                        <div class="flex gap-x-3">
-                            <FormItem
-                                label="Código *"
-                                name="codigo"
-                                class="w-2/5"
-                            >
-                                <Input
-                                    v-model:value="equipo.codigo"
-                                    placeholder="Ingrese el código"
-                                    autocomplete="off"
-                                />
-                                <InputError :message="errors.codigo?.[0]" />
-                            </FormItem>
+            <div class="flex gap-x-3">
+                <FormItem label="Código *" name="codigo" class="w-2/5">
+                    <Input
+                        v-model:value="equipo.codigo"
+                        placeholder="Ingrese el código"
+                        autocomplete="off"
+                    />
+                    <InputError :message="errors.codigo?.[0]" />
+                </FormItem>
 
-                            <FormItem
-                                label="Nombre *"
-                                name="nombre"
-                                class="w-3/5"
-                            >
-                                <Input
-                                    v-model:value="equipo.nombre"
-                                    placeholder="Ingrese el nombre"
-                                    autocomplete="off"
-                                />
-                                <InputError :message="errors.nombre?.[0]" />
-                            </FormItem>
-                        </div>
+                <FormItem label="Nombre *" name="nombre" class="w-3/5">
+                    <Input
+                        v-model:value="equipo.nombre"
+                        placeholder="Ingrese el nombre"
+                        autocomplete="off"
+                    />
+                    <InputError :message="errors.nombre?.[0]" />
+                </FormItem>
+            </div>
 
-                        <FormItem label="Descripción" name="descripcion">
-                            <Input.TextArea
-                                v-model:value="equipo.descripcion"
-                                placeholder="Ingrese una descripción"
-                            />
-                            <InputError :message="errors.descripcion?.[0]" />
-                        </FormItem>
+            <FormItem label="Descripción" name="descripcion">
+                <Input.TextArea
+                    v-model:value="equipo.descripcion"
+                    placeholder="Ingrese una descripción"
+                />
+                <InputError :message="errors.descripcion?.[0]" />
+            </FormItem>
 
-                        <div class="flex gap-x-3">
-                            <FormItem label="Tipo" name="tipo" class="w-full">
-                                <Select
-                                    v-model:value="equipo.tipo"
-                                    placeholder="Seleccione el tipo"
-                                    :options="opcionesTipo"
-                                />
-                                <InputError :message="errors.tipo?.[0]" />
-                            </FormItem>
+            <div class="flex gap-x-3">
+                <FormItem label="Tipo" name="tipo" class="w-full">
+                    <Select
+                        v-model:value="equipo.tipo"
+                        placeholder="Seleccione el tipo"
+                        :options="opcionesTipo"
+                    />
+                    <InputError :message="errors.tipo?.[0]" />
+                </FormItem>
 
-                            <FormItem
-                                label="Estado actual"
-                                name="estado"
-                                class="w-full"
-                            >
-                                <Select
-                                    v-model:value="equipo.estado"
-                                    placeholder="Seleccione el estado"
-                                    :options="opcionesEstado"
-                                />
-                                <InputError :message="errors.estado?.[0]" />
-                            </FormItem>
-                        </div>
+                <FormItem label="Estado actual" name="estado" class="w-full">
+                    <Select
+                        v-model:value="equipo.estado"
+                        placeholder="Seleccione el estado"
+                        :options="opcionesEstado"
+                    />
+                    <InputError :message="errors.estado?.[0]" />
+                </FormItem>
+            </div>
 
-                        <FormItem label="Área" name="area_id" class="w-full">
-                            <Select
-                                v-model:value="equipo.area_id"
-                                placeholder="Seleccionar"
-                                :options="opcionesAreas"
-                                show-search
-                                :filter-option="buscarArea"
-                                allowClear
-                            />
-                            <InputError :message="errors.area_id?.[0]" />
-                        </FormItem>
+            <FormItem label="Área" name="area_id" class="w-full">
+                <Select
+                    v-model:value="equipo.area_id"
+                    placeholder="Seleccionar"
+                    :options="opcionesAreas"
+                    show-search
+                    :filter-option="buscarArea"
+                    allowClear
+                />
+                <InputError :message="errors.area_id?.[0]" />
+            </FormItem>
+
+            <FormItem label="Recursos que componen este equipo" name="recursos">
+                <Transfer
+                    v-model:targetKeys="recursosAsignados"
+                    v-model:value="equipo.recursos"
+                    :data-source="listaRecursos"
+                    :render="renderRecurso"
+                    :titles="[' disponibles', ' asignados']"
+                    @change="cambiarRecursos"
+                    :list-style="{ width: '100%' }"
+                />
+            </FormItem>
+
+            <FormItem label="Fotos del equipo">
+                <Upload
+                    list-type="picture-card"
+                    :file-list="fileList"
+                    @preview="manejarPrevisualizacion"
+                    @remove="quitarFoto"
+                    :before-upload="procesarFotoNueva"
+                    :multiple="true"
+                >
+                    <div v-if="fileList.length < maxFiles">
+                        <PlusOutlined />
+                        <div class="mt-2">Subir</div>
                     </div>
-                </a-col>
-                <a-col :span="24" :md="24" :lg="12">
-                    <div class="flex flex-col">
-                        <FormItem
-                            label="Recursos que componen este equipo"
-                            name="recursos"
-                        >
-                            <Transfer
-                                v-model:targetKeys="recursosAsignados"
-                                v-model:value="equipo.recursos"
-                                :data-source="listaRecursos"
-                                :render="renderRecurso"
-                                :titles="[' disponibles', ' asignados']"
-                                @change="cambiarRecursos"
-                                :list-style="{ width: '100%' }"
-                            />
-                        </FormItem>
-
-                        <FormItem label="Fotos del equipo">
-                            <Upload
-                                list-type="picture-card"
-                                :file-list="fileList"
-                                @preview="manejarPrevisualizacion"
-                                @remove="quitarFoto"
-                                :before-upload="procesarFotoNueva"
-                                :multiple="true"
-                            >
-                                <div v-if="fileList.length < maxFiles">
-                                    <PlusOutlined />
-                                    <div class="mt-2">Subir</div>
-                                </div>
-                            </Upload>
-                            <Modal
-                                :open="previewVisible"
-                                title="Vista previa"
-                                :footer="null"
-                                @cancel="cerrarModalPrevisualizacion"
-                            >
-                                <img
-                                    alt="Vista previa"
-                                    class="w-full"
-                                    :src="previewImage"
-                                />
-                            </Modal>
-                        </FormItem>
-                    </div>
-                </a-col>
-            </a-row>
-
-            <FormItem class="flex justify-end mb-0">
-                <Button class="mr-3" @click="cerrarModal"> Cancelar </Button>
-                <Button type="primary" htmlType="submit" :loading="cargando">
-                    Guardar
-                </Button>
+                </Upload>
+                <Modal
+                    :open="previewVisible"
+                    title="Vista previa"
+                    :footer="null"
+                    @cancel="cerrarModalPrevisualizacion"
+                >
+                    <img
+                        alt="Vista previa"
+                        class="w-full"
+                        :src="previewImage"
+                    />
+                </Modal>
             </FormItem>
         </Form>
-    </Modal>
+
+        <template #extra>
+            <Button style="margin-right: 8px" @click="cerrarModal"
+                >Cancelar</Button
+            >
+            <Button
+                type="primary"
+                v-on:click="enviarFormulario"
+                :loading="cargando"
+                >Guardar</Button
+            >
+        </template>
+    </Drawer>
 </template>
 
 <script setup>
@@ -154,6 +135,7 @@ import { PlusOutlined } from "@ant-design/icons-vue";
 import axios from "axios";
 import {
     Modal,
+    Drawer,
     Form,
     FormItem,
     Input,
@@ -210,9 +192,11 @@ const cambiarRecursos = (keys) => {
     recursosAsignados.value = keys;
 };
 
-// Renderizar recursos en el Transfer
-const renderRecurso = (item) => {
-    return `${item.codigo} - ${item.nombre}`;
+const filtrarRecursos = (inputValue, option) => {
+    return (
+        option.codigo.toLowerCase().includes(inputValue.toLowerCase()) ||
+        option.nombre.toLowerCase().includes(inputValue.toLowerCase())
+    );
 };
 
 const buscarArea = (input, option) => {
@@ -309,7 +293,11 @@ onMounted(() => {
         key: recurso.id.toString(),
         codigo: recurso.codigo || "Sin código",
         nombre: recurso.nombre,
-        foto: recurso.foto,
+        equipo_id: recurso.equipo_id || null,
+        foto:
+            recurso.fotos.length > 0
+                ? `/storage/${recurso.fotos[0].ruta}`
+                : "/img/default-placeholder.webp",
     }));
 });
 </script>

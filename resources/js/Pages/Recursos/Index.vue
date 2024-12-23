@@ -7,7 +7,7 @@
         </template>
 
         <div class="max-w-7xl mx-auto py-4 sm:px-6 lg:px-8 px-4">
-            <Tabs default-active-key="1" type="line" >
+            <Tabs default-active-key="1" :activeKey="activeKey" type="line"  @change="manejarCambioTab">
                 <TabPane key="1" tab="Recursos">
                     <TablaRecursos
                         :recursos="recursos"
@@ -85,6 +85,12 @@ const areas = ref(props.areas || []);
 const equipos = ref(props.equipos || []);
 const recursos = ref(props.recursos || []);
 
+const activeKey = ref(props.tab.toString() || "1");
+
+const manejarCambioTab = (key) => {
+    activeKey.value = key;
+}
+
 // Variables y funciones para Recursos
 const mostrarModalCrearRecurso = ref(false);
 const mostrarModalEditarRecurso = ref(false);
@@ -93,7 +99,7 @@ const recursoSeleccionado = ref(null);
 const actualizarTablaRecursos = () => {
     mostrarModalCrearRecurso.value = false;
     mostrarModalEditarRecurso.value = false;
-    router.visit(route("recursos.index"), { preserveScroll: true });
+    router.visit(route("recursos.index", { tab: 1 }), { preserveScroll: true });
 };
 
 const abrirModalCrearRecurso = () => {
@@ -113,7 +119,7 @@ const equipoSeleccionado = ref(null);
 const actualizarTablaEquipos = () => {
     mostrarModalCrearEquipo.value = false;
     mostrarModalEditarEquipo.value = false;
-    router.visit(route("recursos.index"), { preserveScroll: true });
+    router.visit(route("recursos.index", { tab: 2 }), { preserveScroll: true });
 };
 
 const abrirModalCrearEquipo = () => {
@@ -124,4 +130,5 @@ const abrirModalEditarEquipo = (equipo) => {
     mostrarModalEditarEquipo.value = true;
     equipoSeleccionado.value = { ...equipo };
 };
+
 </script>
