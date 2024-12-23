@@ -10,13 +10,13 @@ use App\Models\User;
 class LaboratorioController extends Controller
 {
     public $rules = [
-        'nombre' => ['required', 'min:5', 'max:90'],
-        'codigo' => ['required', 'min:5', 'max:10'],
-        'descripcion' => ['nullable', 'min:5', 'max:100'],
-        'aforo' => ['nullable', 'integer', 'max:100'],
+        'nombre' => ['required', 'string', 'min:5', 'max:90'],
+        'codigo' => ['required', 'string', 'min:5', 'max:10'],
+        'descripcion' => ['nullable', 'string', 'min:5', 'max:100'],
+        'aforo' => ['nullable', 'integer', 'min:1', 'max:100'],
         'email' => ['nullable', 'email', 'min:5', 'max:100'],
         'inauguracion' => ['nullable', 'date'],
-        'responsable_id' => ['required', 'exists:users,id'],
+        'responsable_id' => ['required', 'integer', 'exists:users,id'],
     ];
 
     // Listar los laboratorios en la vista

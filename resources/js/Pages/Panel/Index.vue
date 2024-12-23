@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import CardItems from "./Partes/CardItems.vue";
+import BarraIngresos from "./Charts/BarraIngresos.vue";
 </script>
 
 <template>
@@ -20,7 +21,7 @@ import CardItems from "./Partes/CardItems.vue";
                 >
                     <h3 class="text-xl font-bold pb-1">Metricas claves</h3>
                     <div class="flex flex-wrap">
-                        <div class="w-full sm:w-2/6">
+                        <div class="w-full lg:w-2/6">
                             <div class="grid grid-cols-2 gap-4">
                                 
                                 <CardItems name="Usuarios" des="Registros"/>
@@ -31,8 +32,8 @@ import CardItems from "./Partes/CardItems.vue";
                             </div>
                         </div>
                         <!-- Caja del 60% -->
-                        <div class="w-full sm:w-4/6">
-                            Caja 60%
+                        <div class="w-full lg:w-4/6 mt-4 lg:mt-0">
+                            <BarraIngresos class="mx-2" />
                         </div>
                     </div>
                 </div>
