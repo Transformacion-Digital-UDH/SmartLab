@@ -45,7 +45,7 @@ class AsistenciaController extends Controller
 		$asistencias = DB::table('asistencias')
 			->join('users', 'users.id', '=', 'asistencias.usuario_id')
 			->leftJoin('laboratorios', 'laboratorios.id', '=', 'asistencias.laboratorio_id') // Agrega la relación con laboratorios
-			->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id') // Agrega la relación con laboratorios
+			->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id') // Agrega la relación con proyectos
 			->where('asistencias.usuario_id', '=', $usuario_id)
 			->select(
 				'asistencias.*',
@@ -54,8 +54,10 @@ class AsistenciaController extends Controller
 				'users.apellidos',
 				'users.rol',
 				'laboratorios.nombre as laboratorio', // Incluye el nombre del laboratorio
-				'proyectos.nombre as proyecto' // Incluye el nombre del laboratorio
-			)->paginate(20);
+				'proyectos.nombre as proyecto' // Incluye el nombre del proyecto
+			)
+			->orderBy('asistencias.hora_entrada', 'desc') // Ordenar por fecha de inicio
+			->paginate(20);
 
 		return Inertia::render('Asistencia/MiAsistencia', [
 			'token' => csrf_token(),

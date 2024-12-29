@@ -1,11 +1,16 @@
 <script lang="ts" setup>
+	import 'dayjs/locale/es';
 	import moment from 'moment';
 	import { CheckCircleFilled, CheckCircleOutlined, AppleOutlined, AndroidOutlined, ExclamationCircleOutlined, UserOutlined, DeploymentUnitOutlined, ExperimentOutlined } from '@ant-design/icons-vue';
+	import dayjs from 'dayjs';
+	dayjs.locale('es');
+
 
 	const { asistencia } = defineProps({
 		asistencia: Object
 	})
 
+	console.log( dayjs(asistencia.salida).diff(asistencia.entrada,'hour'));
 </script>
 <template>
 	<article class="flex justify-between bg-neutral-50 border border-neutral-100 rounded-xl py-1 pl-3 pr-3">
@@ -18,7 +23,7 @@
 			</div>
 			<div>
 				<div class="text-green-600 font-bold">
-					{{moment(asistencia.entrada).format('D MMM YYYY').toLocaleLowerCase()}}
+					{{dayjs(asistencia.entrada).format('dddd, D MMM YYYY').toLowerCase()}}
 				</div class="text-green-500">
 				<div class="flex gap-x-3 flex-wrap">
 					<div v-if="asistencia.laboratorio != null" class="flex items-center gap-2">
@@ -35,7 +40,7 @@
 		<!-- LEFT -->
 		<div class="flex gap-3">
 			<div class="flex flex-col items-end justify-between gap-1">
-				<span v-if="asistencia.check" class="text-blue-600">{{ asistencia.diff }}</span>
+				<span v-if="asistencia.check" class="text-blue-600">{{ dayjs(asistencia.salida).diff(asistencia.entrada,'hour') }}h {{ dayjs(asistencia.salida).diff(asistencia.entrada,'minute') % 60}}m</span>
 				<span v-else class="text-blue-600">0h 0m</span>
 				<div class="flex font-semibold text-nowrap text-gray-500">
 					{{ moment(asistencia.entrada).locale('es').format('LT') }}
