@@ -24,7 +24,6 @@ asistencias.data = asistencias.data.map((asis) => ({
     : 'C',
   laboratorio: asis.laboratorio,
   proyecto: asis.proyecto,
-  diff: moment(asis.hora_salida).diff(moment(asis.hora_entrada), 'minutes'),
 }));
 
 // Dividir asistencias
