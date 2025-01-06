@@ -13,6 +13,7 @@ use App\Http\Controllers\PanelController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UserController;
+use App\Models\Proyecto;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -115,3 +116,12 @@ Route::middleware([
 Route::get('/galeria', function () {
     return Inertia::render('Landing/Galeria');
 })->name('galeria');
+
+Route::get('/landing', function () {
+    return Inertia::render('LandingDev/Index');
+});
+
+Route::get('/projects', function () {
+    $proyectos = Proyecto::with('responsable')->get();
+    return Inertia::render('LandingDev/Proyectos', ['magos' => 12, 'proyectos' => $proyectos]);
+});
