@@ -102,11 +102,11 @@ class AsistenciaController extends Controller
 
 		$proyectos = MiembroProyecto::where('usuario_id', $user->id)
 			->join('proyectos', 'miembro_proyectos.proyecto_id', '=', 'proyectos.id')
-			->select('proyectos.nombre', 'proyectos.descripcion', 'proyectos.id')
+			->select('proyectos.nombre', 'proyectos.descripcion', 'proyectos.id', 'proyectos.estado')
 			->get();
 
 		$proyectosA = Proyecto::where('responsable_id', $user->id)
-			->select('proyectos.nombre', 'proyectos.descripcion', 'proyectos.id')
+			->select('proyectos.nombre', 'proyectos.descripcion', 'proyectos.id', 'proyectos.estado')
 			->get();
 
 		return response()->json([
