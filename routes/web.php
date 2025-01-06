@@ -9,6 +9,7 @@ use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\MiembroController;
+use App\Http\Controllers\PanelController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UserController;
@@ -46,9 +47,7 @@ Route::middleware([
 ])->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/panel', [PanelController::class, 'index'])->name('dashboard');
 
     // Vistas de Asistencia
     Route::get('/asistencias', [AsistenciaController::class, 'index'])->name('asistencias.index');
