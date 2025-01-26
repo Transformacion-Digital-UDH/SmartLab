@@ -30,7 +30,7 @@
 	);
 
 	const recursosFiltrados = computed(() => recursos.value.filter((recurso) => {
-		const a = recurso?.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) 
+		const a = recurso?.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase())
 		const b = recurso.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
 		const c = idLabSelected.value === -1 ? true : recurso?.area?.laboratorio.id === idLabSelected.value
 			return (a || b ) && c
@@ -43,7 +43,7 @@
 		tipo.value = tipex;
 	}
 
-	function buscar() {		
+	function buscar() {
 		loading.value = true
 		router.visit(route('catalogo.index')+'?'+ new URLSearchParams({ q: valorBuscar.value }).toString(), { preserveScroll: true });
 	}
@@ -53,14 +53,14 @@
 	}
 
 	function handleChange() {
-		
+
 	}
 </script>
 <template>
-	<AppLayout title="Recursos">
+	<AppLayout title="Catálogo">
 		<template #header>
 			<h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0">
-				Catalogo
+				Catálogo
 			</h2>
 		</template>
 		<div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8 px-4">
@@ -99,7 +99,7 @@
 			</div> -->
 			<ModalReservar :recurso="recursoSeleccionado" :tipo="tipo" v-model:open="open" @close="open=false"/>
 		</div>
-		
+
 	</AppLayout>
 </template>
 <style scoped>

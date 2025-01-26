@@ -9,7 +9,7 @@
 		open: Boolean,
 		tipo: String
 	});
-	
+
 	const emitir = defineEmits(['send','close']);
 	const recurso = ref(props.recurso ?? {});
 	const tipo = ref(props.tipo)
@@ -64,7 +64,7 @@
 			const response = await axios.post(route('reserva.create'), {...data});
 			console.log(response.data);
 			if (response.status === 201) {
-				message.success('Se reservo exitosamente');
+				message.success('Solicitud de reserva enviada correctamente');
 				emitir('close');
 			} else {
 				throw new Error('Error al reservar')
@@ -128,5 +128,5 @@
 	</Modal>
 </template>
 <style scoped>
-	
+
 </style>

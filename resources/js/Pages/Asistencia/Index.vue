@@ -75,7 +75,7 @@
 	let buscar = ref(new URLSearchParams(window.location.search).get('q') ?? '')
 
 	async function buscarAsistencias() {
-		
+
 		router.visit(route('asistencias.index')+'?'+ new URLSearchParams({ q: buscar.value }).toString(), { preserveScroll: true });
 	}
 
@@ -107,9 +107,9 @@
 					@search="buscarAsistencias"
 					v-model:value="buscar"
 				/>
-				<Button type="primary" @click="abrirModalCrear" size="large" class="font-medium" >Agregar Asistencia</Button>
+				<Button type="primary" @click="abrirModalCrear" size="large" class="font-medium" >Agregar asistencia</Button>
 			</div>
-			<TablaAsistencia 
+			<TablaAsistencia
 				:asistencias="asistencias"
 				@actualizar-tabla="actualizarTabla"
 				@editar="abrirModalEditar"
