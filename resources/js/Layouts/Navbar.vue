@@ -27,6 +27,11 @@ const logout = () => {
 
 const navigationLinks = [
     {
+        name: "Panel",
+        route: "dashboard",
+        icon: ExperimentOutlined,
+    },
+    {
         name: "Laboratorios",
         route: "laboratorios.index",
         icon: ExperimentOutlined,

@@ -7,7 +7,12 @@
         :footer="null"
         width="100&"
     >
-        <Form layout="vertical" :model="equipo">
+        <Form
+            layout="vertical"
+            @finish="enviarFormulario"
+            :model="equipo"
+            class="mt-4"
+        >
             <div class="flex gap-x-3">
                 <FormItem label="Código *" name="codigo" class="w-2/5">
                     <Input
@@ -68,41 +73,16 @@
                 <InputError :message="errors.area_id?.[0]" />
             </FormItem>
 
-            <!-- Transfer para asignar recursos -->
             <FormItem label="Recursos que componen este equipo" name="recursos">
-                <p class="text-xs text-gray-400 mb-4">Los recursos en naranja ya pertenecen a un equipo. Si lo asigna a este equipo, se quitará del otro.</p>
                 <Transfer
                     v-model:targetKeys="recursosAsignados"
                     v-model:value="equipo.recursos"
                     :data-source="listaRecursos"
+                    :render="renderRecurso"
                     :titles="[' disponibles', ' asignados']"
-                    show-search
                     @change="cambiarRecursos"
-                    :filter-option="filtrarRecursos"
-                    :list-style="{ width: '100%', height: '300px' }"
-                    :locale="{
-                        searchPlaceholder: 'Buscar aquí',
-                        itemUnit: '',
-                        itemsUnit: '',
-                        notFoundContent: 'No hay datos disponibles'
-                    }"
-                >
-                    <template #render="item">
-                        <div
-                            class="flex items-center gap-x-3 max-w-12"
-                            :class="{'text-amber-500': item.equipo_id !== null, '': item.equipo_id === null}"
-                        >                            <img
-                                :src="`${item.foto}`"
-                                alt="Foto del recurso"
-                                class="w-8 h-8 object-cover rounded-sm"
-                            />
-                            <div class="flex flex-col w-full">
-                                <small class="text-xs font-medium">{{ item.codigo }}</small>
-                                <small>{{ item.nombre }}</small>
-                            </div>
-                        </div>
-                    </template>
-                </Transfer>
+                    :list-style="{ width: '100%' }"
+                />
             </FormItem>
 
             <FormItem label="Fotos del equipo">
@@ -132,15 +112,19 @@
                     />
                 </Modal>
             </FormItem>
-
-
         </Form>
 
         <template #extra>
-            <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
-            <Button type="primary" v-on:click="enviarFormulario" :loading="cargando">Guardar</Button>
+            <Button style="margin-right: 8px" @click="cerrarModal"
+                >Cancelar</Button
+            >
+            <Button
+                type="primary"
+                v-on:click="enviarFormulario"
+                :loading="cargando"
+                >Guardar</Button
+            >
         </template>
-
     </Drawer>
 </template>
 
@@ -215,7 +199,6 @@ const filtrarRecursos = (inputValue, option) => {
     );
 };
 
-
 const buscarArea = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
 };
@@ -258,7 +241,7 @@ const enviarFormulario = async () => {
 
     // Agregar los recursos asignados al FormData
     recursosAsignados.value.forEach((recursoId) => {
-        formData.append('recursos[]', recursoId);
+        formData.append("recursos[]", recursoId);
     });
 
     // Agregar las fotos al FormData
@@ -311,7 +294,10 @@ onMounted(() => {
         codigo: recurso.codigo || "Sin código",
         nombre: recurso.nombre,
         equipo_id: recurso.equipo_id || null,
-        foto: recurso.fotos.length > 0 ? `/storage/${recurso.fotos[0].ruta}` : '/img/default-placeholder.webp',
+        foto:
+            recurso.fotos.length > 0
+                ? `/storage/${recurso.fotos[0].ruta}`
+                : "/img/default-placeholder.webp",
     }));
 });
 </script>
