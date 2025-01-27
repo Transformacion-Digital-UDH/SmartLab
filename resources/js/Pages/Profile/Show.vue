@@ -34,6 +34,11 @@ defineProps({
                     <SectionBorder />
                 </div>
 
+                <div>
+                    <MiQr class="mt-10 sm:mt-0" />
+                    <SectionBorder />
+                </div>
+
                 <div v-if="$page.props.jetstream.canUpdatePassword">
                     <UpdatePasswordForm class="mt-10 sm:mt-0" />
 
@@ -57,11 +62,6 @@ defineProps({
                     :sessions="sessions"
                     class="mt-10 sm:mt-0"
                 />
-                
-                <div>
-                    <SectionBorder />
-                    <MiQr class="mt-10 sm:mt-0" />
-                </div>
 
                 <template
                     v-if="$page.props.jetstream.hasAccountDeletionFeatures"

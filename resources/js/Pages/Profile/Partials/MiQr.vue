@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import ActionSection from "@/Components/ActionSection.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -9,12 +9,14 @@ import html2canvas from "html2canvas";
 const user = usePage().props.auth.user;
 
 // Código o DNI para generar el QR
-const codigoODNI = ref(user.codigo ?? user.dni);
+const codigoODNI = ref(
+    user.codigo && user.codigo.trim() ? user.codigo : user.dni
+);
 
-// Estado para mostrar mensajes de descarga
+const icon = ref("");
 const mensajeDescarga = ref("");
 
-// Función para descargar el fotochek
+// Descargar el fotochek
 const descargarFotochek = async () => {
     const descargarDiv = document.getElementById("descargar");
     if (!descargarDiv) {
@@ -42,6 +44,25 @@ const descargarFotochek = async () => {
             "Ocurrió un error al generar la imagen. Intenta nuevamente.";
     }
 };
+
+// Convertir la imagen a Base64
+const getImageBase64 = async (url) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result); // Cadena Base64
+        reader.onerror = reject;
+        reader.readAsDataURL(blob); // Convertir blob en base64
+    });
+};
+
+// Convertir la imagen a Base64
+onMounted(async () => {
+    const imageUrl = `${window.location.origin}/img/logotipo.png`;
+    icon.value = await getImageBase64(imageUrl);
+});
 </script>
 
 <template>
@@ -58,13 +79,22 @@ const descargarFotochek = async () => {
                 <!-- Columna izquierda: QR -->
                 <div class="flex flex-col items-center">
                     <div
-                        class="p-4 inline-block bg-blue-100 rounded text-center"
+                        class="py-4 px-8 inline-block bg-gray-100 rounded text-center"
                         id="descargar"
                     >
-                        <span class="font-bold text-lg block mt-4">{{ user.nombres }}</span>
+                        <span class="font-bold text-lg block mt-4">{{
+                            user.nombres
+                        }}</span>
                         <p class="text-lg">{{ user.apellidos }}</p>
                         <div class="bg-white rounded-[8px]">
-                            <QRCode :size="250" :value="codigoODNI" />
+                            <QRCode
+                                :size="250"
+                                :value="codigoODNI"
+                                :icon="icon"
+                                :icon-size="55"
+                                error-level="H"
+                                type="png"
+                            />
                         </div>
                         <p class="text-sm mt-2">{{ codigoODNI }}</p>
                     </div>
