@@ -34,7 +34,7 @@ const descargarFotochek = async () => {
         // Crear el enlace para descargar la imagen
         const enlace = document.createElement("a");
         enlace.href = canvas.toDataURL("image/png");
-        enlace.download = `${codigoODNI.value}.png`;
+        enlace.download = `QR-${codigoODNI.value}.png`;
         enlace.click();
 
         mensajeDescarga.value = "Imagen descargada exitosamente.";
