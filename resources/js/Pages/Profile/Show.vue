@@ -6,6 +6,7 @@ import SectionBorder from "@/Components/SectionBorder.vue";
 import TwoFactorAuthenticationForm from "@/Pages/Profile/Partials/TwoFactorAuthenticationForm.vue";
 import UpdatePasswordForm from "@/Pages/Profile/Partials/UpdatePasswordForm.vue";
 import UpdateProfileInformationForm from "@/Pages/Profile/Partials/UpdateProfileInformationForm.vue";
+import MiQr from "./Partials/MiQr.vue";
 
 defineProps({
     confirmsTwoFactorAuthentication: Boolean,
@@ -56,6 +57,11 @@ defineProps({
                     :sessions="sessions"
                     class="mt-10 sm:mt-0"
                 />
+                
+                <div>
+                    <SectionBorder />
+                    <MiQr class="mt-10 sm:mt-0" />
+                </div>
 
                 <template
                     v-if="$page.props.jetstream.hasAccountDeletionFeatures"
