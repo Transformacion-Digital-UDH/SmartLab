@@ -24,6 +24,14 @@ class Laboratorio extends Model
 
     // Relaciones
 
+        /**
+     * Un laboratorio tiene muchos proyectos.
+     */
+    public function proyectos()
+    {
+        return $this->hasMany(Proyecto::class);
+    }
+
     // Un laboratorio puede tener muchas áreas.
     public function areas()
     {

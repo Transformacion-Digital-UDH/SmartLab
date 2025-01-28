@@ -18,7 +18,16 @@ class Proyecto extends Model
         'estado',
         'is_active',
         'responsable_id',
+        'laboratorio_id',
     ];
+
+    /**
+     * Relación: Un proyecto pertenece a un laboratorio.
+     */
+    public function laboratorio()
+    {
+        return $this->belongsTo(Laboratorio::class);
+    }
 
     // Un proyecto puede tener muchos miembros.
     public function participantes()

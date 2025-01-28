@@ -29,7 +29,7 @@
         key: "dni",
     },
     {
-        title: "Tipo",
+        title: "Estado",
         dataIndex: "tipo",
         key: "tipo",
     },
@@ -119,10 +119,10 @@
         </template>
         <template v-if="column.key === 'tipo'">
             <Tag v-if="record.hora_salida" :bordered="false" color="green">
-                Salida
+                Completado
             </Tag>
-            <Tag v-else :bordered="false" color="red">
-                Entrada
+            <Tag v-else :bordered="false" color="orange">
+                Por completar
             </Tag>
         </template>
         <template v-if="column.key === 'acciones'">
