@@ -6,6 +6,7 @@ use App\Models\Area;
 use App\Models\Equipo;
 use App\Models\Laboratorio;
 use App\Models\Recurso;
+use App\Models\Reserva;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -32,7 +33,6 @@ class CatalogoController extends Controller
 			'laboratorios' => $laboratorios
 		]);
 	}
-
  
 	// Guardar un nuevo recurso
 	public function store(Request $request)
@@ -66,6 +66,19 @@ class CatalogoController extends Controller
 		]);
 
 		$recurso->update($request->all());
+	}
+
+	public function listaDeReservados ($id, $tipo) {
+		$reservas = [];
+		if ($tipo == 'recurso') {
+			$reservas = Reserva::where('equipo_id', $id)->get();
+		} else if ($tipo == 'equipo') {
+			$reservas = Reserva::where('recurso_id', $id)->get();
+		}
+
+		return response()->json([
+			'data' => $reservas
+		]);
 	}
 
 	// Eliminar un recurso
