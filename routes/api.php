@@ -14,11 +14,14 @@ Route::prefix('/asistencia')->group(function () {
     Route::post('/registrar_entrada', [AsistenciaController::class, 'registrarEntrada']);
     Route::put('/registrar_salida', [AsistenciaController::class, 'registrarSalida']);
     Route::put('/eliminar/{id}', [AsistenciaController::class, 'eliminar']);
-    
+
+});
+
+Route::prefix('/users')->group(function () {
+    Route::get('{dni}', [AsistenciaController::class, 'info'])->where('codigo', '^\d{8}$');
 });
 
 Route::prefix('/laboratorios')->group(function () {
     Route::get('/', [LaboratorioController::class, 'info']);
     Route::post('/auth', [LaboratorioController::class, 'validar_lab']);
-
 });

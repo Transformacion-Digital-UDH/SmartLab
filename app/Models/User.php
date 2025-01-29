@@ -76,7 +76,7 @@ class User extends Authenticatable
     // Un usuario puede tener muchas asistencias.
     public function asistencias()
     {
-        return $this->hasMany(Asistencia::class);
+        return $this->hasMany(Asistencia::class, 'usuario_id');
     }
 
     // Un usuario puede tener muchas reservas.
