@@ -13,6 +13,7 @@ use App\Http\Controllers\PanelController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UserController;
+use App\Models\Proyecto;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -89,6 +90,7 @@ Route::middleware([
 
     // Catalogo
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
+    Route::get('/catalogo/reservas/{tipo}/{id}', [CatalogoController::class, 'listaDeReservados'])->name('catalogo.horarios');
 
     // Áreas
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');

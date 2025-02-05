@@ -1,5 +1,6 @@
 <script setup>
 	import { Button, Card, CardMeta } from 'ant-design-vue';
+
 	const props = defineProps({
 			recurso: Array,
 	});
@@ -36,7 +37,7 @@
 						{{recurso.area?.nombre ?? 'Sin definir'}}
 					</div>
 					<div class="flex items-center gap-2">
-						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zm4 15h10m-8-4v4m6-4v4"/></svg>
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3h6m-5 6h4m-4-6v6L6 20a.7.7 0 0 0 .5 1h11a.7.7 0 0 0 .5-1L14 9V3"/></svg>
 						{{recurso.area?.laboratorio?.nombre ?? 'Sin definir'}}
 					</div>
 				</div>

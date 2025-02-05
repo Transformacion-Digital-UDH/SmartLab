@@ -88,7 +88,7 @@
         </template>
         <template v-if="column.key === 'tipo'">
             <span>
-                Tipo
+                Estado
             </span>
         </template>
         <template v-if="column.key === 'rol'">
