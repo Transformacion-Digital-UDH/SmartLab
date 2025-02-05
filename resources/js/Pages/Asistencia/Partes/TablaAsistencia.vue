@@ -88,7 +88,7 @@
         </template>
         <template v-if="column.key === 'tipo'">
             <span>
-                Tipo
+                Estado
             </span>
         </template>
         <template v-if="column.key === 'rol'">
@@ -119,10 +119,10 @@
         </template>
         <template v-if="column.key === 'tipo'">
             <Tag v-if="record.hora_salida" :bordered="false" color="green">
-                Salida
+                Finalizo
             </Tag>
-            <Tag v-else :bordered="false" color="red">
-                Entrada
+            <Tag v-else :bordered="false" color="blue">
+                Pesente
             </Tag>
         </template>
         <template v-if="column.key === 'acciones'">
