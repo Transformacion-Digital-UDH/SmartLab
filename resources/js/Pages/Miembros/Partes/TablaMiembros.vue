@@ -18,7 +18,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
 import { Table, Modal, message } from "ant-design-vue";
 import { router } from '@inertiajs/vue3';
 import {

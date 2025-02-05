@@ -5,139 +5,179 @@
         @cancel="cerrarModal"
         centered
         :footer="null"
+        width="650px"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="recurso">
-            <!-- Campo Nombre -->
-            <FormItem label="Nombre" name="nombre" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
-                <Input v-model:value="recurso.nombre" placeholder="Ingrese el nombre" />
-            </FormItem>
+        <Form
+            layout="vertical"
+            @finish="enviarFormulario"
+            :model="recurso"
+            class="mt-4"
+        >
+            <div class="flex gap-x-3">
+                <FormItem label="Código *" name="codigo" class="w-2/5">
+                    <Input
+                        v-model:value="recurso.codigo"
+                        placeholder="Ingrese el código"
+                        autocomplete="off"
+                    />
+                    <InputError :message="errors.codigo?.[0]" />
+                </FormItem>
 
-            <!-- Campo Código -->
-            <FormItem label="Código" name="codigo">
-                <Input v-model:value="recurso.codigo" placeholder="Ingrese el código" />
-            </FormItem>
+                <FormItem label="Nombre *" name="nombre" class="w-3/5">
+                    <Input
+                        v-model:value="recurso.nombre"
+                        placeholder="Ingrese el nombre"
+                        autocomplete="off"
+                    />
+                    <InputError :message="errors.nombre?.[0]" />
+                </FormItem>
+            </div>
 
-            <!-- Campo Tipo -->
-            <FormItem label="Tipo" name="tipo" :rules="[{ required: true, message: 'Seleccione el tipo' }]">
-                <Select v-model:value="recurso.tipo" placeholder="Seleccione el tipo" :options="opcionesTipo" />
-            </FormItem>
-
-            <!-- Campo Estado -->
-            <FormItem label="Estado" name="estado" :rules="[{ required: true, message: 'Seleccione el estado' }]">
-                <Select v-model:value="recurso.estado" placeholder="Seleccione el estado" :options="opcionesEstado" />
-            </FormItem>
-
-            <!-- Campo Descripción -->
             <FormItem label="Descripción" name="descripcion">
-                <Input v-model:value="recurso.descripcion" placeholder="Ingrese una descripción" />
-            </FormItem>
-
-            <!-- Campo Área -->
-            <FormItem label="Área" name="area_id">
-                <Select
-                    v-model:value="recurso.area_id"
-                    placeholder="Seleccione un área"
-                    :options="opcionesAreas"
-                    show-search
-                    :filter-option="buscarArea"
+                <Input.TextArea
+                    v-model:value="recurso.descripcion"
+                    placeholder="Ingrese una descripción"
                 />
+                <InputError :message="errors.descripcion?.[0]" />
             </FormItem>
 
-            <!-- Campo Equipo -->
-            <FormItem label="Equipo (opcional)" name="equipo_id">
-                <Select
-                    v-model:value="recurso.equipo_id"
-                    placeholder="Seleccione un equipo"
-                    :options="opcionesEquipos"
-                    show-search
-                    :filter-option="buscarEquipo"
-                />
-            </FormItem>
+            <div class="flex gap-x-3">
+                <FormItem label="Tipo" name="tipo" class="w-full">
+                    <Select
+                        v-model:value="recurso.tipo"
+                        placeholder="Seleccione el tipo"
+                        :options="opcionesTipo"
+                    />
+                    <InputError :message="errors.tipo?.[0]" />
+                </FormItem>
 
-            <!-- Cargar fotos del recurso -->
+                <FormItem label="Estado actual" name="estado" class="w-full">
+                    <Select
+                        v-model:value="recurso.estado"
+                        placeholder="Seleccione el estado"
+                        :options="opcionesEstado"
+                    />
+                    <InputError :message="errors.estado?.[0]" />
+                </FormItem>
+            </div>
+
+            <div class="flex gap-x-3">
+                <FormItem label="Área" name="area_id" class="w-full">
+                    <Select
+                        v-model:value="recurso.area_id"
+                        placeholder="Seleccionar"
+                        :options="opcionesAreas"
+                        show-search
+                        :filter-option="buscarArea"
+                        allowClear
+                    />
+                    <InputError :message="errors.area_id?.[0]" />
+                </FormItem>
+
+                <FormItem
+                    label="Equipo (opcional)"
+                    name="equipo_id"
+                    class="w-full"
+                >
+                    <Select
+                        v-model:value="recurso.equipo_id"
+                        placeholder="Seleccionar"
+                        :options="opcionesEquipos"
+                        show-search
+                        :filter-option="buscarEquipo"
+                        allowClear
+                    />
+                    <InputError :message="errors.equipo_id?.[0]" />
+                </FormItem>
+            </div>
+
+            <!-- Fotos del recurso -->
             <FormItem label="Fotos del recurso">
                 <Upload
                     list-type="picture-card"
                     :file-list="fileList"
                     @preview="manejarPrevisualizacion"
-                    @change="manejarCambio"
-                    :before-upload="() => false"
+                    @remove="marcarFotoEliminada"
+                    :before-upload="procesarFotoNueva"
+                    :multiple="true"
                 >
-                    <template #default>
-                        <div v-if="fileList.length < maxFiles">
-                            <PlusOutlined />
-                            <div style="margin-top: 8px">Subir</div>
-                        </div>
-                    </template>
+                    <div v-if="fileList.length < maxFiles">
+                        <PlusOutlined />
+                        <div class="mt-2">Subir</div>
+                    </div>
                 </Upload>
                 <Modal
                     :open="previewVisible"
                     title="Vista previa"
                     :footer="null"
-                    @cancel="manejarCancelacion"
+                    @cancel="cerrarModalPrevisualizacion"
                 >
-                    <img alt="Vista previa" style="width: 100%" :src="previewImage" />
+                    <img
+                        alt="Vista previa"
+                        class="w-full"
+                        :src="previewImage"
+                    />
                 </Modal>
             </FormItem>
 
             <FormItem class="flex justify-end mb-0">
-                <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
-                <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
+                <Button class="mr-3" @click="cerrarModal"> Cancelar </Button>
+                <Button type="primary" htmlType="submit" :loading="cargando">
+                    Actualizar
+                </Button>
             </FormItem>
         </Form>
     </Modal>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineProps, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, Button, message, Upload } from 'ant-design-vue';
-import { PlusOutlined } from '@ant-design/icons-vue';
-import axios from 'axios';
+import { ref, watch, onMounted } from "vue";
+import InputError from "@/Components/Inputs/InputError.vue";
+import { PlusOutlined } from "@ant-design/icons-vue";
+import axios from "axios";
+import {
+    Modal,
+    Form,
+    FormItem,
+    Input,
+    Select,
+    Button,
+    message,
+    Upload,
+} from "ant-design-vue";
 
 const props = defineProps({
     visible: Boolean,
-    recurso: {
-        type: Object,
-        default: () => ({
-            nombre: '',
-            codigo: '',
-            tipo: '',
-            estado: '',
-            descripcion: '',
-            is_active: true,
-            area_id: null,
-            equipo_id: null,
-            fotos: [],
-        }),
-    },
+    recurso: Object,
     areas: Array,
     equipos: Array,
 });
 
-console.log('Recurso:', props.recurso);
-const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
+const emitir = defineEmits(["update:visible", "actualizar-tabla"]);
 
 const recurso = ref({ ...props.recurso });
 const cargando = ref(false);
 
 const opcionesTipo = ref([
-    { label: 'Reservable', value: 'Reservable' },
-    { label: 'No reservable', value: 'No reservable' },
-    { label: 'Suministro', value: 'Suministro' },
+    { label: "Reservable", value: "Reservable" },
+    { label: "No reservable", value: "No reservable" },
+    { label: "Suministro", value: "Suministro" },
 ]);
 
 const opcionesEstado = ref([
-    { label: 'Activo', value: 'Activo' },
-    { label: 'Inactivo', value: 'Inactivo' },
-    { label: 'Reservado', value: 'Reservado' },
-    { label: 'Prestado', value: 'Prestado' },
+    { label: "Activo", value: "Activo" },
+    { label: "Inactivo", value: "Inactivo" },
+    { label: "Reservado", value: "Reservado" },
+    { label: "Prestado", value: "Prestado" },
 ]);
 
 const opcionesAreas = ref([]);
 const opcionesEquipos = ref([]);
 
 const cerrarModal = () => {
-    emitir('update:visible', false);
+    recurso.value = {};
+    errors.value = {};
+    emitir("update:visible", false);
 };
 
 const buscarArea = (input, option) => {
@@ -150,102 +190,112 @@ const buscarEquipo = (input, option) => {
 
 const fileList = ref([]);
 const previewVisible = ref(false);
-const previewImage = ref('');
+const previewImage = ref("");
 const maxFiles = 5; // Máximo de fotos permitidas
 const fotosEliminadas = ref([]);
+const errors = ref({});
 
 const manejarPrevisualizacion = (file) => {
     previewImage.value = file.url || file.thumbUrl;
     previewVisible.value = true;
 };
 
-const manejarCancelacion = () => {
+// Cerrar el modal de previsualización
+const cerrarModalPrevisualizacion = () => {
     previewVisible.value = false;
 };
 
-const manejarCambio = ({ fileList: newFileList }) => {
-    fileList.value = newFileList;
-    console.log('Nueva lista de archivos:', fileList.value);
+// Procesar foto nueva antes de subir
+const procesarFotoNueva = (file) => {
+    fileList.value.push({
+        uid: file.uid,
+        name: file.name,
+        status: "done",
+        originFileObj: file,
+    });
+    return false; // Evita la subida automática
 };
 
+// Cargar fotos existentes en el recurso
 const cargarFotos = () => {
-    if (recurso.value.fotos && recurso.value.fotos.length > 0) {
-        fileList.value = recurso.value.fotos.map((foto) => ({
-            uid: foto,  // Asumiendo que las rutas son únicas
-            name: foto,
-            status: 'done',
-            url: `/storage/${foto.ruta}`,
-        }));
-    }
-    console.log('Fotos:', fileList.value);
+    fileList.value = recurso.value.fotos.map((foto) => ({
+        uid: foto.id,
+        name: foto.nombre,
+        status: "done",
+        url: `/storage/${foto.ruta}`,
+    }));
 };
 
+// Marcar una foto como eliminada
+const marcarFotoEliminada = (file) => {
+    if (file.uid && Number.isInteger(file.uid)) {
+        fotosEliminadas.value.push(file.uid);
+    }
+    fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
+};
 
+// Enviar formulario al backend
 const enviarFormulario = async () => {
     cargando.value = true;
+
+    const formData = new FormData();
+    formData.append("_method", "PUT");
+    Object.keys(recurso.value).forEach((key) => {
+        formData.append(key, recurso.value[key] || "");
+    });
+
+    // Agregar fotos eliminadas
+    fotosEliminadas.value.forEach((id) =>
+        formData.append("fotos_eliminadas[]", id)
+    );
+
+    // Agregar fotos nuevas
+    fileList.value.forEach((file) => {
+        if (file.originFileObj) {
+            formData.append("fotos_nuevas[]", file.originFileObj);
+        }
+    });
+
     try {
-        // Crear un FormData para incluir archivos y datos
-        const formData = new FormData();
-
-        // Emular el método PUT con '_method'
-        formData.append('_method', 'PUT');
-
-        // Agregar datos del recurso
-        Object.keys(recurso.value).forEach((key) => {
-            const value = recurso.value[key];
-            formData.append(key, value !== null && value !== undefined && value !== '' ? value : null);
-        });
-
-        // Agregar rutas de fotos existentes
-        recurso.value.fotos.forEach((foto) => {
-            formData.append('fotos[]', foto);
-        });
-
-        // Agregar imágenes
-        fileList.value.forEach((file) => {
-            formData.append('fotos[]', file.originFileObj || file);
-        });
-
-        // Enviar solicitud con el método POST, pero con '_method' indicando PUT
-        const response = await axios.post(route('recursos.update', props.recurso.id), formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
-
-        // Mostrar mensaje de éxito
-        message.success('Recurso actualizado exitosamente');
+        const { data } = await axios.post(
+            route("recursos.update", recurso.value.id),
+            formData,
+            {
+                headers: { "Content-Type": "multipart/form-data" },
+            }
+        );
+        message.success("Recurso actualizado exitosamente");
         cerrarModal();
-        emitir('actualizar-tabla', response.data.recurso);
+        emitir("actualizar-tabla", data.recurso);
     } catch (error) {
-        // Manejar errores
-        message.error('Error al actualizar el recurso');
-        console.error('Error al guardar el recurso:', error);
+        message.error("Error al actualizar recurso");
+        if (error.response && error.response.data.errors) {
+            errors.value = error.response.data.errors;
+        }
     } finally {
-        // Restablecer el estado de carga
         cargando.value = false;
     }
 };
 
-
-
-
-
-watch(() => props.visible, (val) => {
-    if (val) {
-        recurso.value = { ...props.recurso };
+watch(
+    () => props.visible,
+    (val) => {
+        if (val) {
+            recurso.value = { ...props.recurso };
+            cargarFotos();
+        }
     }
-});
+);
 
 onMounted(() => {
-    opcionesAreas.value = props.areas.map(area => ({
+    cargarFotos();
+    opcionesAreas.value = props.areas.map((area) => ({
         label: area.nombre,
         value: area.id,
     }));
-    opcionesEquipos.value = props.equipos.map(equipo => ({
+    opcionesEquipos.value = props.equipos.map((equipo) => ({
         label: equipo.nombre,
         value: equipo.id,
     }));
-
-    cargarFotos();
 });
-
 </script>

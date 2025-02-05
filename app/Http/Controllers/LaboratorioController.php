@@ -9,14 +9,14 @@ use App\Models\User;
 
 class LaboratorioController extends Controller
 {
-    protected $rules = [
-        'nombre' => 'required|max:100',
-        'codigo' => 'nullable|max:20',
-        'descripcion' => 'nullable|max:255',
-        'aforo' => 'nullable|integer',
-        'email' => 'nullable|email|max:100',
-        'inauguracion' => 'nullable|date',
-        'responsable_id' => 'nullable|exists:users,id',
+    public $rules = [
+        'nombre' => ['required', 'string', 'min:5', 'max:90'],
+        'codigo' => ['required', 'string', 'min:5', 'max:10'],
+        'descripcion' => ['nullable', 'string', 'min:5', 'max:100'],
+        'aforo' => ['nullable', 'integer', 'min:1', 'max:100'],
+        'email' => ['nullable', 'email', 'min:5', 'max:100'],
+        'inauguracion' => ['nullable', 'date'],
+        'responsable_id' => ['required', 'integer', 'exists:users,id'],
     ];
 
     // Listar los laboratorios en la vista
@@ -39,6 +39,7 @@ class LaboratorioController extends Controller
     public function store(Request $request)
     {
         $request->validate($this->rules);
+
         Laboratorio::create($request->all());
     }
 
@@ -59,18 +60,18 @@ class LaboratorioController extends Controller
     // API
     public function info()
     {
-        $laboratorios = Laboratorio::select('id', 'nombre') ->where('is_active', 1)->get();
+        $laboratorios = Laboratorio::select('id', 'nombre')->where('is_active', 1)->get();
         return [
             'data' => $laboratorios
         ];
     }
     public function validar_lab(Request $request)
     {
-        $id = $request -> input('id');
-        $codigo = $request -> input('codigo');
+        $id = $request->input('id');
+        $codigo = $request->input('codigo');
 
         $lab = Laboratorio::find($id);
-        if($lab -> codigo == $codigo) {
+        if ($lab->codigo == $codigo) {
             return response(null);
         }
         return response('Codigo Invalido', 401);

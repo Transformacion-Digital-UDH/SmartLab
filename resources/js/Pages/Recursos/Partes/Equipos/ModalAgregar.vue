@@ -1,167 +1,303 @@
 <template>
-    <Modal
-        title="Agregar recurso"
+    <Drawer
+        title="Agregar equipo"
         :open="visible"
-        @cancel="cerrarModal"
-        centered
+        @close="cerrarModal"
+        placement="right"
         :footer="null"
+        width="100&"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="recurso">
-            <!-- Campo Nombre -->
-            <FormItem label="Nombre" name="nombre" :rules="[{ required: true, message: 'Por favor ingrese el nombre' }]">
-                <Input v-model:value="recurso.nombre" placeholder="Ingrese el nombre" autofocus />
-            </FormItem>
+        <Form
+            layout="vertical"
+            @finish="enviarFormulario"
+            :model="equipo"
+            class="mt-4"
+        >
+            <div class="flex gap-x-3">
+                <FormItem label="Código *" name="codigo" class="w-2/5">
+                    <Input
+                        v-model:value="equipo.codigo"
+                        placeholder="Ingrese el código"
+                        autocomplete="off"
+                    />
+                    <InputError :message="errors.codigo?.[0]" />
+                </FormItem>
 
-            <!-- Campo Código -->
-            <FormItem label="Código" name="codigo">
-                <Input v-model:value="recurso.codigo" placeholder="Ingrese el código" />
-            </FormItem>
+                <FormItem label="Nombre *" name="nombre" class="w-3/5">
+                    <Input
+                        v-model:value="equipo.nombre"
+                        placeholder="Ingrese el nombre"
+                        autocomplete="off"
+                    />
+                    <InputError :message="errors.nombre?.[0]" />
+                </FormItem>
+            </div>
 
-            <!-- Campo Tipo -->
-            <FormItem label="Tipo" name="tipo" :rules="[{ required: true, message: 'Seleccione el tipo' }]">
-                <Select v-model:value="recurso.tipo" placeholder="Seleccione el tipo" :options="opcionesTipo" />
-            </FormItem>
-
-            <!-- Campo Estado -->
-            <FormItem label="Estado" name="estado" :rules="[{ required: true, message: 'Seleccione el estado' }]">
-                <Select v-model:value="recurso.estado" placeholder="Seleccione el estado" :options="opcionesEstado" />
-            </FormItem>
-
-            <!-- Campo Descripción -->
             <FormItem label="Descripción" name="descripcion">
-                <Input v-model:value="recurso.descripcion" placeholder="Ingrese una descripción" />
+                <Input.TextArea
+                    v-model:value="equipo.descripcion"
+                    placeholder="Ingrese una descripción"
+                />
+                <InputError :message="errors.descripcion?.[0]" />
             </FormItem>
 
-            <!-- Campo Área -->
-            <FormItem label="Área" name="area_id" :rules="[{ required: false, message: 'Seleccione un área' }]">
+            <div class="flex gap-x-3">
+                <FormItem label="Tipo" name="tipo" class="w-full">
+                    <Select
+                        v-model:value="equipo.tipo"
+                        placeholder="Seleccione el tipo"
+                        :options="opcionesTipo"
+                    />
+                    <InputError :message="errors.tipo?.[0]" />
+                </FormItem>
+
+                <FormItem label="Estado actual" name="estado" class="w-full">
+                    <Select
+                        v-model:value="equipo.estado"
+                        placeholder="Seleccione el estado"
+                        :options="opcionesEstado"
+                    />
+                    <InputError :message="errors.estado?.[0]" />
+                </FormItem>
+            </div>
+
+            <FormItem label="Área" name="area_id" class="w-full">
                 <Select
-                    v-model:value="recurso.area_id"
-                    placeholder="Seleccione un área"
+                    v-model:value="equipo.area_id"
+                    placeholder="Seleccionar"
                     :options="opcionesAreas"
                     show-search
                     :filter-option="buscarArea"
+                    allowClear
+                />
+                <InputError :message="errors.area_id?.[0]" />
+            </FormItem>
+
+            <FormItem label="Recursos que componen este equipo" name="recursos">
+                <Transfer
+                    v-model:targetKeys="recursosAsignados"
+                    v-model:value="equipo.recursos"
+                    :data-source="listaRecursos"
+                    :render="renderRecurso"
+                    :titles="[' disponibles', ' asignados']"
+                    @change="cambiarRecursos"
+                    :list-style="{ width: '100%' }"
                 />
             </FormItem>
 
-            <!-- Campo Equipo -->
-            <FormItem label="Equipo (opcional)" name="equipo_id">
-                <Select
-                    v-model:value="recurso.equipo_id"
-                    placeholder="Seleccione un equipo"
-                    :options="opcionesEquipos"
-                    show-search
-                    :filter-option="buscarEquipo"
-                />
+            <FormItem label="Fotos del equipo">
+                <Upload
+                    list-type="picture-card"
+                    :file-list="fileList"
+                    @preview="manejarPrevisualizacion"
+                    @remove="quitarFoto"
+                    :before-upload="procesarFotoNueva"
+                    :multiple="true"
+                >
+                    <div v-if="fileList.length < maxFiles">
+                        <PlusOutlined />
+                        <div class="mt-2">Subir</div>
+                    </div>
+                </Upload>
+                <Modal
+                    :open="previewVisible"
+                    title="Vista previa"
+                    :footer="null"
+                    @cancel="cerrarModalPrevisualizacion"
+                >
+                    <img
+                        alt="Vista previa"
+                        class="w-full"
+                        :src="previewImage"
+                    />
+                </Modal>
             </FormItem>
-
-            <FormItem class="flex justify-end mb-0">
-                <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
-                <Button type="primary" htmlType="submit" :loading="cargando">Guardar</Button>
-            </FormItem>
-
         </Form>
-    </Modal>
+
+        <template #extra>
+            <Button style="margin-right: 8px" @click="cerrarModal"
+                >Cancelar</Button
+            >
+            <Button
+                type="primary"
+                v-on:click="enviarFormulario"
+                :loading="cargando"
+                >Guardar</Button
+            >
+        </template>
+    </Drawer>
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue';
-import { Modal, Form, FormItem, Input, Select, Button, message } from 'ant-design-vue';
-import axios from 'axios';
+import { ref, watch, onMounted } from "vue";
+import InputError from "@/Components/Inputs/InputError.vue";
+import { PlusOutlined } from "@ant-design/icons-vue";
+import axios from "axios";
+import {
+    Modal,
+    Drawer,
+    Form,
+    FormItem,
+    Input,
+    Select,
+    Button,
+    message,
+    Upload,
+    Transfer,
+} from "ant-design-vue";
 
 const props = defineProps({
     visible: Boolean,
     areas: Array,
-    equipos: Array,
+    recursos: Array,
 });
 
-const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
+const emitir = defineEmits(["update:visible", "actualizar-tabla"]);
 
-const recurso = ref({
-    nombre: '',
-    codigo: '',
-    tipo: '',
-    estado: '',
-    descripcion: '',
-    is_active: true,
+const equipo = ref({
+    nombre: "",
+    codigo: "",
+    tipo: "No reservable",
+    estado: "Activo",
+    descripcion: "",
     area_id: null,
-    equipo_id: null,
+    is_active: true,
+    recursos: [],
 });
 
 const cargando = ref(false);
+const errors = ref({});
+
 const opcionesTipo = ref([
-    { label: 'Reservable', value: 'Reservable' },
-    { label: 'No reservable', value: 'No reservable' },
-    { label: 'Suministro', value: 'Suministro' },
+    { label: "Reservable", value: "Reservable" },
+    { label: "No reservable", value: "No reservable" },
 ]);
 
 const opcionesEstado = ref([
-    { label: 'Activo', value: 'Activo' },
-    { label: 'Inactivo', value: 'Inactivo' },
-    { label: 'Reservado', value: 'Reservado' },
-    { label: 'Prestado', value: 'Prestado' },
+    { label: "Activo", value: "Activo" },
+    { label: "Inactivo", value: "Inactivo" },
 ]);
 
-const opcionesActivo = ref([
-    { label: 'Sí', value: true },
-    { label: 'No', value: false },
-]);
-
+// Variables
 const opcionesAreas = ref([]);
-const opcionesEquipos = ref([]);
+const listaRecursos = ref([]);
+const recursosAsignados = ref([]);
 
-// Cierra el modal y emite el evento para cerrar en el componente padre
 const cerrarModal = () => {
-    emitir('update:visible', false);
+    emitir("update:visible", false);
+};
+
+// Cambiar recursos asignados
+const cambiarRecursos = (keys) => {
+    recursosAsignados.value = keys;
+};
+
+const filtrarRecursos = (inputValue, option) => {
+    return (
+        option.codigo.toLowerCase().includes(inputValue.toLowerCase()) ||
+        option.nombre.toLowerCase().includes(inputValue.toLowerCase())
+    );
 };
 
 const buscarArea = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
 };
 
-const buscarEquipo = (input, option) => {
-    return option.label.toLowerCase().includes(input.toLowerCase());
+const fileList = ref([]);
+const previewVisible = ref(false);
+const previewImage = ref("");
+const maxFiles = 5;
+
+const manejarPrevisualizacion = (file) => {
+    previewImage.value = file.url || file.thumbUrl;
+    previewVisible.value = true;
 };
 
-// Envía el formulario de creación del recurso
+const cerrarModalPrevisualizacion = () => {
+    previewVisible.value = false;
+};
+
+const procesarFotoNueva = (file) => {
+    fileList.value.push({
+        uid: file.uid,
+        name: file.name,
+        status: "done",
+        originFileObj: file,
+    });
+    return false;
+};
+
+const quitarFoto = (file) => {
+    fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
+};
+
 const enviarFormulario = async () => {
     cargando.value = true;
+
+    const formData = new FormData();
+    Object.keys(equipo.value).forEach((key) => {
+        formData.append(key, equipo.value[key] || "");
+    });
+
+    // Agregar los recursos asignados al FormData
+    recursosAsignados.value.forEach((recursoId) => {
+        formData.append("recursos[]", recursoId);
+    });
+
+    // Agregar las fotos al FormData
+    fileList.value.forEach((file) => {
+        if (file.originFileObj) {
+            formData.append("fotos[]", file.originFileObj);
+        }
+    });
+
     try {
-        const response = await axios.post(route('recursos.store'), recurso.value);
-        message.success('Recurso agregado exitosamente');
+        const response = await axios.post(route("equipos.store"), formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+        message.success("Equipo agregado exitosamente");
         cerrarModal();
-        emitir('actualizar-tabla', response.data["recurso"]);
+        emitir("actualizar-tabla", response.data);
     } catch (error) {
-        message.error('Error al agregar el recurso');
-        console.error('Error al guardar el recurso:', error);
+        message.error("Error al agregar el equipo");
+        if (error.response && error.response.data.errors) {
+            errors.value = error.response.data.errors;
+        }
     } finally {
         cargando.value = false;
     }
 };
 
-// Verificar si el modal se abre por primera vez y cargar opciones
-watch(() => props.visible, (val) => {
-    if (val) {
-        recurso.value = {
-            nombre: '',
-            codigo: '',
-            tipo: '',
-            estado: '',
-            descripcion: '',
-            is_active: true,
-            area_id: null,
-            equipo_id: null,
-        };
-
-        // Cargar las opciones de áreas y equipos
-        opcionesAreas.value = props.areas.map(area => ({
-            label: area.nombre,
-            value: area.id,
-        }));
-
-        opcionesEquipos.value = props.equipos.map(equipo => ({
-            label: equipo.nombre,
-            value: equipo.id,
-        }));
+watch(
+    () => props.visible,
+    (val) => {
+        if (val) {
+            equipo.value = {
+                nombre: "",
+                codigo: "",
+                tipo: "",
+                estado: "",
+                descripcion: "",
+            };
+        }
     }
+);
+
+onMounted(() => {
+    opcionesAreas.value = props.areas.map((area) => ({
+        label: area.nombre,
+        value: area.id,
+    }));
+
+    listaRecursos.value = props.recursos.map((recurso) => ({
+        key: recurso.id.toString(),
+        codigo: recurso.codigo || "Sin código",
+        nombre: recurso.nombre,
+        equipo_id: recurso.equipo_id || null,
+        foto:
+            recurso.fotos.length > 0
+                ? `/storage/${recurso.fotos[0].ruta}`
+                : "/img/default-placeholder.webp",
+    }));
 });
 </script>

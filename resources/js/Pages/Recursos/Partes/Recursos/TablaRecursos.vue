@@ -52,12 +52,18 @@
                         alt="Primera foto"
                         class="w-16 h-16 object-cover rounded"
                     />
-                    <span v-else>No tiene</span>
+                    <img v-else
+                        :src="`/img/default-placeholder.webp`"
+                        class="w-16 h-16 object-cover rounded"
+                    />
                 </template>
 
                 <!-- Acciones -->
                 <template v-if="column.key === 'acciones'">
-                    <FormOutlined @click="editar(record)" class="text-blue-600" />
+                    <FormOutlined
+                        @click="editar(record)"
+                        class="text-blue-600"
+                    />
                     <DeleteOutlined
                         @click="confirmarEliminacion(record)"
                         class="text-red-600 ml-2"
@@ -69,9 +75,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { defineProps, defineEmits } from "vue";
-import { Table, Modal, message, InputSearch, Button, Tag } from "ant-design-vue";
+import { ref, h, computed } from "vue";
+import {
+    Table,
+    Modal,
+    message,
+    InputSearch,
+    Button,
+    Tag,
+} from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 
@@ -88,15 +100,26 @@ const valorBuscar = ref("");
 const recursosFiltrados = computed(() =>
     !valorBuscar.value
         ? props.recursos
-        : props.recursos.filter((recurso) =>
-            recurso.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
-            recurso.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
-        )
+        : props.recursos.filter(
+              (recurso) =>
+                  recurso.nombre
+                      .toLowerCase()
+                      .includes(valorBuscar.value.toLowerCase()) ||
+                  recurso.codigo
+                      ?.toLowerCase()
+                      .includes(valorBuscar.value.toLowerCase())
+          )
 );
 
 // Definir las columnas de la tabla
 const columnas = [
-    { title: "Código", dataIndex: "codigo", key: "codigo", width: 100 },
+    {
+        title: "Código",
+        dataIndex: "codigo",
+        key: "codigo",
+        width: 100,
+        sorter: (a, b) => a.codigo.localeCompare(b.codigo),
+    },
     { title: "Foto", key: "foto", width: 120 },
     {
         title: "Nombre",
@@ -108,21 +131,21 @@ const columnas = [
         title: "Área",
         dataIndex: ["area", "nombre"],
         key: "area",
-        sorter: (a, b) => a.tipo.localeCompare(b.tipo)
+        sorter: (a, b) => a.tipo.localeCompare(b.tipo),
     },
     {
         title: "Tipo",
         dataIndex: "tipo",
         key: "tipo",
         width: 150,
-        sorter: (a, b) => a.tipo.localeCompare(b.tipo)
+        sorter: (a, b) => a.tipo.localeCompare(b.tipo),
     },
     {
         title: "Estado",
         dataIndex: "estado",
         key: "estado",
         width: 150,
-        sorter: (a, b) => a.estado.localeCompare(b.estado)
+        sorter: (a, b) => a.estado.localeCompare(b.estado),
     },
     { title: "Acciones", key: "acciones", fixed: "right", width: 100 },
 ];
@@ -130,23 +153,23 @@ const columnas = [
 // Función para determinar el color del Tag según el tipo
 const colorTipo = (estado) => {
     const colores = {
-        "Reservable": "green",
+        Reservable: "green",
         "No reservable": "orange",
-        "Suministro": "blue",
+        Suministro: "blue",
     };
     return colores[estado] || "default";
-}
+};
 
 // Función para determinar el color del Tag según el estado
 const colorEstado = (estado) => {
     const colores = {
-        "Activo": "green",
-        "Inactivo": "error",
-        "Reservado": "blue",
-        "Prestado": "orange",
+        Activo: "green",
+        Inactivo: "error",
+        Reservado: "blue",
+        Prestado: "orange",
     };
     return colores[estado] || "default";
-}
+};
 
 function abrirModalCrear() {
     emitir("abrir-crear");
@@ -159,8 +182,15 @@ function editar(recurso) {
 
 const confirmarEliminacion = (recurso) => {
     Modal.confirm({
-        title: "¿Estás seguro de eliminar este recurso?",
-        content: `${recurso.nombre}`,
+        title: "Eliminar recurso",
+        content: () =>
+            h("div", [
+                "Estas a punto de eliminar",
+                " al recurso ",
+                h("br"),
+                h("b", recurso.codigo + " - " + recurso.nombre),
+                ".",
+            ]),
         okText: "Confirmar",
         cancelText: "Cancelar",
         onOk() {
@@ -177,6 +207,5 @@ const confirmarEliminacion = (recurso) => {
             });
         },
     });
-}
-
+};
 </script>

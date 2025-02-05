@@ -26,7 +26,8 @@ class ProyectoController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $responsables = User::where('rol', 'Responsable')->get();
+        // Por ahora cualquier usuario puede ser responsable de un proyecto
+        $responsables = User::all();
 
         return Inertia::render('Proyectos/Index', [
             'proyectos' => $proyectos,
@@ -67,7 +68,7 @@ class ProyectoController extends Controller
 
         return response()->json($participantes);
     }
-    
+
 
     // Agregar un participante al proyecto
     public function agregarParticipante(Request $request, Proyecto $proyecto)

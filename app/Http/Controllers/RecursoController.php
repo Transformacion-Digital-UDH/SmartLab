@@ -5,28 +5,49 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use App\Models\Equipo;
 use App\Models\Recurso;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class RecursoController extends Controller
 {
-    public function index()
+
+    protected $rules = [
+        'nombre' => ['required', 'string', 'max:100'],
+        'codigo' => ['required', 'string', 'max:20'],
+        'tipo' => ['required', 'in:Reservable,No reservable,Suministro'],
+        'descripcion' => ['nullable', 'string'],
+        'estado' => ['required', 'in:Activo,Inactivo,Reservado,Prestado'],
+        'area_id' => ['nullable', 'exists:areas,id'],
+        'equipo_id' => ['nullable', 'exists:equipos,id'],
+        'is_active' => ['boolean'],
+        'fotos.*' => ['image'],
+        'fotos_nuevas.*' => ['image'],
+        'fotos_eliminadas' => ['array'],
+        'fotos_eliminadas.*' => ['integer', 'exists:fotos_recursos,id'],
+    ];
+
+    public function index(Request $request)
     {
         $recursos = Recurso::with('area', 'equipo',  'fotos')
             ->where('is_active', true)
             ->orderBy('id', 'desc')
             ->get();
 
+        $equipos = Equipo::with('area', 'recursos',  'fotos')
+            ->where('is_active', true)
+            ->orderBy('id', 'desc')
+            ->get();
+
         $areas = Area::orderBy('id', 'desc')->get();
-        $equipos = Equipo::orderBy('id', 'desc')->get();
+
+        $tab = $request->query('tab', 1);
 
         return Inertia::render('Recursos/Index', [
             'recursos' => $recursos,
             'areas' => $areas,
             'equipos' => $equipos,
+            'tab' => $tab,
         ]);
     }
 
@@ -34,72 +55,49 @@ class RecursoController extends Controller
     // Guardar un nuevo recurso
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'codigo' => 'nullable|string|max:20',
-            'tipo' => 'required|in:Reservable,No reservable,Suministro',
-            'descripcion' => 'nullable|string',
-            'estado' => 'required|in:Activo,Inactivo,Reservado,Prestado',
-            'is_active' => 'boolean',
-            'area_id' => 'nullable|exists:areas,id',
-            'equipo_id' => 'nullable|exists:equipos,id',
+        $request->merge([
+            'is_active' => filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN)
         ]);
 
-        Recurso::create($request->all());
+        $request->validate($this->rules);
+        $recurso = Recurso::create($request->all());
+
+        // Procesar y guardar las imágenes si se enviaron
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $imagen) {
+                $ruta = $imagen->store('recursos', 'public');
+                $recurso->fotos()->create(['ruta' => $ruta]);
+            }
+        }
     }
 
     // Actualizar un recurso existente
     public function update(Request $request, Recurso $recurso)
     {
-        Log::info('Request:', [
-            'fotos' => array_map(function($foto) {
-                // Si es un objeto, lo convertimos a JSON
-                if (is_object($foto)) {
-                    return json_decode(json_encode($foto), true); // Convertir objeto a array
-                }
-                return $foto;
-            }, $request->all()['fotos']),
-        ]);
-
-
-
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'codigo' => 'nullable|string|max:20',
-            'tipo' => 'required|in:Reservable,No reservable,Suministro',
-            'descripcion' => 'nullable|string',
-            'estado' => 'required|in:Activo,Inactivo,Reservado,Prestado',
-            'is_active' => 'boolean',
-            'area_id' => 'nullable|exists:areas,id',
-            'equipo_id' => 'nullable|exists:equipos,id',
-            // 'imagenes.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validación de imágenes
-        ]);
-
-        // Actualizar datos del recurso
+        $request->validate($this->rules);
         $recurso->update($request->all());
 
-        // Fotos enviadas desde el frontend
-        $fotosNuevas = $request->file('fotos', []);
-        $fotosExistentes = $request->input('fotos', []);
-
-        // Eliminar las fotos que ya no están presentes en la lista
-        foreach ($recurso->fotos as $foto) {
-            if (!in_array($foto->ruta, $fotosExistentes)) {
-                // Eliminar foto del almacenamiento
-                Storage::disk('public')->delete($foto->ruta);
-                // Eliminar foto de la base de datos
-                $foto->delete();
+        // Eliminar fotos enviadas para eliminación
+        if ($request->has('fotos_eliminadas')) {
+            foreach ($request->fotos_eliminadas as $fotoId) {
+                $foto = $recurso->fotos()->find($fotoId);
+                if ($foto) {
+                    // Eliminar archivo físico y el registro en la base de datos
+                    Storage::disk('public')->delete($foto->ruta);
+                    $foto->delete();
+                }
             }
         }
 
-        // Agregar las fotos nuevas
-        foreach ($fotosNuevas as $imagen) {
-            $ruta = $imagen->store('recursos', 'public');
-            $recurso->fotos()->create([
-                'ruta' => $ruta,
-            ]);
+        // Agregar fotos nuevas
+        if ($request->hasFile('fotos_nuevas')) {
+            foreach ($request->file('fotos_nuevas') as $imagen) {
+                $ruta = $imagen->store('recursos', 'public');
+                $recurso->fotos()->create(['ruta' => $ruta]);
+            }
         }
     }
+
 
     // Eliminar un recurso
     public function destroy(Recurso $recurso)

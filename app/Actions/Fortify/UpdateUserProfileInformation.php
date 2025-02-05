@@ -20,8 +20,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         Validator::make($input, [
             'nombres' => ['required', 'string', 'max:255'],
             'apellidos' => ['required', 'string', 'max:255'],
-            'dni' => ['required', 'string', 'size:8', Rule::unique('users')->ignore($user->id)],
+            'dni' => ['required', 'string', 'size:8'],
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'celular' => ['required', 'numeric', 'digits:9'],
+            'codigo' => ['nullable', 'numeric', 'min:8'],
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
         ])->validateWithBag('updateProfileInformation');
 
@@ -37,6 +39,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'nombres' => $input['nombres'],
                 'apellidos' => $input['apellidos'],
                 'dni' => $input['dni'],
+                'celular' => $input['celular'],
+                'codigo' => $input['codigo'],
                 'email' => $input['email'],
             ])->save();
         }
@@ -53,6 +57,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'nombres' => $input['nombres'],
             'apellidos' => $input['apellidos'],
             'dni' => $input['dni'],
+            'celular' => $input['celular'],
+            'codigo' => $input['codigo'],
             'email' => $input['email'],
             'email_verified_at' => null,
         ])->save();
