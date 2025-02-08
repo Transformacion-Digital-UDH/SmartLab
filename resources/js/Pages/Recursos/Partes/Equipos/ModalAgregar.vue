@@ -218,7 +218,7 @@ const cambiarRecursos = (keys) => {
     recursosAsignados.value = keys;
 };
 
-const    = (inputValue, option) => {
+const filtrarRecursos = (inputValue, option) => {
     return (
         option.codigo.toLowerCase().includes(inputValue.toLowerCase()) ||
         option.nombre.toLowerCase().includes(inputValue.toLowerCase())
