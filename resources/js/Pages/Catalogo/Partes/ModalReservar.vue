@@ -84,7 +84,7 @@
 	};
 </script>
 <template>
-	<Modal :open="open" title="Detalles" width="min(620px,100%)" @cancel="emitir('close')">
+	<Modal :open="open" title="Reservación" width="min(620px,100%)">
 		<div class="flex w-auto  flex-wrap sm:flex-nowrap sm:justify-end gap-3">
 			<!-- portada -->
 			<div>
@@ -106,6 +106,15 @@
 							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3h6m-5 6h4m-4-6v6L6 20a.7.7 0 0 0 .5 1h11a.7.7 0 0 0 .5-1L14 9V3"/></svg>
 							{{recurso.area?.laboratorio?.nombre ?? 'Sin definir'}}
 						</div>
+						<details class="m-1">
+							<summary><b>Horarios reservados</b></summary>
+							<div>
+								<div class="flex items-center gap-2">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="none" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.5 21H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6M16 3v4M8 3v4m-4 4h16m-5 8l2 2l4-4"/></svg>
+									{{ dayjs('2025-01-06').format('dddd, D [de] MMMM: [de] hh:mm A') }} a {{ dayjs('2025-01-06').format('hh:mm A') }}
+								</div>
+							</div>
+						</details>
 					</div>
 			</div>
 			<div class="min-w-96">
@@ -131,13 +140,13 @@
 						<RangePicker
 							:show-time="{ format: 'HH:mm' }"
 							format="YYYY-MM-DD HH:mm"
-							:placeholder="['Inicio', 'Fin']"
+							:placeholder="['Start Time', 'End Time']"
 							@change="onRangeChange"
 							@ok="onRangeOk"
 						/>
 						<p class="flex items-center gap-2 pl-3 text-gray-500 pt-1">
 							<InfoCircleOutlined />
-							Maximo tiempo 2h 59m <a :href="'https://wa.me/'+ page.props.adminNumber +'?text=Hola necesito mas tiempo!'" target="_blank" class="text-blue-500 hover:text-blue-600 hover:underline">¿Mas tiempo?</a>
+							Maximo tiempo 2h 59m
 						</p>
 					</div>
 				</div>
