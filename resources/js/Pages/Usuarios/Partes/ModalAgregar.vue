@@ -1,6 +1,6 @@
 <template>
     <Modal
-        title="Agregar Usuario"
+        title="Agregar usuario"
         :open="visible"
         @cancel="cerrarModal"
         centered
