@@ -21,59 +21,41 @@
                 rowKey="id"
             >
                 <template #bodyCell="{ column, text, record }">
-                    <template
-                        v-if="
-                            ['nombre', 'descripcion', 'aforo'].includes(
-                                column.dataIndex
-                            )
-                        "
-                    >
+                    <template v-if="['nombre', 'descripcion', 'aforo'].includes(column.dataIndex)">
                         <div>
                             <template v-if="datosEditables[record.key]">
                                 <Input
-                                    v-model:value="
-                                        datosEditables[record.key][
-                                            column.dataIndex
-                                        ]
-                                    "
+                                    v-model:value="datosEditables[record.key][column.dataIndex]"
                                     style="margin: -5px 0"
                                     size="small"
                                 />
-                                <InputError
-                                    :message="
-                                        errors[record.key]?.[column.dataIndex]
-                                    "
-                                />
+                                <InputError :message="errors[record.key]?.[column.dataIndex]" />
                             </template>
-
                             <template v-else>
                                 {{ text }}
                             </template>
                         </div>
                     </template>
+                    <template v-else-if="column.dataIndex === 'tipo'">
+                        <template v-if="datosEditables[record.key]">
+                            <Select v-model:value="datosEditables[record.key].tipo" size="small">
+                                <Select.Option value="Reservable">Reservable</Select.Option>
+                                <Select.Option value="No reservable">No reservable</Select.Option>
+                            </Select>
+                        </template>
+                        <template v-else>
+                            {{ text }}
+                        </template>
+                    </template>
                     <template v-else-if="column.dataIndex === 'operation'">
                         <div>
                             <span v-if="datosEditables[record.key]">
-                                <CheckOutlined
-                                    @click="guardar(record.key, record.id)"
-                                    class="text-green-600 mr-2"
-                                />
-                                <CloseOutlined
-                                    @click="cancelar(record.key)"
-                                    class="text-red-600"
-                                />
+                                <CheckOutlined @click="guardar(record.key, record.id)" class="text-green-600 mr-2" />
+                                <CloseOutlined @click="cancelar(record.key)" class="text-red-600" />
                             </span>
                             <span v-else>
-                                <FormOutlined
-                                    @click="editar(record.key)"
-                                    class="text-blue-600 mr-2"
-                                />
-                                <Popconfirm
-                                    title="Confirmar acción"
-                                    okText="Sí"
-                                    cancelText="No"
-                                    @confirm="eliminarArea(record.id)"
-                                >
+                                <FormOutlined @click="editar(record.key)" class="text-blue-600 mr-2" />
+                                <Popconfirm title="Confirmar acción" okText="Sí" cancelText="No" @confirm="eliminarArea(record.id)">
                                     <DeleteOutlined class="text-red-600" />
                                 </Popconfirm>
                             </span>
@@ -94,20 +76,8 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
 import InputError from "@/Components/Inputs/InputError.vue";
-import {
-    Modal,
-    Table,
-    Input,
-    Button,
-    message,
-    Popconfirm,
-} from "ant-design-vue";
-import {
-    FormOutlined,
-    DeleteOutlined,
-    CheckOutlined,
-    CloseOutlined,
-} from "@ant-design/icons-vue";
+import { Modal, Table, Input, Button, message, Popconfirm, Select } from "ant-design-vue";
+import { FormOutlined, DeleteOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
 import axios from "axios";
 import AgregarArea from "./AgregarArea.vue";
 
@@ -121,18 +91,12 @@ const props = defineProps({
 
 const emit = defineEmits(["update:visible"]);
 
-// Columnas de la tabla
 const columnasAreas = [
     { title: "Nombre", dataIndex: "nombre", key: "nombre" },
     { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
     { title: "Aforo", dataIndex: "aforo", key: "aforo", width: 80 },
-    {
-        title: "Acciones",
-        dataIndex: "operation",
-        key: "operation",
-        fixed: "right",
-        width: 100,
-    },
+    { title: "Tipo", dataIndex: "tipo", key: "tipo", width: 120 },
+    { title: "Acciones", dataIndex: "operation", key: "operation", fixed: "right", width: 100 },
 ];
 
 const areas = ref([]);
@@ -159,13 +123,8 @@ const cerrarModalAgregar = () => {
 const cargarAreas = async () => {
     isLoading.value = true;
     try {
-        const response = await axios.get(
-            route("areas.json", { laboratorio_id: props.laboratorio.id })
-        );
-        areas.value = response.data.map((area, index) => ({
-            key: index.toString(),
-            ...area,
-        }));
+        const response = await axios.get(route("areas.json", { laboratorio_id: props.laboratorio.id }));
+        areas.value = response.data.map((area, index) => ({ key: index.toString(), ...area }));
     } catch (error) {
         console.error("Error al cargar las áreas:", error);
     } finally {
@@ -174,9 +133,7 @@ const cargarAreas = async () => {
 };
 
 const editar = (key) => {
-    datosEditables.value[key] = {
-        ...areas.value.find((area) => area.key === key),
-    };
+    datosEditables.value[key] = { ...areas.value.find((area) => area.key === key) };
 };
 
 const guardar = async (key, areaId) => {
@@ -188,6 +145,7 @@ const guardar = async (key, areaId) => {
                 nombre: datosEditables.value[key].nombre,
                 descripcion: datosEditables.value[key].descripcion,
                 aforo: datosEditables.value[key].aforo,
+                tipo: datosEditables.value[key].tipo,
             });
             areas.value[index] = { ...datosEditables.value[key] };
             delete datosEditables.value[key];
@@ -223,12 +181,9 @@ onMounted(() => {
     cargarAreas();
 });
 
-watch(
-    () => props.laboratorio.id,
-    (nuevoLaboratorioId, previoLaboratorioId) => {
-        if (nuevoLaboratorioId !== previoLaboratorioId) {
-            cargarAreas();
-        }
+watch(() => props.laboratorio.id, (nuevoLaboratorioId, previoLaboratorioId) => {
+    if (nuevoLaboratorioId !== previoLaboratorioId) {
+        cargarAreas();
     }
-);
+});
 </script>

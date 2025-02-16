@@ -13,6 +13,8 @@
     asistencias: Array,
   });
 
+  console.log(props.asistencias);
+
   const emitir = defineEmits(["editar", "actualizar-tabla"]);
 
   // Definir las columnas de la tabla de laboratorios
@@ -40,24 +42,19 @@
         sorter: (a, b) => a.rol.localeCompare(b.nombre),
     },
     {
-    title: "Entrada",
-    dataIndex: "fecha_entrada",
-    key: "entrada",
-    width: 150,
-    sorter: (a, b) => new Date(a.fecha_entrada) - new Date(b.fecha_entrada)
-},
-{
-    title: "Salida",
-    dataIndex: "fecha_salida",
-    key: "salida",
-    width: 150,
-    sorter: (a, b) => {
-        // Manejo de valores NULL
-        if (!a.fecha_salida) return -1;
-        if (!b.fecha_salida) return 1;
-        return new Date(a.fecha_salida) - new Date(b.fecha_salida);
-    }
-},
+        title: "Entrada",
+        dataIndex: "hora_entrada",
+        key: "entrada",
+        width: 150,
+        sorter: (a, b) => a.hora_entrada.localeCompare(b.hora_entrada),
+    },
+    {
+        title: "Salida",
+        dataIndex: "hora_salida",
+        key: "salida",
+        width: 150,
+        sorter: (a, b) => a.hora_salida.localeCompare(b.hora_salida),
+    },
     { title: "Acciones", key: "acciones", fixed: "right", width: 100 },
   ];
 
