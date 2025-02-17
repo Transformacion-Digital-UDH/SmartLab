@@ -21,6 +21,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
 
             $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('laboratorio_id')->nullable()->constrained('laboratorios')->onDelete('set null');
+
 
             $table->timestamps();
         });

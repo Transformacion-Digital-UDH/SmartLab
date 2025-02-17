@@ -23,12 +23,12 @@ import BarraIngresos from "./Charts/BarraIngresos.vue";
                     <div class="flex flex-wrap">
                         <div class="w-full lg:w-2/6">
                             <div class="grid grid-cols-2 gap-4">
-                                
+
                                 <CardItems name="Usuarios" des="Registros"/>
                                 <CardItems name="Proyectos" des="Ejecutándose"/>
                                 <CardItems name="Asistencias" des="Ingresos hoy"/>
                                 <CardItems name="Equipos" des="Activos"/>
-                               
+
                             </div>
                         </div>
                         <!-- Caja del 60% -->

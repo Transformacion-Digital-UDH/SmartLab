@@ -14,7 +14,7 @@
                     class="w-full"
                     size="large"
                 />
-                <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium">Agregar Nuevo Miembro</Button>
+                <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium">Agregar miembro</Button>
             </div>
 
             <!-- Tabla de miembros -->

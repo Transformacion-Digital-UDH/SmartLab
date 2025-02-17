@@ -15,6 +15,7 @@ class Area extends Model
         'descripcion',
         'aforo',
         'is_active',
+        'tipo',
         'laboratorio_id',
     ];
 

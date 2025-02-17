@@ -17,12 +17,13 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->integer('aforo')->nullable();
             $table->boolean('is_active')->default(true);
-
+            $table->enum('tipo', ['Reservable', 'No reservable']);
             $table->foreignId('laboratorio_id')->constrained('laboratorios')->onDelete('restrict');
-            
+
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

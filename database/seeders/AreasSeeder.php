@@ -19,6 +19,7 @@ class AreasSeeder extends Seeder
                 'descripcion' => 'Descripción del Área 1',
                 'aforo' => 20,
                 'is_active' => true,
+                'tipo' => 'Reservable',
                 'laboratorio_id' => 1,
             ],
             [
@@ -26,6 +27,7 @@ class AreasSeeder extends Seeder
                 'descripcion' => 'Descripción del Área 2',
                 'aforo' => 30,
                 'is_active' => true,
+                'tipo' => 'Reservable',
                 'laboratorio_id' => 1,
             ],
             [
@@ -33,6 +35,7 @@ class AreasSeeder extends Seeder
                 'descripcion' => 'Descripción del Área 3',
                 'aforo' => 25,
                 'is_active' => true,
+                'tipo' => 'No reservable',
                 'laboratorio_id' => 2,
             ],
             [
@@ -40,6 +43,7 @@ class AreasSeeder extends Seeder
                 'descripcion' => 'Descripción del Área 4',
                 'aforo' => 15,
                 'is_active' => true,
+                'tipo' => 'Reservable',
                 'laboratorio_id' => 2,
             ],
             [
@@ -47,6 +51,7 @@ class AreasSeeder extends Seeder
                 'descripcion' => 'Descripción del Área 5',
                 'aforo' => 40,
                 'is_active' => false,
+                'tipo' => 'Reservable',
                 'laboratorio_id' => 3,
             ],
         ];

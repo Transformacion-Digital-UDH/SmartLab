@@ -1,6 +1,6 @@
 <template>
     <Modal
-        title="Agregar Usuario"
+        title="Agregar usuario"
         :open="visible"
         @cancel="cerrarModal"
         centered
@@ -112,7 +112,7 @@ const enviarFormulario = async () => {
         }
 
         const response = await axios.post(url, data);
-        
+
         message.success(`Usuario ${props.usuario.id ? 'actualizado' : 'creado'} exitosamente`);
         cerrarModal();
         emitir('actualizar-tabla', response.data.usuario);

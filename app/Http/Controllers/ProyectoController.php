@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Laboratorio;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Proyecto;
@@ -16,22 +17,26 @@ class ProyectoController extends Controller
         'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
         'estado' => 'required|in:Sin iniciar,En proceso,Completado,Cancelado',
         'responsable_id' => 'nullable|exists:users,id',
+        'laboratorio_id' => 'required|exists:laboratorios,id',
     ];
 
     // Listar los proyectos en la vista
     public function index()
     {
         $proyectos = Proyecto::with('responsable')
+            ->with('laboratorio')
             ->where('is_active', true)
             ->orderBy('id', 'desc')
             ->get();
 
         // Por ahora cualquier usuario puede ser responsable de un proyecto
         $responsables = User::all();
+        $laboratorios = Laboratorio::all();
 
         return Inertia::render('Proyectos/Index', [
             'proyectos' => $proyectos,
             'responsables' => $responsables,
+            'laboratorios' => $laboratorios,
         ]);
     }
 
