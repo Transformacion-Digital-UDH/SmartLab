@@ -35,16 +35,11 @@ const emitir = defineEmits(["editar", "mostrar-asistencias", "actualizar-tabla"]
 const columnas = [
     { title: "Código", dataIndex: "codigo", key: "codigo" },
     {
-        title: "Nombres",
-        dataIndex: "nombres",
-        key: "nombres",
-        sorter: (a, b) => a.nombres.localeCompare(b.nombres),
-    },
-    {
-        title: "Apellidos",
-        dataIndex: "apellidos",
-        key: "apellidos",
-        sorter: (a, b) => a.apellidos.localeCompare(b.apellidos),
+        title: "Nombre Completo",
+        dataIndex: "nombre_completo",
+        key: "nombre_completo",
+        sorter: (a, b) => a.nombre_completo.localeCompare(b.nombre_completo),
+        customRender: ({ record }) => `${record.nombres} ${record.apellidos}`,
     },
     { title: "DNI", dataIndex: "dni", key: "dni", width: 100 },
     { title: "Email", dataIndex: "email", key: "email" },
