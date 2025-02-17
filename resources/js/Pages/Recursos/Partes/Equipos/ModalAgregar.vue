@@ -11,10 +11,9 @@
             layout="vertical"
             @finish="enviarFormulario"
             :model="equipo"
-            class="mt-4"
         >
             <div class="flex gap-x-3">
-                <FormItem label="Código *" name="codigo" class="w-2/5">
+                <FormItem label="Código *" name="codigo" class="w-1/5">
                     <Input
                         v-model:value="equipo.codigo"
                         placeholder="Ingrese el código"
@@ -23,7 +22,7 @@
                     <InputError :message="errors.codigo?.[0]" />
                 </FormItem>
 
-                <FormItem label="Nombre *" name="nombre" class="w-3/5">
+                <FormItem label="Nombre *" name="nombre" class="w-4/5">
                     <Input
                         v-model:value="equipo.nombre"
                         placeholder="Ingrese el nombre"
@@ -74,6 +73,7 @@
             </FormItem>
 
             <FormItem label="Recursos que componen este equipo" name="recursos">
+                <p class="text-xs text-gray-400 mb-4">Los recursos en naranja ya pertenecen a un equipo. Si lo asigna a este equipo, se quitará del otro.</p>
                 <Transfer
                     v-model:targetKeys="recursosAsignados"
                     v-model:value="equipo.recursos"
@@ -81,8 +81,34 @@
                     :render="renderRecurso"
                     :titles="[' disponibles', ' asignados']"
                     @change="cambiarRecursos"
-                    :list-style="{ width: '100%' }"
-                />
+                    :filter-option="filtrarRecursos"
+                    :list-style="{ width: '100%', height: '300px' }"
+                    :locale="{
+                        searchPlaceholder: 'Buscar aquí',
+                        itemUnit: '',
+                        itemsUnit: '',
+                        notFoundContent: 'No hay datos disponibles'
+                    }"
+                >
+                    <template #render="item">
+                        <div
+                            class="flex items-center gap-x-3 max-w-12"
+                            :class="{'text-amber-500': item.equipo_id !== null, '': item.equipo_id === null}"
+                        >
+                            <img
+                                :src="`${item.foto}`"
+                                alt="Foto del recurso"
+                                class="w-8 h-8 object-cover rounded-sm"
+                            />
+                            <div class="flex flex-col w-full">
+                                <small class="text-xs font-medium">
+                                    {{ item.codigo }}
+                                </small>
+                                <small>{{ item.nombre }}</small>
+                            </div>
+                        </div>
+                    </template>
+                </Transfer>
             </FormItem>
 
             <FormItem label="Fotos del equipo">

@@ -42,6 +42,14 @@
                 <InputError :message="errors.aforo?.[0]" />
             </FormItem>
 
+            <FormItem label="Tipo *" name="tipo">
+                <Select v-model:value="nuevaArea.tipo" placeholder="Seleccione un tipo">
+                    <Select.Option value="Reservable">Reservable</Select.Option>
+                    <Select.Option value="No reservable">No reservable</Select.Option>
+                </Select>
+                <InputError :message="errors.tipo?.[0]" />
+            </FormItem>
+
             <FormItem class="flex justify-end mb-0">
                 <Button class="mr-3" @click="cerrarModal"> Cancelar </Button>
                 <Button type="primary" htmlType="submit" :loading="cargando">
@@ -62,6 +70,7 @@ import {
     FormItem,
     Input,
     InputNumber,
+    Select,
     Button,
     message,
 } from "ant-design-vue";
@@ -80,6 +89,7 @@ const nuevaArea = ref({
     nombre: "",
     descripcion: "",
     aforo: null,
+    tipo: "",
 });
 
 const cargando = ref(false);
@@ -88,7 +98,7 @@ const errors = ref({});
 const cerrarModal = () => {
     errors.value = {};
     emit("close");
-    nuevaArea.value = { nombre: "", descripcion: "", aforo: null };
+    nuevaArea.value = { nombre: "", descripcion: "", aforo: null, tipo: "" };
 };
 
 const guardarArea = async () => {
@@ -99,6 +109,7 @@ const guardarArea = async () => {
             nombre: nuevaArea.value.nombre,
             descripcion: nuevaArea.value.descripcion,
             aforo: nuevaArea.value.aforo,
+            tipo: nuevaArea.value.tipo,
             laboratorio_id: props.laboratorio_id,
         });
 

@@ -13,9 +13,11 @@
 	let asistenciasPaginate = JSON.parse(JSON.stringify(props.asistencias))
 
 	// Damos formato de fecha de entrada y salida
-	let asistencias = ref(asistenciasPaginate.data.map((asis)=>{
-		return new Asistencia(asis);
-	}));
+	// let asistencias = ref(asistenciasPaginate.data.map((asis)=>{
+	// 	return new Asistencia(asis);
+	// }));
+
+    let asistencias = asistenciasPaginate.data
 
 	console.log(props)
 	const token = ref(props.token || []);

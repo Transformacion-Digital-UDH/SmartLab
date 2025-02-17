@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Laboratorio;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Models\MiembroProyecto;
@@ -13,6 +14,7 @@ class ProyectoSeeder extends Seeder
     {
         // Obtener todos los usuarios existentes para asignar como responsables
         $usuarios = User::all();
+        $laboratorios = Laboratorio::all();
 
         // Generar 10 proyectos
         for ($i = 1; $i <= 10; $i++) {
@@ -25,6 +27,7 @@ class ProyectoSeeder extends Seeder
                 'estado' => ['Sin iniciar', 'En proceso', 'Completado', 'Cancelado'][rand(0, 3)],
                 'is_active' => true,
                 'responsable_id' => $usuarios->random()->id,
+                'laboratorio_id' => $laboratorios->random()->id,
             ]);
 
             // Seleccionar 4 usuarios aleatorios para ser participantes del proyecto

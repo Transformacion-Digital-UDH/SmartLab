@@ -16,7 +16,7 @@ import {
     ProjectOutlined, CalendarOutlined,
     UserOutlined,
     LogoutOutlined,
-    FormatPainterOutlined
+    BarChartOutlined
 } from "@ant-design/icons-vue";
 
 const showingNavigationDropdown = ref(false);
@@ -27,9 +27,9 @@ const logout = () => {
 
 const navigationLinks = [
     {
-        name: "Panel",
+        name: "Dashboard",
         route: "dashboard",
-        icon: ExperimentOutlined,
+        icon: BarChartOutlined,
     },
     {
         name: "Laboratorios",
@@ -77,7 +77,7 @@ const navigationLinks = [
         >
             <!-- Logo y Título -->
             <div
-                class="flex items-center px-4 h-[74px] border-b border-gray-200 dark:border-gray-600"
+                class="flex items-center px-4 py-2.5 border-b border-gray-200 dark:border-gray-600"
             >
                 <Link
                     :href="route('laboratorios.index')"
@@ -85,7 +85,7 @@ const navigationLinks = [
                 >
                     <ApplicationMark class="w-auto h-12 mt-1" />
                     <div class="flex flex-col">
-                        <h1 class="text-sm text-blue-500">Laboratorio</h1>
+                        <h1 class="text-sm font-bold text-blue-500">Laboratorio</h1>
                         <span class="text-sm">Transformación Digital</span>
                     </div>
                 </Link>
