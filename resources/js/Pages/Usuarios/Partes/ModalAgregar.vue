@@ -1,5 +1,11 @@
 <template>
-<Modal title="Agregar Usuario" :open="visible" @cancel="cerrarModal" centered :footer="null">
+    <Modal
+        title="Agregar usuario"
+        :open="visible"
+        @cancel="cerrarModal"
+        centered
+        :footer="null"
+    >
         <Form layout="vertical" @finish="enviarFormulario" :model="usuario">
             <div class="block md:flex gap-x-3">
                 <FormItem label="Nombres" name="nombres" class="w-full"
