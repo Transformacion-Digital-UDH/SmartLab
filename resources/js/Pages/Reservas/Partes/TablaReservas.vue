@@ -35,7 +35,6 @@
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
 import { Table, Modal, Tag, message } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons-vue";
