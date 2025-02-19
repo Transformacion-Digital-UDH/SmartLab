@@ -7,41 +7,49 @@
         :footer="null"
     >
         <Form layout="vertical" @finish="enviarFormulario" :model="usuario">
-            <FormItem label="Nombres" name="nombres" :rules="[{ required: true, message: 'Por favor ingrese los nombres' }]">
-                <Input v-model:value="usuario.nombres" placeholder="Ingrese los nombres" />
-            </FormItem>
+            <div class="block md:flex gap-x-3">
+                <FormItem label="Nombres" name="nombres" class="w-full" :rules="[{ required: true, message: 'Por favor ingrese los nombres' }]">
+                    <Input v-model:value="usuario.nombres" placeholder="Ingrese los nombres" />
+                </FormItem>
 
-            <FormItem label="Apellidos" name="apellidos" :rules="[{ required: true, message: 'Por favor ingrese los apellidos' }]">
-                <Input v-model:value="usuario.apellidos" placeholder="Ingrese los apellidos" />
-            </FormItem>
+                <FormItem label="Apellidos" name="apellidos" class="w-full" :rules="[{ required: true, message: 'Por favor ingrese los apellidos' }]">
+                    <Input v-model:value="usuario.apellidos" placeholder="Ingrese los apellidos" />
+                </FormItem>
+            </div>
 
-            <FormItem label="DNI" name="dni" :rules="[{ required: true, message: 'Por favor ingrese el DNI' }]">
-                <Input v-model:value="usuario.dni" placeholder="Ingrese el DNI" />
-            </FormItem>
+            <div class="block md:flex gap-x-3">
+                <FormItem label="DNI" name="dni" class="w-full" :rules="[{ required: true, message: 'Por favor ingrese el DNI' }]">
+                    <Input v-model:value="usuario.dni" placeholder="Ingrese el DNI" />
+                </FormItem>
 
-            <FormItem label="Email" name="email" :rules="[{ type: 'email', message: 'Por favor ingrese un correo válido' }]">
-                <Input v-model:value="usuario.email" placeholder="Ingrese el correo electrónico" />
-            </FormItem>
+                <FormItem label="Email" name="email" class="w-full" :rules="[{ type: 'email', message: 'Por favor ingrese un correo válido' }]">
+                    <Input v-model:value="usuario.email" placeholder="Ingrese el correo electrónico" />
+                </FormItem>
+            </div>
 
-            <FormItem label="Celular" name="celular">
-                <Input v-model:value="usuario.celular" placeholder="Ingrese número de celular" />
-            </FormItem>
+            <div class="block md:flex gap-x-3">
+                <FormItem label="Celular" name="celular" class="w-full">
+                    <Input v-model:value="usuario.celular" placeholder="Ingrese número de celular" />
+                </FormItem>
 
-            <FormItem label="Rol" name="rol" :rules="[{ required: true, message: 'Por favor seleccione un rol' }]">
-                <Select
-                    v-model:value="usuario.rol"
-                    placeholder="Seleccione un rol"
-                    :options="opcionesRoles"
-                />
-            </FormItem>
+                <FormItem label="Rol" name="rol" class="w-full" :rules="[{ required: true, message: 'Por favor seleccione un rol' }]">
+                    <Select
+                        v-model:value="usuario.rol"
+                        placeholder="Seleccione un rol"
+                        :options="opcionesRoles"
+                    />
+                </FormItem>
+            </div>
 
-            <FormItem label="Código" name="codigo">
-                <Input v-model:value="usuario.codigo" placeholder="Ingrese el código" />
-            </FormItem>
+            <div class="block md:flex gap-x-3">
+                <FormItem label="Código" name="codigo" class="w-full">
+                    <Input v-model:value="usuario.codigo" placeholder="Ingrese el código" />
+                </FormItem>
 
-            <FormItem label="Contraseña" name="password" :rules="[{ message: 'Por favor ingrese una contraseña' }]">
-                <Input type="password" v-model:value="usuario.password" placeholder="*************" />
-            </FormItem>
+                <FormItem label="Contraseña" name="password" class="w-full" :rules="[{ message: 'Por favor ingrese una contraseña' }]">
+                    <Input type="password" v-model:value="usuario.password" placeholder="*************" />
+                </FormItem>
+            </div>
 
             <FormItem class="flex justify-end mb-0">
                 <Button style="margin-right: 8px" @click="cerrarModal">Cancelar</Button>
@@ -79,7 +87,6 @@ const usuario = ref({ ...props.usuario });
 const cargando = ref(false);
 
 const opcionesRoles = ref([
-    { label: 'Libre', value: 'Libre' },
     { label: 'Invitado', value: 'Invitado' },
     { label: 'Miembro', value: 'Miembro' },
     { label: 'Coordinador', value: 'Coordinador' },

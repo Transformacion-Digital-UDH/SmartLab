@@ -38,6 +38,7 @@ class CompletarRegistro
         $user->dni = $request->dni;
         $user->codigo = $request->codigo;
         $user->celular = $request->celular;
+        $user->rol = "Invitado";
         $user->se_registro = 1;
 
         $user->save();

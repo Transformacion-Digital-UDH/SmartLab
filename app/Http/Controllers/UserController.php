@@ -12,7 +12,7 @@ class UserController extends Controller
     public function index()
     {
         $usuarios = User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular', 'password')
-            ->where('rol', '!=', 'Admin') 
+            ->where('rol', '!=', 'Admin')
             ->where('is_active', true)
             ->orderBy('id', 'desc')
             ->get();
@@ -32,6 +32,7 @@ class UserController extends Controller
             'password' => 'required|min:6',
             'is_active' => 'boolean',
             'celular' => 'nullable|numeric|digits:9',
+            'rol' => 'required|in:Invitado,Miembro,Coordinador,Responsable,Admin',
         ], [
             'required' => 'Este campo es obligatorio.',
             'email' => 'Ingrese un correo electrónico válido.',
@@ -49,9 +50,8 @@ class UserController extends Controller
             'celular' => $request->celular,
             'password' => Hash::make($request->password),
             'codigo' => $request->codigo,
-            'rol' => 'Libre',
+            'rol' => $request->rol,
             'is_active' => $request->is_active ?? true,
-            'celular' => $request->celular,
         ]);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente');
@@ -62,7 +62,7 @@ class UserController extends Controller
         $request->validate([
             'nombres' => 'required|max:255',
             'apellidos' => 'nullable|max:255',
-            'rol' => 'required|in:Libre,Invitado,Miembro,Coordinador',
+            'rol' => 'required|in:Invitado,Miembro,Coordinador,Responsable',
             'celular' => 'nullable|numeric|digits:9',
         ], [
             'required' => 'Este campo es obligatorio.',
@@ -98,10 +98,9 @@ class UserController extends Controller
     // Devuelve la lista de usuarios en JSON
     public function getUsuarios()
     {
-        return User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular','password')
-        ->where('is_active', true)
-        ->orderBy('nombres')
-        ->get();    
+        return User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular', 'password')
+            ->where('is_active', true)
+            ->orderBy('nombres')
+            ->get();
     }
-
 }
