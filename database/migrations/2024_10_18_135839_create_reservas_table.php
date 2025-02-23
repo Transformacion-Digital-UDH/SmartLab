@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('usuario_id')->constrained('users')->onDelete('restrict');
             $table->foreignId('equipo_id')->nullable()->constrained('equipos')->onDelete('restrict');
             $table->foreignId('recurso_id')->nullable()->constrained('recursos')->onDelete('restrict');
+            $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('restrict');
 
             $table->timestamps();
         });
