@@ -53,6 +53,18 @@ const columnas = [
     { title: "Nombre", dataIndex: "nombre", key: "nombre", sorter: (a, b) => a.nombre.localeCompare(b.nombre) },
     { title: "Responsable", dataIndex: ["responsable", "nombres"], key: "nombres" },
     {
+        title: "Laboratorio",
+        dataIndex: ["laboratorio", "nombre"],
+        key: "laboratorio",
+        sorter: (a, b) => {
+            const labA = a.laboratorio?.nombre?.toLowerCase() || "";
+            const labB = b.laboratorio?.nombre?.toLowerCase() || "";
+            return labA.localeCompare(labB);
+        }
+    },
+
+
+    {
         title: "Fecha inicio",
         dataIndex: "fecha_inicio",
         key: "fecha_inicio",

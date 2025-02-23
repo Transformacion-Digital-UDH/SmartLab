@@ -21,6 +21,9 @@
                 @change="actualizarUsuariosSeleccionados"
                 placeholder="Selecciona usuarios para agregar"
                 class="w-full"
+                showSearch
+                :filterOption="(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())"
             />
             <Button type="primary" @click="agregarParticipantes">Agregar</Button>
         </div>

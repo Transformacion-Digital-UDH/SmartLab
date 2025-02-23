@@ -117,3 +117,12 @@ Route::middleware([
 Route::get('/galeria', function () {
     return Inertia::render('Landing/Galeria');
 })->name('galeria');
+
+Route::get('/landing', function () {
+    return Inertia::render('LandingDev/Index');
+});
+
+Route::get('/projects', function () {
+    $proyectos = Proyecto::with('responsable')->get();
+    return Inertia::render('LandingDev/Proyectos', ['magos' => 12, 'proyectos' => $proyectos]);
+});

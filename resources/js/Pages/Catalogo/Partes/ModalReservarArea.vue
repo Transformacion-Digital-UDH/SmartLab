@@ -2,8 +2,8 @@
 	import "dayjs/locale/es";
 	import dayjs from 'dayjs';
 	import { ref, watch } from 'vue';
-	import { Button, DatePicker, message, Modal, RangePicker, Select, SelectOption, Space } from 'ant-design-vue';
-	import { InfoCircleOutlined, ClockCircleOutlined } from '@ant-design/icons-vue';
+	import { Button, message, Modal, RangePicker, Space } from 'ant-design-vue';
+	import { InfoCircleOutlined } from '@ant-design/icons-vue';
 	import { usePage, router } from "@inertiajs/vue3";
 
 	dayjs.locale('es');
@@ -122,139 +122,28 @@
 				<p>{{recurso.descripcion}}</p>
 				<div class="">
 					
-					<details class="m-1 border px-3 py-2 rounded-lg">
+					<details class="m-1">
 						<summary><b>Horarios reservados</b></summary>
 						<div>
-							<table>
-								<thead>
-									<tr>
-										<th>Fecha</th>
-										<th>Inicio</th>
-										<th>Fin</th>
-									</tr>
-								</thead>
-								<tbody>
-									
-									<tr>
-										<td class="px-2">
-											<div class="flex items-center gap-1">
-
-												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="none" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.5 21H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6M16 3v4M8 3v4m-4 4h16m-5 8l2 2l4-4"/></svg>
-												martes, 6 de enero
-											</div>
-										</td>
-										<td>
-											<div class="flex items-center gap-1 px-2">
-												<ClockCircleOutlined />
-												12:45 PM
-											</div>
-										</td>
-										<td>
-											<div class="flex items-center gap-1 px-2">
-												12:45 PM
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td class="px-2">
-											<div class="flex items-center gap-1">
-
-												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="none" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.5 21H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6M16 3v4M8 3v4m-4 4h16m-5 8l2 2l4-4"/></svg>
-												miercoles, 6 de enero
-											</div>
-										</td>
-										<td>
-											<div class="flex items-center gap-1 px-2">
-												<ClockCircleOutlined />
-												12:45 PM
-											</div>
-										</td>
-										<td>
-											<div class="flex items-center gap-1 px-2">
-												12:45 PM
-											</div>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-							<!-- <div class="flex items-center gap-2">
+							<div class="flex items-center gap-2">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="none" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.5 21H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6M16 3v4M8 3v4m-4 4h16m-5 8l2 2l4-4"/></svg>
 								{{ dayjs('2025-01-06').format('dddd, D [de] MMMM: [de] hh:mm A') }} a {{ dayjs('2025-01-06 13:34').format('hh:mm A') }}
 							</div>
 							<div class="flex items-center gap-2">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="none" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.5 21H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6M16 3v4M8 3v4m-4 4h16m-5 8l2 2l4-4"/></svg>
 								{{ dayjs('2025-01-07 13:15').format('dddd, D [de] MMMM: [de] hh:mm A') }} a {{ dayjs('2025-01-07 13:34').format('hh:mm A') }}
-							</div> -->
+							</div>
 						</div>
 					</details>
 					<div class="">
 						<h2 class="text-base">Selecciona el dia y la hora {{tiempo}}</h2>
-						<!-- <RangePicker
+						<RangePicker
 							:show-time="{ format: 'HH:mm' }"
 							format="YYYY-MM-DD HH:mm"
 							:placeholder="['Start Time', 'End Time']"
 							@change="onRangeChange"
 							@ok="onRangeOk"
-						/> -->
-						<div class="flex p-2 gap-2">
-							<DatePicker v-model:value="value1" />
-							<Select
-								ref="select"
-								v-model:value="value1"
-								style="width: 120px"
-								@focus="focus"
-								@change="handleChange"
-							>
-								<SelectOption value="1">06:30 AM</SelectOption>
-								<SelectOption value="2">07:15 AM</SelectOption>
-								<SelectOption value="3">08:00 AM</SelectOption>
-								<SelectOption value="4">08:45 AM</SelectOption>
-								<SelectOption value="5">09:30 AM</SelectOption>
-								<SelectOption value="6">10:15 AM</SelectOption>
-								<SelectOption value="7">11:00 AM</SelectOption>
-								<SelectOption value="8">11:45 AM</SelectOption>
-								<SelectOption value="9">12:30 PM</SelectOption>
-								<SelectOption value="10">01:15 PM</SelectOption>
-								<SelectOption value="11">02:00 PM</SelectOption>
-								<SelectOption value="12">02:45 PM</SelectOption>
-								<SelectOption value="13">03:30 PM</SelectOption>
-								<SelectOption value="14">04:15 PM</SelectOption>
-								<SelectOption value="15">05:00 PM</SelectOption>
-								<SelectOption value="16">05:45 PM</SelectOption>
-								<SelectOption value="17">06:30 PM</SelectOption>
-								<SelectOption value="18">07:15 PM</SelectOption>
-								<SelectOption value="19">08:00 PM</SelectOption>
-								<SelectOption value="20">08:45 PM</SelectOption>
-								<SelectOption value="21">09:30 PM</SelectOption>
-							</Select>
-							<Select
-								ref="select"
-								v-model:value="value1"
-								style="width: 120px"
-								@focus="focus"
-								@change="handleChange"
-							>
-								<SelectOption value="2">07:15 AM</SelectOption>
-								<SelectOption value="3">08:00 AM</SelectOption>
-								<SelectOption value="4">08:45 AM</SelectOption>
-								<SelectOption value="5">09:30 AM</SelectOption>
-								<SelectOption value="6">10:15 AM</SelectOption>
-								<SelectOption value="7">11:00 AM</SelectOption>
-								<SelectOption value="8">11:45 AM</SelectOption>
-								<SelectOption value="9">12:30 PM</SelectOption>
-								<SelectOption value="10">01:15 PM</SelectOption>
-								<SelectOption value="11">02:00 PM</SelectOption>
-								<SelectOption value="12">02:45 PM</SelectOption>
-								<SelectOption value="13">03:30 PM</SelectOption>
-								<SelectOption value="14">04:15 PM</SelectOption>
-								<SelectOption value="15">05:00 PM</SelectOption>
-								<SelectOption value="16">05:45 PM</SelectOption>
-								<SelectOption value="17">06:30 PM</SelectOption>
-								<SelectOption value="18">07:15 PM</SelectOption>
-								<SelectOption value="19">08:00 PM</SelectOption>
-								<SelectOption value="20">08:45 PM</SelectOption>
-								<SelectOption value="21">09:30 PM</SelectOption>
-							</Select>
-						</div>
+						/>
 						<p class="flex items-center gap-2 pl-3 text-gray-500 pt-1">
 							<InfoCircleOutlined />
 							Maximo tiempo 2h 59m
@@ -270,7 +159,5 @@
 	</Modal>
 </template>
 <style scoped>
-	* {
-		font-family: Geist !important;
-	}
+
 </style>

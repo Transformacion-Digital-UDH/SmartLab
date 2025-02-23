@@ -7,11 +7,9 @@
                     @click="confirmarEliminacion(record)"
                     class="ml-2 text-red-600"
                 />
-            <!---------
-                <AppstoreAddOutlined
-                    @click="mostrarAsistencias(record)"
-                    class="ml-2 text-green-600"
-                />----------->
+            </template>
+            <template v-if="column.key === 'nombre'">
+                {{ record.nombres }} {{ record.apellidos }}
             </template>
         </template>
     </Table>
@@ -22,42 +20,25 @@ import { Table, Modal, message } from "ant-design-vue";
 import { router } from '@inertiajs/vue3';
 import {
     FormOutlined,
-    DeleteOutlined,
-    AppstoreAddOutlined,
+    DeleteOutlined
 } from "@ant-design/icons-vue";
 
 const props = defineProps({
     miembros: Array,
 });
 
-const emitir = defineEmits(["editar", "mostrar-asistencias", "actualizar-tabla"]);
+const emitir = defineEmits(["editar", "actualizar-tabla"]);
 
 const columnas = [
     { title: "Código", dataIndex: "codigo", key: "codigo" },
     {
-        title: "Nombres",
-        dataIndex: "nombres",
-        key: "nombres",
-        sorter: (a, b) => a.nombres.localeCompare(b.nombres),
-    },
-    {
-        title: "Apellidos",
-        dataIndex: "apellidos",
-        key: "apellidos",
-        sorter: (a, b) => a.apellidos.localeCompare(b.apellidos),
+        title: "Nombre",
+        key: "nombre",
+        sorter: (a, b) => (a.nombres + " " + a.apellidos).localeCompare(b.nombres + " " + b.apellidos),
     },
     { title: "DNI", dataIndex: "dni", key: "dni", width: 100 },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Celular", dataIndex: "celular", key: "celular" },
-    { title: "Rol", dataIndex: "rol", key: "rol", width: 100 },
-    
-    /*{
-        title: "Activo",
-        dataIndex: "is_active",
-        key: "is_active",
-        width: 80,
-        customRender: ({ text }) => (text ? "Sí" : "No"),
-    },*/
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 
@@ -86,8 +67,4 @@ const confirmarEliminacion = (miembro) => {
         },
     });
 };
-
-function mostrarAsistencias(miembro) {
-    emitir("mostrar-asistencias", miembro);
-}
 </script>
