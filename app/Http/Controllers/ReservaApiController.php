@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Equipo;
-use App\Models\Recurso;
 use App\Models\Reserva;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ReservaApiController extends Controller
 {
@@ -15,30 +13,16 @@ class ReservaApiController extends Controller
         $reservas = [];
         if ($tipo == 'equipo') {
             $reservas = Reserva::where('equipo_id', $id)->get();
-        } else {
+        } else if ($tipo == 'recurso') {
             $reservas = Reserva::where('recurso_id', $id)->get();
         }
 
-        return response()->json($reservas);
-    }
+        $filteredReservas = $reservas->filter(function ($reserva) {
+            return now()->timestamp < strtotime($reserva->hora_inicio);;
+        });
 
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function show(string $id)
-    {
-        //
-    }
-
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'data' => $filteredReservas
+        ]);
     }
 }
