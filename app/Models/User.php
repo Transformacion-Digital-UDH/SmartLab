@@ -37,6 +37,8 @@ class User extends Authenticatable
         'celular',
         'rol',
         'is_active',
+        'google_token',
+        'google_refresh_token'
     ];
 
     /**

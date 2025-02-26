@@ -24,6 +24,8 @@ return new class extends Migration
             $table->enum('rol', ['Libre', 'Invitado', 'Miembro', 'Coordinador', 'Responsable', 'Admin']);
             $table->string('profile_photo_path', 2048)->nullable();
             $table->boolean('is_active')->default(true);
+            $table->text('google_token')->nullable();
+            $table->text('google_refresh_token')->nullable(); 
             $table->rememberToken();
 
             $table->foreignId('current_team_id')->nullable();
@@ -47,6 +49,7 @@ return new class extends Migration
             $table->integer('last_activity')->index();
         });
     }
+
 
     /**
      * Reverse the migrations.

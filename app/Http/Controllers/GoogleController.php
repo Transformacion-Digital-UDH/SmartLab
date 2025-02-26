@@ -10,8 +10,12 @@ class GoogleController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('google')->redirect();
+        // Solicitar el scope de calendar.events
+        return Socialite::driver('google')
+            ->scopes(['https://www.googleapis.com/auth/calendar.events'])
+            ->redirect();
     }
+
 
     public function callback()
     {
@@ -32,6 +36,11 @@ class GoogleController extends Controller
                 if ($this->esEstudianteUDH($google->email)) {
                     $user->codigo = $this->usuarioCorreo($google->email);
                 }
+
+                 // 💾 Guardar token de acceso y refresh token
+                $user->google_token = $google->token;
+                $user->google_refresh_token = $google->refreshToken;
+
                 $user->save();
                 Auth::login($user);
                 return redirect()->intended(route('dashboard'));
@@ -39,6 +48,13 @@ class GoogleController extends Controller
                 if ($se_registro->is_active != 1) {
                     throw new \Exception('Su cuenta se encuentra suspendida.');
                 }
+
+                // 💾 Actualizar el token de Google si cambia
+                $se_registro->update([
+                    'google_token' => $google->token,
+                    'google_refresh_token' => $google->refreshToken
+                ]);
+
                 Auth::login($se_registro);
                 return redirect()->intended(route('dashboard'));
             }
