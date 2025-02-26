@@ -81,7 +81,10 @@ import ModalAgregarEquipo from "./Partes/Equipos/ModalAgregar.vue";
 import ModalEditarEquipo from "./Partes/Equipos/ModalEditar.vue";
 
 const { props } = usePage();
-const areas = ref(props.areas || []);
+const areas = ref(props.areas.map(area => ({
+    ...area,
+    label: `${area.nombre} (${area.laboratorio.codigo})`
+})));
 const equipos = ref(props.equipos || []);
 const recursos = ref(props.recursos || []);
 

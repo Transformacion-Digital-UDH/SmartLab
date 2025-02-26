@@ -60,7 +60,7 @@
                 </FormItem>
             </div>
 
-            <FormItem label="Área" name="area_id" class="w-full">
+            <FormItem label="Área *" name="area_id" class="w-full">
                 <Select
                     v-model:value="equipo.area_id"
                     placeholder="Seleccionar"
@@ -311,7 +311,7 @@ watch(
 
 onMounted(() => {
     opcionesAreas.value = props.areas.map((area) => ({
-        label: area.nombre,
+        label: `${area.nombre} (${area.laboratorio.codigo})`,
         value: area.id,
     }));
 
