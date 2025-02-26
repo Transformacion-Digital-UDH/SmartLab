@@ -117,6 +117,7 @@ const cargarParticipantes = async () => {
         const response = await axios.get(route('proyectos.participantes', { proyecto: props.proyecto.id }));
         participantes.value = response.data.map((participante) => ({
             id: participante.id,
+            id_participante: participante.usuario.id,
             dni: participante.usuario.dni,
             nombres: participante.usuario.nombres,
             apellidos: participante.usuario.apellidos,
@@ -124,6 +125,7 @@ const cargarParticipantes = async () => {
             celular: participante.usuario.celular,
         }));
         console.log("Participantes: ", participantes.value);
+        cargarUsuarios(); // Cargar usuarios después de cargar participantes
     } catch (error) {
         console.error('Error al cargar los participantes:', error);
         message.error('No se pudieron cargar los participantes');
@@ -135,10 +137,16 @@ const cargarUsuarios = async () => {
     cargandoUsuarios.value = true;
     try {
         const response = await axios.get(route('usuarios.json'));
-        opcionesUsuarios.value = response.data.map(usuario => ({
-            label: `${usuario.dni} - ${usuario.nombres} ${usuario.apellidos} - ${usuario.email}`,
-            value: usuario.id,
-        }));
+        const usuarios = response.data;
+
+        // Filtrar usuarios que no están en la lista de participantes
+        const participantesIds = participantes.value.map(participante => participante.id_participante);
+        opcionesUsuarios.value = usuarios
+            .filter(usuario => !participantesIds.includes(usuario.id))
+            .map(usuario => ({
+                label: `${usuario.dni} - ${usuario.nombres} ${usuario.apellidos} - ${usuario.email}`,
+                value: usuario.id,
+            }));
         console.log("Opciones de usuarios: ", opcionesUsuarios.value);
     } catch (error) {
         console.error("Error al cargar usuarios:", error);

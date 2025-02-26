@@ -84,7 +84,7 @@
 	};
 </script>
 <template>
-	<Modal :open="open" title="Reservación" width="min(620px,100%)">
+	<Modal :open="open" title="Reservación" width="min(620px,100%)" @cancel="emitir('close')">
 		<div class="flex w-auto  flex-wrap sm:flex-nowrap sm:justify-end gap-3">
 			<!-- portada -->
 			<div>

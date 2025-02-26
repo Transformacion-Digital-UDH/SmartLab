@@ -9,7 +9,6 @@ use App\Models\Reserva;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Http\Request;
 
 class ReservaController extends Controller
@@ -47,24 +46,24 @@ class ReservaController extends Controller
     }
 
     // Crear una reserva
-    public function create(Request $request){
-		$validatedData = $request->validate([
-			'hora_inicio' => 'required|date_format:Y-m-d H:i:s|before:hora_fin',
-			'hora_fin' => 'required|date_format:Y-m-d H:i:s|after:hora_inicio',
-			'recurso_id' => 'nullable|integer|exists:recursos,id',
-			'equipo_id' => 'nullable|integer|exists:equipos,id',
-		]);
+    public function store(Request $request){
+        $validatedData = $request->validate([
+            'hora_inicio' => 'required|date_format:Y-m-d\TH:i|before:hora_fin',
+            'hora_fin' => 'required|date_format:Y-m-d\TH:i|after:hora_inicio',
+            'recurso_id' => 'nullable|integer|exists:recursos,id',
+            'equipo_id' => 'nullable|integer|exists:equipos,id',
+        ]);
 
-		Reserva::create([
-			'hora_inicio' => $validatedData['hora_inicio'],
-			'hora_fin' => $validatedData['hora_fin'],
-			'usuario_id' => Auth::id(),
-			'equipo_id' => $validatedData['equipo_id'],
-			'recurso_id' => $validatedData['recurso_id'],
-		]);
+        Reserva::create([
+            'hora_inicio' => $validatedData['hora_inicio'],
+            'hora_fin' => $validatedData['hora_fin'],
+            'usuario_id' => Auth::id(),
+            'equipo_id' => $validatedData['equipo_id'],
+            'recurso_id' => $validatedData['recurso_id'],
+        ]);
 
-		return response()->noContent(201);
-	}
+        return response()->noContent(201);
+    }
 
     // Actualizar una reserva
     public function update(Request $request, Reserva $reserva)

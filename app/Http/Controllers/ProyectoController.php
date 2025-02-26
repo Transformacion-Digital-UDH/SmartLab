@@ -85,9 +85,10 @@ class ProyectoController extends Controller
 
         // Registrar múltiples participantes
         foreach ($request->usuario_ids as $usuarioId) {
-            $proyecto->participantes()->updateOrCreate([
-                'usuario_id' => $usuarioId,
-            ]);
+            $proyecto->participantes()->updateOrCreate(
+                ['usuario_id' => $usuarioId],
+                ['is_active' => true] 
+            );
         }
 
         return response()->json([
