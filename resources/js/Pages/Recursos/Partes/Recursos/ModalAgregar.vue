@@ -62,7 +62,7 @@
             </div>
 
             <div class="flex gap-x-3 w-full">
-                <FormItem label="Área" name="area_id" class="w-full">
+                <FormItem label="Área *" name="area_id" class="w-full">
                     <Select
                         v-model:value="recurso.area_id"
                         placeholder="Seleccionar"
@@ -284,7 +284,7 @@ watch(
 onMounted(() => {
     // Cargar las opciones de áreas y equipos
     opcionesAreas.value = props.areas.map((area) => ({
-        label: area.nombre,
+        label: `${area.nombre} (${area.laboratorio.codigo})`,
         value: area.id,
     }));
     opcionesEquipos.value = props.equipos.map((equipo) => ({

@@ -18,7 +18,7 @@ class RecursoController extends Controller
         'tipo' => ['required', 'in:Reservable,No reservable,Suministro'],
         'descripcion' => ['nullable', 'string'],
         'estado' => ['required', 'in:Activo,Inactivo,Reservado,Prestado'],
-        'area_id' => ['nullable', 'exists:areas,id'],
+        'area_id' => ['required', 'exists:areas,id'],
         'equipo_id' => ['nullable', 'exists:equipos,id'],
         'is_active' => ['boolean'],
         'fotos.*' => ['image'],
@@ -39,7 +39,7 @@ class RecursoController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $areas = Area::orderBy('id', 'desc')->get();
+        $areas = Area::with('laboratorio')->orderBy('id', 'desc')->get();
 
         $tab = $request->query('tab', 1);
 

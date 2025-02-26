@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Laboratorio;
 use App\Models\User;
+use App\Models\Area;
 
 class LaboratorioController extends Controller
 {
@@ -40,7 +41,16 @@ class LaboratorioController extends Controller
     {
         $request->validate($this->rules);
 
-        Laboratorio::create($request->all());
+        $laboratorio = Laboratorio::create($request->all());
+
+        // Crear un área llamada "General" por defecto para el laboratorio
+        Area::create([
+            'nombre' => 'General',
+            'descripcion' => 'Área general del laboratorio',
+            'laboratorio_id' => $laboratorio->id,
+            'is_active' => true,
+            'tipo' => 'No reservable'
+        ]);
     }
 
     // Actualizar laboratorio
