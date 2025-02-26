@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use App\Models\Equipo;
 use App\Models\Recurso;
 use App\Models\Reserva;
@@ -20,6 +21,7 @@ class ReservaController extends Controller
         'usuario_id' => 'required|exists:users,id',
         'equipo_id' => 'nullable|exists:equipos,id',
         'recurso_id' => 'nullable|exists:recursos,id',
+        'area_id' => 'nullable|exists:areas,id',
     ];
 
     // Listar las reservas en la vista
@@ -33,12 +35,14 @@ class ReservaController extends Controller
         $usuarios = User::all();
         $equipos = Equipo::all();
         $recursos = Recurso::all();
+        $areas = Area::all();
 
         return Inertia::render('Reservas/Index', [
             'reservas' => $reservas,
             'usuarios' => $usuarios,
             'equipos' => $equipos,
             'recursos' => $recursos,
+            'areas' => $areas,
         ]);
     }
 
