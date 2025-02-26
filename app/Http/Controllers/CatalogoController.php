@@ -33,7 +33,7 @@ class CatalogoController extends Controller
 
 		$laboratorios = Laboratorio::where('is_active', true)->get();
 
-		$admin = User::where('rol', '=', 'Admin')->first();
+		$admin = User::where('rol', '=', 'Miembro')->first();
 
 		return Inertia::render('Catalogo/Index', [
 			'recursos' => $recursos,
