@@ -12,7 +12,10 @@ class GoogleController extends Controller
     {
         // Solicitar el scope de calendar.events
         return Socialite::driver('google')
-            ->scopes(['https://www.googleapis.com/auth/calendar.events'])
+            ->scopes([
+                'https://www.googleapis.com/auth/calendar',
+                'https://www.googleapis.com/auth/calendar.events'
+            ])
             ->redirect();
     }
 

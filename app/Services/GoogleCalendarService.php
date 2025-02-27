@@ -4,51 +4,63 @@ namespace App\Services;
 
 use Google_Client;
 use Google_Service_Calendar;
+use Google_Service_Calendar_Calendar;
+use Google_Service_Calendar_AclRule;
+use Google_Service_Calendar_AclRuleScope;
 use Google_Service_Calendar_Event;
+
+
+use Illuminate\Support\Facades\Log;
 
 class GoogleCalendarService
 {
     protected $client;
-    protected $service;
-    protected $calendarId;
 
     public function __construct()
     {
-        // Configura el cliente de Google con la cuenta de servicio
         $this->client = new Google_Client();
-        $this->client->setAuthConfig(storage_path('app/google-credentials.json'));
+        // Apunta al archivo JSON de la cuenta de servicio
+        $this->client->setAuthConfig(storage_path('app/google/credentials.json'));
+        // Permisos necesarios para manejar calendarios y eventos
         $this->client->addScope(Google_Service_Calendar::CALENDAR);
-
-        // Crea la instancia de la API de Calendar
-        $this->service = new Google_Service_Calendar($this->client);
-
-        // El ID del calendario donde quieres crear los eventos
-        $this->calendarId = 'tu_calendar_id@group.calendar.google.com';
+        $this->client->addScope(Google_Service_Calendar::CALENDAR_EVENTS);
     }
 
-    public function createEvent($reserva)
+    public function createCalendar($nombreLaboratorio)
     {
-        $event = new Google_Service_Calendar_Event([
-            'summary'     => "Reserva #{$reserva->id}",
-            'description' => "Reserva creada por el usuario #{$reserva->usuario_id}",
-            'start'       => [
-                'dateTime' => $reserva->hora_inicio,
-                'timeZone' => 'America/Lima',
-            ],
-            'end'         => [
-                'dateTime' => $reserva->hora_fin,
-                'timeZone' => 'America/Lima',
-            ],
-            // Si quieres invitar a un usuario, usa 'attendees':
-            // 'attendees' => [
-            //     ['email' => 'usuario@example.com']
-            // ],
-        ]);
+        $service = new Google_Service_Calendar($this->client);
 
-        // Inserta el evento en tu calendario
-        $createdEvent = $this->service->events->insert($this->calendarId, $event);
+        $calendar = new Google_Service_Calendar_Calendar();
+        $calendar->setSummary($nombreLaboratorio);
+        $calendar->setTimeZone('America/Lima');
 
-        // Retorna el ID del evento en Google Calendar
-        return $createdEvent->getId();
+        $createdCalendar = $service->calendars->insert($calendar);
+
+        // Crear y configurar el objeto AclRuleScope
+        $aclScope = new \Google_Service_Calendar_AclRuleScope();
+        $aclScope->setType('user');
+        $aclScope->setValue('transformaciondigital@udh.edu.pe');
+
+        // Crear la regla ACL y asignar el scope
+        $rule = new \Google_Service_Calendar_AclRule();
+        $rule->setScope($aclScope);
+        $rule->setRole('owner'); // O 'writer' si prefieres
+
+        $service->acl->insert($createdCalendar->getId(), $rule);
+
+        return $createdCalendar->getId();
+    }
+
+
+
+    // Ejemplo: Crear un evento en un calendario
+    public function createEvent($calendarId, $eventData)
+    {
+        $service = new Google_Service_Calendar($this->client);
+
+        $event = new \Google_Service_Calendar_Event($eventData);
+        $createdEvent = $service->events->insert($calendarId, $event);
+
+        return $createdEvent;
     }
 }

@@ -1,21 +1,7 @@
 <template>
     <Table :columns="columnas" :dataSource="reservas" rowKey="id" :pagination="false" :scroll="{ x: 800 }">
         <template #bodyCell="{ column, record }">
-            <template v-if="column.key === 'estado'">
-                <Tag :color="estadoColor(record.estado)" :bordered="false">
-                    {{ record.estado }}
-                </Tag>
-            </template>
-
-            <template v-if="column.key === 'acciones'">
-                <FormOutlined @click="editar(record)" class="text-blue-600" />
-                <DeleteOutlined
-                    @click="confirmarEliminacion(record)"
-                    class="text-red-600 ml-2"
-                />
-            </template>
-
-            <!-- Renderizado personalizado para la columna 'Fecha' -->
+            <!-- Renderizado personalizado para la columna 'Reserva' -->
             <template v-if="column.key === 'fecha'">
                 <div>
                     <div class="font-medium">{{ dayjs(record.hora_inicio).format("YYYY-MM-DD") }}</div>
@@ -23,39 +9,50 @@
                 </div>
             </template>
 
-            <!-- Renderizado personalizado para la columna 'Fecha de Creación' -->
+            <!-- Renderizado personalizado para la columna 'Reservable' -->
+            <template v-if="column.key === 'recurso_equipo'">
+                {{ record.equipo?.nombre || record.recurso?.nombre || "No especificado" }}
+            </template>
+
+            <!-- Renderizado personalizado para la columna 'Solicitante' -->
+            <template v-if="column.key === 'usuario'">
+                {{ record.usuario.nombres }} {{ record.usuario.apellidos }}
+            </template>
+
+            <!-- Renderizado personalizado para la columna 'Fecha registro' -->
             <template v-if="column.key === 'created_at'">
                 <div>
                     <div>{{ dayjs(record.created_at).format("YYYY-MM-DD") }}</div>
                     <div>{{ dayjs(record.created_at).format("HH:mm") }}</div>
                 </div>
             </template>
+
+            <!-- Renderizado personalizado para la columna 'Acciones' -->
+            <template v-if="column.key === 'acciones'">
+                <Button type="primary" @click="editar(record)">Visualizar</Button>
+                <Popconfirm
+                    title="¿Estás seguro de aprobar esta reserva?"
+                    okText="Sí"
+                    cancelText="No"
+                    @confirm="aprobar(record)"
+                >
+                    <Button type="success" class="ml-2">Aprobar</Button>
+                </Popconfirm>
+            </template>
         </template>
     </Table>
 </template>
 
 <script setup>
-import { Table, Modal, Tag, message } from "ant-design-vue";
+import { Table, message, Popconfirm, Button } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
-import { FormOutlined, DeleteOutlined } from "@ant-design/icons-vue";
-import dayjs from "dayjs"; // Importamos dayjs para formatear las fechas
+import dayjs from "dayjs";
 
 const props = defineProps({
     reservas: Array,
 });
 
 const emitir = defineEmits(["editar", "actualizar-tabla"]);
-
-// Mapeo de estados a colores
-const estadoColor = (estado) => {
-    const colores = {
-        "Por aprobar": "warning",
-        "Aprobada": "success",
-        "No aprobada": "error",
-        "Finalizada": "default",
-    };
-    return colores[estado] || "default";
-};
 
 // Definir las columnas de la tabla de reservas
 const columnas = [
@@ -81,15 +78,7 @@ const columnas = [
         },
     },
     {
-        title: "Estado",
-        dataIndex: "estado",
-        key: "estado",
-        sorter: (a, b) => a.estado.localeCompare(b.estado),
-        width: 150
-    },
-    {
         title: "Solicitante",
-        dataIndex: ["usuario", "nombres", "usuario", "apellidos"],
         key: "usuario",
         customRender: ({ record }) => `${record.usuario.nombres} ${record.usuario.apellidos}`,
     },
@@ -100,33 +89,35 @@ const columnas = [
         width: 200,
         sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at),
     },
-    { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
+    {
+        title: "Acciones",
+        key: "acciones",
+        fixed: "right",
+        width: 150,
+    },
 ];
 
-// Emitir eventos para editar y eliminar
+// Función para emitir el evento de edición y abrir el ModalEditar.vue
 function editar(reserva) {
     emitir("editar", reserva);
 }
 
-const confirmarEliminacion = (reserva) => {
-    Modal.confirm({
-        title: "¿Estás seguro de eliminar esta reserva?",
-        content: `Reserva de ${dayjs(reserva.hora_inicio).format("HH:mm")} a ${dayjs(reserva.hora_fin).format("HH:mm")}`,
-        okText: "Confirmar",
-        cancelText: "Cancelar",
-        onOk() {
-            router.delete(route("reservas.destroy", reserva), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    message.success("Reserva eliminada exitosamente");
-                    emitir("actualizar-tabla");
-                },
-                onError: (error) => {
-                    console.error("Error al eliminar la reserva:", error);
-                    message.error("Error al eliminar la reserva");
-                },
-            });
-        },
-    });
-};
+// Función para aprobar la reserva
+function aprobar(reserva) {
+  // Actualizamos el objeto de reserva con el estado "Aprobada"
+  const reservaActualizada = { ...reserva, estado: "Aprobada" };
+  // Utilizamos reserva.id para construir la ruta
+  router.put(route("reservas.update", reserva.id), reservaActualizada, {
+    preserveScroll: true,
+    onSuccess: () => {
+      message.success("Reserva aprobada exitosamente");
+      emitir("actualizar-tabla", reservaActualizada);
+    },
+    onError: (error) => {
+      console.error("Error al aprobar la reserva:", error);
+      message.error("Error al aprobar la reserva");
+    },
+  });
+}
+
 </script>

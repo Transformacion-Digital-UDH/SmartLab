@@ -8,6 +8,9 @@ use App\Models\Laboratorio;
 use App\Models\User;
 use App\Models\Area;
 
+use Illuminate\Support\Facades\Log;
+use App\Services\GoogleCalendarService;
+
 class LaboratorioController extends Controller
 {
     public $rules = [
@@ -37,13 +40,27 @@ class LaboratorioController extends Controller
     }
 
     // Crear el laboratorio
-    public function store(Request $request)
+    public function store(Request $request, GoogleCalendarService $googleCalendarService)
     {
         $request->validate($this->rules);
 
+        // Crear el laboratorio en la BD
         $laboratorio = Laboratorio::create($request->all());
 
-        // Crear un área llamada "General" por defecto para el laboratorio
+        // Crear el calendario en Google Calendar
+        try {
+            $calendarId = $googleCalendarService->createCalendar($laboratorio->nombre);
+            $laboratorio->update(['google_calendar_id' => $calendarId]);
+        } catch (\Exception $e) {
+            // Puedes loguear el error si lo deseas
+            Log::error("Error al crear calendario: " . $e->getMessage());
+
+            return response()->json([
+                'error' => 'No se pudo crear el calendario en Google: ' . $e->getMessage()
+            ], 500);
+        }
+
+        // Crear un área general por defecto
         Area::create([
             'nombre' => 'General',
             'descripcion' => 'Área general del laboratorio',
@@ -51,7 +68,13 @@ class LaboratorioController extends Controller
             'is_active' => true,
             'tipo' => 'No reservable'
         ]);
+
+        return response()->json([
+            'message' => 'Laboratorio y calendario creados correctamente',
+            'laboratorio' => $laboratorio
+        ]);
     }
+
 
     // Actualizar laboratorio
     public function update(Request $request, Laboratorio $laboratorio)
