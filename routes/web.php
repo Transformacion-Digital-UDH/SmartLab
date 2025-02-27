@@ -91,6 +91,7 @@ Route::middleware([
     // Catalogo
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
     Route::get('/catalogo/reservas/{tipo}/{id}', [CatalogoController::class, 'listaDeReservados'])->name('catalogo.horarios');
+    Route::get('/catalogo/reservas/{tipo}/{id}', [CatalogoController::class, 'listaDeReservados'])->name('catalogo.horarios');
 
     // Áreas
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');
