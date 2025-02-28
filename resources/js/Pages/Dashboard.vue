@@ -17,7 +17,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
                 <div
                     class="bg-gray-50 dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-4"
                 >
-                    <h3>Metricas claves</h3>
+                    <h3>Métricas claves</h3>
                     <div class="flex flex-wrap">
                         <div class="w-full sm:w-2/6">
                             <div class="grid grid-cols-2 gap-4">
@@ -58,7 +58,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
                                     <span>Registros</span>
                                 </div>
 
-                               
+
                             </div>
                         </div>
                         <!-- Caja del 60% -->
