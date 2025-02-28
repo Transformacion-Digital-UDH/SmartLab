@@ -1,0 +1,32 @@
+name: Desplegar a entorno de testing
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ejecutar script de despliegue
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            php -v
+            cd htdocs/smartlab.sistemasudh.com
+            git reset --hard HEAD
+            git pull origin main
+            php artisan route:cache
+            php artisan config:cache
+            php artisan view:cache
+            php artisan cache:clear
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan event:clear
+            php artisan optimize:clear
+            php artisan optimize
+            npm run build
+
