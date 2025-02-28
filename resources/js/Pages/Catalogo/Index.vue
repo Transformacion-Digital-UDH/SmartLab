@@ -39,55 +39,30 @@ const tipo = ref('')
 // Filtrar equipos
 const equiposFiltrados = computed(() => equipos.value.filter((equipo) => {
     const a = equipo?.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase());
-    const b = equipo.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
-    const c = idLabSelected.value === -1 ? true : equipo?.area?.laboratorio.id === idLabSelected.value
-    return (a || b) && c
-})
-);
+    const b = equipo.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase());
+    const c = idLabSelected.value === -1 ? true : equipo?.area?.laboratorio.id === idLabSelected.value;
+    return (a || b) && c;
+}));
 
 // Filtrar recursos
 const recursosFiltrados = computed(() => recursos.value.filter((recurso) => {
-    const a = recurso?.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase())
-    const b = recurso.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase())
-    const c = idLabSelected.value === -1 ? true : recurso?.area?.laboratorio.id === idLabSelected.value
-    return (a || b) && c
-})
-);
+    const a = recurso?.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase());
+    const b = recurso.codigo?.toLowerCase().includes(valorBuscar.value.toLowerCase());
+    const c = idLabSelected.value === -1 ? true : recurso?.area?.laboratorio.id === idLabSelected.value;
+    return (a || b) && c;
+}));
 
 // Filtrar áreas
 const areasFiltradas = computed(() => areas.value.filter((area) => {
-    const a = area?.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase())
-    const b = idLabSelected.value === -1 ? true : area?.laboratorio?.id === idLabSelected.value
-    return (a || b)
+    const a = area?.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase());
+    const b = idLabSelected.value === -1 ? true : area?.laboratorio?.id === idLabSelected.value;
+    return a && b;
 }));
 
 function handleSelect(recurso, tipex) {
-    recursoSeleccionado.value = recurso
-    open.value = true
+    recursoSeleccionado.value = recurso;
+    open.value = true;
     tipo.value = tipex;
-}
-
-function buscar() {
-    loading.value = true;
-    const params = new URLSearchParams({
-        q: valorBuscar.value,
-        laboratorio_id: idLabSelected.value === -1 ? "" : idLabSelected.value
-    }).toString();
-    router.visit(route('catalogo.index') + '?' + params, {
-        preserveScroll: true, preserveState: true, onSuccess: () => {
-            loading.value = false;
-            if (idLabSelected.value !== -1) {
-                const selectedLab = laboratorios.value.find(lab => lab.id === idLabSelected.value);
-                if (selectedLab) {
-                    options.forEach(option => {
-                        if (option.value === selectedLab.id) {
-                            option.label = selectedLab.nombre;
-                        }
-                    });
-                }
-            }
-        }
-    });
 }
 
 function filterOption(input, option) {
