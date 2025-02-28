@@ -43,10 +43,21 @@
 
 	// Dar la ruta de paginacion
 	function setURLPage(page, cantidad) {
-		const url = new URL(location.href)
-		url.searchParams.set('page', page)
-		location.href = url.toString()
+		router.get(route(route().current(), { page, cantidad }), {}, {
+			preserveState: true,
+			preserveScroll: true,
+			onSuccess: (page) => {
+				asistencias = page.props.asistencias.data;
+				total.value = page.props.asistencias.total;
+				currentPage.value = page.props.asistencias.current_page;
+			}
+		});
 	}
+
+	watch(() => new URLSearchParams(window.location.search).get('page'), (newPage) => {
+		currentPage.value = parseInt(newPage) || 1;
+		current.value = parseInt(newPage) || 1;
+	});
 
 	// Formatear la fecha
 	const open = ref(false)
@@ -85,7 +96,12 @@
 		mostrarModalAgregarAsistencia.value = true
 	}
 
-	const current = ref(asistencias.current_page);
+	const current = ref(parseInt(new URLSearchParams(window.location.search).get('page')) || asistenciasPaginate.current_page);
+
+	watch(() => new URLSearchParams(window.location.search).get('page'), (newPage) => {
+		current.value = parseInt(newPage) || 1;
+	});
+
 	watch(current, ()=>{
 		setURLPage(current.value)
 	})

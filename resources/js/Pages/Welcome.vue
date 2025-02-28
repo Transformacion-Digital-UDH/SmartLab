@@ -136,7 +136,7 @@ function prev() {
     }
 </style>
 <template>
-    <Head title="SmartLabs" />
+    <Head title="Bienvenido" />
 
     <div class="font-sans text-white bg-gradient-to-b from-blue-900 to-gray-900">
         <!-- Background Particles -->
@@ -236,7 +236,7 @@ function prev() {
         </div>
         </section>
 
-        <!-- Stats Section 
+        <!-- Stats Section
         <section class="flex items-center justify-center h-auto p-5 bg-white md:h-64">
             <div class="grid max-w-6xl grid-cols-1 gap-8 text-center text-blue-800 md:grid-cols-4">
                 <div>
@@ -336,7 +336,7 @@ function prev() {
             </div>
         </div>
 
-        <!-- Carrusel Section 
+        <!-- Carrusel Section
         <div class="flex items-center justify-center py-20 bg-gradient-to-b from-white to-blue-400">
             <div class="container px-6 py-10 mx-auto">
                 <div class="mb-8 text-center">
@@ -443,8 +443,8 @@ function prev() {
         <section id="about" class="px-5 py-20 text-center bg-gradient-to-b from-blue-400 to-blue-600">
             <h2 class="text-3xl font-bold  animate-[float_5s_ease-in-out_infinite]">Pero, como me pongo en contacto?</h2>
             <p class="max-w-3xl mx-auto mt-6">
-                Ahora en su nueva plataforma podras encontrar toda la informacion que necesitas 
-                ver horarios, ver la disponibilidad de los laboratorios, ver los recursos de los laboratorios 
+                Ahora en su nueva plataforma podras encontrar toda la informacion que necesitas
+                ver horarios, ver la disponibilidad de los laboratorios, ver los recursos de los laboratorios
                 registrater e ir como invitado o volverte miembro, planificar tu cronograma de trabajo y más.
             </p>
             <button class="px-6 py-2 mt-6 text-white bg-blue-800 rounded-lg hover:bg-blue-900">Login</button>

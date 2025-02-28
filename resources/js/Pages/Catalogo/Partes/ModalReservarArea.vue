@@ -121,7 +121,7 @@
 				<h3 class="text-2xl font-bold">{{recurso.nombre}} • <span class="text-neutral-400">#{{recurso.codigo}}</span></h3>
 				<p>{{recurso.descripcion}}</p>
 				<div class="">
-					
+
 					<details class="m-1">
 						<summary><b>Horarios reservados</b></summary>
 						<div>
