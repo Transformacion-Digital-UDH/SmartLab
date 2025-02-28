@@ -20,6 +20,7 @@ class CatalogoController extends Controller
 
         $laboratorios = Laboratorio::where('is_active', true)->get();
         $areas = Area::with('laboratorio')
+            ->where('tipo', 'Reservable')
             ->where('is_active', true)
             ->when($laboratorioId !== null, function ($q) use ($laboratorioId) {
                 $q->where('laboratorio_id', $laboratorioId);
