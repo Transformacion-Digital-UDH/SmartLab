@@ -23,7 +23,7 @@
                 <template #bodyCell="{ column, text, record }">
                     <template v-if="['nombre', 'descripcion', 'aforo'].includes(column.dataIndex)">
                         <div>
-                            <template v-if="datosEditables[record.key]">
+                            <template v-if="datosEditables[record.key] && record.nombre !== 'General'">
                                 <Input
                                     v-model:value="datosEditables[record.key][column.dataIndex]"
                                     style="margin: -5px 0"
@@ -37,7 +37,7 @@
                         </div>
                     </template>
                     <template v-else-if="column.dataIndex === 'tipo'">
-                        <template v-if="datosEditables[record.key]">
+                        <template v-if="datosEditables[record.key] && record.nombre !== 'General'">
                             <Select v-model:value="datosEditables[record.key].tipo" size="small">
                                 <Select.Option value="Reservable">Reservable</Select.Option>
                                 <Select.Option value="No reservable">No reservable</Select.Option>
@@ -49,13 +49,13 @@
                     </template>
                     <template v-else-if="column.dataIndex === 'operation'">
                         <div>
-                            <span v-if="datosEditables[record.key]">
+                            <span v-if="datosEditables[record.key] && record.nombre !== 'General'">
                                 <CheckOutlined @click="guardar(record.key, record.id)" class="text-green-600 mr-2" />
                                 <CloseOutlined @click="cancelar(record.key)" class="text-red-600" />
                             </span>
                             <span v-else>
-                                <FormOutlined @click="editar(record.key)" class="text-blue-600 mr-2" />
-                                <Popconfirm title="Confirmar acción" okText="Sí" cancelText="No" @confirm="eliminarArea(record.id)">
+                                <FormOutlined v-if="record.nombre !== 'General'" @click="editar(record.key)" class="text-blue-600 mr-2" />
+                                <Popconfirm v-if="record.nombre !== 'General'" title="Confirmar acción" okText="Sí" cancelText="No" @confirm="eliminarArea(record.id)">
                                     <DeleteOutlined class="text-red-600" />
                                 </Popconfirm>
                             </span>
@@ -133,7 +133,10 @@ const cargarAreas = async () => {
 };
 
 const editar = (key) => {
-    datosEditables.value[key] = { ...areas.value.find((area) => area.key === key) };
+    const area = areas.value.find((area) => area.key === key);
+    if (area.nombre !== 'General') {
+        datosEditables.value[key] = { ...area };
+    }
 };
 
 const guardar = async (key, areaId) => {
