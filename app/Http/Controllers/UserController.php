@@ -9,16 +9,26 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $usuarios = User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular', 'password')
+        $query = User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular', 'password')
             ->where('rol', '!=', 'Admin')
-            ->where('is_active', true)
-            ->orderBy('id', 'desc')
-            ->get();
+            ->where('is_active', true);
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('dni', 'like', "%{$search}%")
+                    ->orWhere('codigo', 'like', "%{$search}%")
+                    ->orWhereRaw("CONCAT(nombres, ' ', apellidos) LIKE ?", ["%{$search}%"]);
+            });
+        }
+
+        $usuarios = $query->orderBy('id', 'desc')->get();
 
         return Inertia::render('Usuarios/Index', [
             'usuarios' => $usuarios,
+            'search' => $request->input('search', ''),
         ]);
     }
 
