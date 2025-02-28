@@ -16,6 +16,8 @@ return new class extends Migration
             $table->dateTime('hora_inicio');
             $table->dateTime('hora_fin');
             $table->enum('estado', allowed: ['Por aprobar', 'Aprobada', 'No aprobada', 'Finalizada'])->default('Por aprobar');
+            $table->string('google_event_id')->nullable();
+
             $table->boolean('is_active')->default(true);
 
             $table->foreignId('usuario_id')->constrained('users')->onDelete('restrict');

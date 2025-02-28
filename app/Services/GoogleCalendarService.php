@@ -36,20 +36,27 @@ class GoogleCalendarService
 
         $createdCalendar = $service->calendars->insert($calendar);
 
-        // Crear y configurar el objeto AclRuleScope
-        $aclScope = new \Google_Service_Calendar_AclRuleScope();
-        $aclScope->setType('user');
-        $aclScope->setValue('transformaciondigital@udh.edu.pe');
+        // Regla pública: Compartir públicamente (lectura)
+        $aclScopePublic = new Google_Service_Calendar_AclRuleScope();
+        $aclScopePublic->setType('default');
+        $publicRule = new Google_Service_Calendar_AclRule();
+        $publicRule->setScope($aclScopePublic);
+        $publicRule->setRole('reader');
+        $service->acl->insert($createdCalendar->getId(), $publicRule);
 
-        // Crear la regla ACL y asignar el scope
-        $rule = new \Google_Service_Calendar_AclRule();
-        $rule->setScope($aclScope);
-        $rule->setRole('owner'); // O 'writer' si prefieres
-
-        $service->acl->insert($createdCalendar->getId(), $rule);
+        // Regla para la cuenta de la app: asignar propiedad a "transformaciondigital@udh.edu.pe"
+        $aclScopeApp = new Google_Service_Calendar_AclRuleScope();
+        $aclScopeApp->setType('user');
+        $aclScopeApp->setValue('transformaciondigital@udh.edu.pe');
+        $appRule = new Google_Service_Calendar_AclRule();
+        $appRule->setScope($aclScopeApp);
+        $appRule->setRole('owner');
+        $service->acl->insert($createdCalendar->getId(), $appRule);
 
         return $createdCalendar->getId();
     }
+
+
 
 
 
@@ -63,4 +70,33 @@ class GoogleCalendarService
 
         return $createdEvent;
     }
+
+
+    public function setUserCredentials($tokenData)
+    {
+        // Si el token viene como string, lo decodificamos a un arreglo
+        if (is_string($tokenData)) {
+            $tokenData = json_decode($tokenData, true);
+        }
+        // Verificamos que el token tenga el formato correcto
+        if (!isset($tokenData['access_token'])) {
+            throw new \InvalidArgumentException("Invalid token format");
+        }
+
+        $this->client->setAccessToken($tokenData);
+
+        // Refrescar el token si es necesario
+        if ($this->client->isAccessTokenExpired()) {
+            $newToken = $this->client->fetchAccessTokenWithRefreshToken($this->client->getRefreshToken());
+            $this->client->setAccessToken($newToken);
+            // Aquí puedes actualizar la base de datos con el nuevo token si es necesario
+        }
+    }
+
+
+    public function getAccessToken()
+    {
+        return $this->client->getAccessToken();
+    }
+
 }

@@ -6,6 +6,7 @@ use App\Models\Reserva;
 use App\Models\Equipo;
 use App\Models\Recurso;
 use App\Models\Area;
+use App\Models\Laboratorio;
 use Inertia\Inertia;
 
 class PanelController extends Controller
@@ -20,12 +21,14 @@ class PanelController extends Controller
         $equipos = Equipo::all();
         $recursos = Recurso::all();
         $areas = Area::all();
+        $laboratorios = Laboratorio::whereNotNull('google_calendar_id')->get();
 
         return Inertia::render('Panel/Index', [
             'reservas' => $reservas,
             'equipos' => $equipos,
             'recursos' => $recursos,
             'areas' => $areas,
+            'laboratorios' => $laboratorios,
         ]);
     }
 }

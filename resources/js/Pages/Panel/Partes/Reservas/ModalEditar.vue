@@ -12,6 +12,20 @@
                 <Input :value="nombreUsuario" disabled />
             </FormItem>
 
+            <!-- Información de contacto con label homogéneo -->
+            <FormItem label="Información de contacto">
+                <div class="flex md:flex gap-x-3">
+                    <div class="flex-1">
+                        <label class="ant-form-item-label" style="padding-bottom: 4px;">Correo</label>
+                        <Input :value="reserva.usuario?.email" disabled />
+                    </div>
+                    <div class="flex-1">
+                        <label class="ant-form-item-label" style="padding-bottom: 4px;">Celular</label>
+                        <Input :value="reserva.usuario?.celular" disabled />
+                    </div>
+                </div>
+            </FormItem>
+
             <!-- Tabs para seleccionar entre Recurso, Equipo o Área -->
             <Tabs v-model:activeKey="activeTab" type="line">
                 <TabPane key="recurso" tab="Recurso">
@@ -52,29 +66,36 @@
                 </TabPane>
             </Tabs>
 
-            <FormItem
-                label="Hora de inicio"
-                name="hora_inicio"
-                :rules="[{ required: true, message: 'Por favor ingrese la hora de inicio' }]"
-            >
-                <Input
-                    v-model:value="reserva.hora_inicio"
-                    type="datetime-local"
-                    placeholder="Seleccione la hora de inicio"
-                />
-            </FormItem>
+            <!-- Hora de inicio y fin en una misma fila -->
+            <div class="flex md:flex gap-x-3">
+                <FormItem
+                    label="Hora de inicio"
+                    name="hora_inicio"
+                    :rules="[{ required: true, message: 'Por favor ingrese la hora de inicio' }]"
+                    class="flex-1"
+                    style="margin-bottom: 0;"
+                >
+                    <Input
+                        v-model:value="reserva.hora_inicio"
+                        type="datetime-local"
+                        placeholder="Seleccione la hora de inicio"
+                    />
+                </FormItem>
 
-            <FormItem
-                label="Hora de fin"
-                name="hora_fin"
-                :rules="[{ required: true, message: 'Por favor ingrese la hora de fin' }]"
-            >
-                <Input
-                    v-model:value="reserva.hora_fin"
-                    type="datetime-local"
-                    placeholder="Seleccione la hora de fin"
-                />
-            </FormItem>
+                <FormItem
+                    label="Hora de fin"
+                    name="hora_fin"
+                    :rules="[{ required: true, message: 'Por favor ingrese la hora de fin' }]"
+                    class="flex-1"
+                    style="margin-bottom: 0;"
+                >
+                    <Input
+                        v-model:value="reserva.hora_fin"
+                        type="datetime-local"
+                        placeholder="Seleccione la hora de fin"
+                    />
+                </FormItem>
+            </div>
 
             <FormItem
                 label="Estado"
@@ -128,12 +149,29 @@ const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 
 const reserva = ref({ ...props.reserva });
 const cargando = ref(false);
-const activeTab = ref('recurso'); // Recurso por defecto
+const activeTab = ref('recurso');
 
-// Computed para obtener el nombre del usuario en formato "Nombres Apellidos"
+// Establece el tab activo en función de la reserva
+watch(
+    () => props.reserva,
+    (newReserva) => {
+        if (newReserva.recurso_id) {
+            activeTab.value = 'recurso';
+        } else if (newReserva.equipo_id) {
+            activeTab.value = 'equipo';
+        } else if (newReserva.area_id) {
+            activeTab.value = 'area';
+        } else {
+            activeTab.value = 'recurso';
+        }
+    },
+    { immediate: true }
+);
+
+// Computed para obtener el nombre del usuario en formato "Nombres Apellidos - DNI"
 const nombreUsuario = computed(() => {
     if (reserva.value.usuario) {
-        return `${reserva.value.usuario.nombres} ${reserva.value.usuario.apellidos}`;
+        return `${reserva.value.usuario.nombres} ${reserva.value.usuario.apellidos} - ${reserva.value.usuario.dni}`;
     }
     return '';
 });
