@@ -27,20 +27,131 @@ asistencias.data = asistencias.data.map((asis) => ({
 }));
 
 // Dividir asistencias
-const asistenciasCompletas = asistencias.data.filter((a) => a.check);
-const asistenciasIncompletas = asistencias.data.filter((a) => !a.check);
+const asistenciasCompletas = ref(props.asistenciasCompletas.data.map((asis) => ({
+  id: asis.id,
+  check: asis.hora_salida != null,
+  entrada: asis.hora_entrada,
+  salida: asis.hora_salida,
+  type: new Date(asis.hora_entrada).getHours() < 12
+    ? 'A'
+    : new Date(asis.hora_entrada).getHours() < 18
+    ? 'B'
+    : 'C',
+  laboratorio: asis.laboratorio,
+  proyecto: asis.proyecto,
+})));
+const asistenciasIncompletas = ref(props.asistenciasIncompletas.data.map((asis) => ({
+  id: asis.id,
+  check: asis.hora_salida != null,
+  entrada: asis.hora_entrada,
+  salida: asis.hora_salida,
+  type: new Date(asis.hora_entrada).getHours() < 12
+    ? 'A'
+    : new Date(asis.hora_entrada).getHours() < 18
+    ? 'B'
+    : 'C',
+  laboratorio: asis.laboratorio,
+  proyecto: asis.proyecto,
+})));
 
 // Estado de la paginación y tabs
 const current = ref(asistencias.current_page);
+const currentCompletas = ref(props.asistenciasCompletas.current_page);
+const currentIncompletas = ref(props.asistenciasIncompletas.current_page);
 const activeKey = ref('1'); // Clave activa del Tab inicial
 
 watch(current, () => {
   setURLPage(current.value);
 });
 
+watch(currentCompletas, () => {
+  setURLPageCompletas(currentCompletas.value);
+});
+
+watch(currentIncompletas, () => {
+  setURLPageIncompletas(currentIncompletas.value);
+});
+
+watch(activeKey, () => {
+  current.value = 1;
+  currentCompletas.value = 1;
+  currentIncompletas.value = 1;
+  setURLPage(1);
+  setURLPageCompletas(1);
+  setURLPageIncompletas(1);
+});
+
 // Dar la ruta de paginación utilizando Inertia.js
 function setURLPage(page) {
-  router.get(route(route().current(), { page }), {}, { preserveState: true, preserveScroll: true });
+  router.get(route('asistencias.user', { page, per_page: 10, tab: activeKey.value }), {}, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: (page) => {
+      asistencias.data = page.props.asistencias.data.map((asis) => ({
+        id: asis.id,
+        check: asis.hora_salida != null,
+        entrada: asis.hora_entrada,
+        salida: asis.hora_salida,
+        type: new Date(asis.hora_entrada).getHours() < 12
+          ? 'A'
+          : new Date(asis.hora_entrada).getHours() < 18
+          ? 'B'
+          : 'C',
+        laboratorio: asis.laboratorio,
+        proyecto: asis.proyecto,
+      }));
+      asistencias.total = page.props.asistencias.total;
+      asistencias.current_page = page.props.asistencias.current_page;
+    }
+  });
+}
+
+function setURLPageCompletas(page) {
+  router.get(route('asistencias.completas', { page, per_page: 10 }), {}, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: (page) => {
+      asistenciasCompletas.value = page.props.asistenciasCompletas.data.map((asis) => ({
+        id: asis.id,
+        check: asis.hora_salida != null,
+        entrada: asis.hora_entrada,
+        salida: asis.hora_salida,
+        type: new Date(asis.hora_entrada).getHours() < 12
+          ? 'A'
+          : new Date(asis.hora_entrada).getHours() < 18
+          ? 'B'
+          : 'C',
+        laboratorio: asis.laboratorio,
+        proyecto: asis.proyecto,
+      }));
+      props.asistenciasCompletas.total = page.props.asistenciasCompletas.total;
+      props.asistenciasCompletas.current_page = page.props.asistenciasCompletas.current_page;
+    }
+  });
+}
+
+function setURLPageIncompletas(page) {
+  router.get(route('asistencias.incompletas', { page, per_page: 10 }), {}, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: (page) => {
+      asistenciasIncompletas.value = page.props.asistenciasIncompletas.data.map((asis) => ({
+        id: asis.id,
+        check: asis.hora_salida != null,
+        entrada: asis.hora_entrada,
+        salida: asis.hora_salida,
+        type: new Date(asis.hora_entrada).getHours() < 12
+          ? 'A'
+          : new Date(asis.hora_entrada).getHours() < 18
+          ? 'B'
+          : 'C',
+        laboratorio: asis.laboratorio,
+        proyecto: asis.proyecto,
+      }));
+      props.asistenciasIncompletas.total = page.props.asistenciasIncompletas.total;
+      props.asistenciasIncompletas.current_page = page.props.asistenciasIncompletas.current_page;
+    }
+  });
 }
 </script>
 
@@ -59,7 +170,7 @@ function setURLPage(page) {
               <UserOutlined class="block" />
               Asistencias
               <span class="text-green-600 font-bold ml-2 bg-neutral-100 px-1 rounded-full">
-                {{ asistencias.total }}
+                {{ props.totalAsistencias }}
               </span>
             </div>
           </template>
@@ -70,6 +181,9 @@ function setURLPage(page) {
               :key="asistencia.id"
             />
           </div>
+          <div class="grid place-items-center pb-5">
+            <Pagination v-model:current="current" :total="asistencias.total" :pageSize="10" show-less-items @change="setURLPage" />
+          </div>
         </TabPane>
         <TabPane key="2">
           <template #tab>
@@ -77,7 +191,7 @@ function setURLPage(page) {
               <CheckCircleOutlined />
               Completas
               <span class="text-blue-600 font-bold ml-2 bg-blue-100 px-1 rounded-full">
-                {{ asistenciasCompletas.length }}
+                {{ props.totalCompletas }}
               </span>
             </div>
           </template>
@@ -88,6 +202,9 @@ function setURLPage(page) {
               :key="asistenciaCompleta.id"
             />
           </div>
+          <div class="grid place-items-center pb-5">
+            <Pagination v-model:current="currentCompletas" :total="props.asistenciasCompletas.total" :pageSize="10" show-less-items @change="setURLPageCompletas" />
+          </div>
         </TabPane>
         <TabPane key="3">
           <template #tab>
@@ -95,22 +212,22 @@ function setURLPage(page) {
               <ExclamationCircleOutlined class="block" />
               Incompletas
               <span class="text-red-600 font-bold ml-2 bg-red-100 px-1 rounded-full">
-                {{ asistenciasIncompletas.length }}
+                {{ props.totalIncompletas }}
               </span>
             </div>
           </template>
           <div class="appy gap-2">
             <CardAsistencia
-              :asistencia="asistencia"
-              v-for="(asistencia) in asistenciasIncompletas"
-              :key="asistencia.id"
+              :asistencia="asistenciaIncompleta"
+              v-for="(asistenciaIncompleta) in asistenciasIncompletas"
+              :key="asistenciaIncompleta.id"
             />
+          </div>
+          <div class="grid place-items-center pb-5">
+            <Pagination v-model:current="currentIncompletas" :total="props.asistenciasIncompletas.total" :pageSize="10" show-less-items @change="setURLPageIncompletas" />
           </div>
         </TabPane>
       </Tabs>
-    </div>
-    <div class="grid place-items-center pb-5">
-      <Pagination v-model:current="current" :total="asistencias.total" show-less-items />
     </div>
   </AppLayout>
 </template>

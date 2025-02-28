@@ -60,7 +60,7 @@ const estadoColor = (estado) => {
 // Definir las columnas de la tabla de reservas
 const columnas = [
     {
-        title: "Fecha y hora",
+        title: "Reserva",
         key: "fecha",
         dataIndex: "hora_inicio",
         customRender: ({ record }) => {
@@ -70,7 +70,7 @@ const columnas = [
         sorter: (a, b) => new Date(a.hora_inicio) - new Date(b.hora_inicio),
     },
     {
-        title: "Recurso / Equipo",
+        title: "Reservable",
         key: "recurso_equipo",
         customRender: ({ record }) =>
             record.equipo?.nombre || record.recurso?.nombre || "No especificado",
@@ -88,7 +88,7 @@ const columnas = [
         width: 150
     },
     {
-        title: "Reservante",
+        title: "Solicitante",
         dataIndex: ["usuario", "nombres", "usuario", "apellidos"],
         key: "usuario",
         customRender: ({ record }) => `${record.usuario.nombres} ${record.usuario.apellidos}`,

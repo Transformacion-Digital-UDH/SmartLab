@@ -33,7 +33,7 @@ const props = defineProps({
 const emitir = defineEmits(["editar", "mostrar-asistencias", "actualizar-tabla"]);
 
 const columnas = [
-    { title: "Código", dataIndex: "codigo", key: "codigo" },
+    { title: "Código", dataIndex: "codigo", key: "codigo", width: 120 },
     {
         title: "Nombre Completo",
         dataIndex: "nombre_completo",
@@ -43,16 +43,9 @@ const columnas = [
     },
     { title: "DNI", dataIndex: "dni", key: "dni", width: 100 },
     { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Celular", dataIndex: "celular", key: "celular" },
-    { title: "Rol", dataIndex: "rol", key: "rol", width: 100 },
-    
-    /*{
-        title: "Activo",
-        dataIndex: "is_active",
-        key: "is_active",
-        width: 80,
-        customRender: ({ text }) => (text ? "Sí" : "No"),
-    },*/
+    { title: "Celular", dataIndex: "celular", key: "celular", width: 120 },
+    { title: "Rol", dataIndex: "rol", key: "rol", width: 120 },
+
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 

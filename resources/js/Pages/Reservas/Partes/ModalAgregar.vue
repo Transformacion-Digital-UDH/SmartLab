@@ -1,14 +1,19 @@
 <template>
     <Modal
-        title="Agregar Reserva"
+        title="Agregar reserva"
         :open="visible"
         @cancel="cerrarModal"
         centered
         :footer="null"
     >
         <Form layout="vertical" @finish="enviarFormulario" :model="reserva">
+            <!-- Selector de tipo de reserva -->
+            <FormItem label="Tipo de Reserva" name="tipo_reserva">
+                <Select v-model:value="tipoReserva" :options="tipoReservaOptions" />
+            </FormItem>
+
             <!-- Campos del formulario -->
-            <FormItem label="Recurso" name="recurso_id">
+            <FormItem v-if="tipoReserva === 'Recurso'" label="Recurso" name="recurso_id">
                 <Select
                     v-model:value="reserva.recurso_id"
                     placeholder="Seleccione un recurso"
@@ -18,7 +23,7 @@
                 />
             </FormItem>
 
-            <FormItem label="Equipo" name="equipo_id">
+            <FormItem v-if="tipoReserva === 'Equipo'" label="Equipo" name="equipo_id">
                 <Select
                     v-model:value="reserva.equipo_id"
                     placeholder="Seleccione un equipo"
@@ -28,11 +33,11 @@
                 />
             </FormItem>
 
-            <FormItem label="Hora de Inicio" name="hora_inicio">
+            <FormItem label="Hora de inicio" name="hora_inicio">
                 <Input type="datetime-local" v-model:value="reserva.hora_inicio" />
             </FormItem>
 
-            <FormItem label="Hora de Fin" name="hora_fin">
+            <FormItem label="Hora de fin" name="hora_fin">
                 <Input type="datetime-local" v-model:value="reserva.hora_fin" />
             </FormItem>
 
@@ -82,6 +87,14 @@ const estadoOptions = ref([
     { label: 'Finalizada', value: 'Finalizada' },
 ]);
 
+// Opciones de tipo de reserva
+const tipoReservaOptions = ref([
+    { label: 'Recurso', value: 'Recurso' },
+    { label: 'Equipo', value: 'Equipo' },
+]);
+
+const tipoReserva = ref('Recurso');
+
 // Cerrar modal
 const cerrarModal = () => {
     emitir('update:visible', false);
@@ -117,6 +130,7 @@ watch(() => props.visible, (val) => {
             hora_fin: '',
             estado: 'Por aprobar',
         };
+        tipoReserva.value = 'Recurso';
     }
 });
 </script>

@@ -38,13 +38,15 @@ class AsistenciaController extends Controller
         ]);
     }
 
-    function misAsistencias(){
+    public function misAsistencias(Request $request) {
         $usuario_id = Auth::id();
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 10);
 
         $asistencias = DB::table('asistencias')
             ->join('users', 'users.id', '=', 'asistencias.usuario_id')
-            ->leftJoin('laboratorios', 'laboratorios.id', '=', 'asistencias.laboratorio_id') // Agrega la relación con laboratorios
-            ->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id') // Agrega la relación con proyectos
+            ->leftJoin('laboratorios', 'laboratorios.id', '=', 'asistencias.laboratorio_id')
+            ->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id')
             ->where('asistencias.usuario_id', '=', $usuario_id)
             ->select(
                 'asistencias.*',
@@ -52,18 +54,190 @@ class AsistenciaController extends Controller
                 'users.nombres',
                 'users.apellidos',
                 'users.rol',
-                'laboratorios.nombre as laboratorio', // Incluye el nombre del laboratorio
-                'proyectos.nombre as proyecto' // Incluye el nombre del proyecto
+                'laboratorios.nombre as laboratorio',
+                'proyectos.nombre as proyecto'
             )
-            ->orderBy('asistencias.hora_entrada', 'desc') // Ordenar por fecha de inicio
-            ->paginate(20);
+            ->orderBy('asistencias.hora_entrada', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        $totalAsistencias = DB::table('asistencias')
+            ->where('usuario_id', '=', $usuario_id)
+            ->count();
+
+        $totalCompletas = DB::table('asistencias')
+            ->where('usuario_id', '=', $usuario_id)
+            ->whereNotNull('hora_salida')
+            ->count();
+
+        $totalIncompletas = DB::table('asistencias')
+            ->where('usuario_id', '=', $usuario_id)
+            ->whereNull('hora_salida')
+            ->count();
+
+        $asistenciasCompletas = DB::table('asistencias')
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
+            ->leftJoin('laboratorios', 'laboratorios.id', '=', 'asistencias.laboratorio_id')
+            ->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id')
+            ->where('asistencias.usuario_id', '=', $usuario_id)
+            ->whereNotNull('asistencias.hora_salida')
+            ->select(
+                'asistencias.*',
+                'users.dni',
+                'users.nombres',
+                'users.apellidos',
+                'users.rol',
+                'laboratorios.nombre as laboratorio',
+                'proyectos.nombre as proyecto'
+            )
+            ->orderBy('asistencias.hora_entrada', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        $asistenciasIncompletas = DB::table('asistencias')
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
+            ->leftJoin('laboratorios', 'laboratorios.id', '=', 'asistencias.laboratorio_id')
+            ->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id')
+            ->where('asistencias.usuario_id', '=', $usuario_id)
+            ->whereNull('asistencias.hora_salida')
+            ->select(
+                'asistencias.*',
+                'users.dni',
+                'users.nombres',
+                'users.apellidos',
+                'users.rol',
+                'laboratorios.nombre as laboratorio',
+                'proyectos.nombre as proyecto'
+            )
+            ->orderBy('asistencias.hora_entrada', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
 
         return Inertia::render('Asistencia/MiAsistencia', [
             'token' => csrf_token(),
-            'asistencias' => $asistencias
+            'asistencias' => $asistencias,
+            'totalAsistencias' => $totalAsistencias,
+            'totalCompletas' => $totalCompletas,
+            'totalIncompletas' => $totalIncompletas,
+            'asistenciasCompletas' => $asistenciasCompletas,
+            'asistenciasIncompletas' => $asistenciasIncompletas,
         ]);
     }
 
+    public function asistenciasCompletas(Request $request) {
+        $usuario_id = Auth::id();
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 10);
+
+        $asistenciasCompletas = DB::table('asistencias')
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
+            ->leftJoin('laboratorios', 'laboratorios.id', '=', 'asistencias.laboratorio_id')
+            ->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id')
+            ->where('asistencias.usuario_id', '=', $usuario_id)
+            ->whereNotNull('asistencias.hora_salida')
+            ->select(
+                'asistencias.*',
+                'users.dni',
+                'users.nombres',
+                'users.apellidos',
+                'users.rol',
+                'laboratorios.nombre as laboratorio',
+                'proyectos.nombre as proyecto'
+            )
+            ->orderBy('asistencias.hora_entrada', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return Inertia::render('Asistencia/MiAsistencia', [
+            'asistenciasCompletas' => $asistenciasCompletas,
+        ]);
+    }
+
+    public function asistenciasIncompletas(Request $request) {
+        $usuario_id = Auth::id();
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 10);
+
+        $asistenciasIncompletas = DB::table('asistencias')
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
+            ->leftJoin('laboratorios', 'laboratorios.id', '=', 'asistencias.laboratorio_id')
+            ->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id')
+            ->where('asistencias.usuario_id', '=', $usuario_id)
+            ->whereNull('asistencias.hora_salida')
+            ->select(
+                'asistencias.*',
+                'users.dni',
+                'users.nombres',
+                'users.apellidos',
+                'users.rol',
+                'laboratorios.nombre as laboratorio',
+                'proyectos.nombre as proyecto'
+            )
+            ->orderBy('asistencias.hora_entrada', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return Inertia::render('Asistencia/MiAsistencia', [
+            'asistenciasIncompletas' => $asistenciasIncompletas,
+        ]);
+    }
+
+    public function misAsistenciasCompletas(Request $request) {
+        $usuario_id = Auth::id();
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 10);
+
+        $asistenciasCompletas = DB::table('asistencias')
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
+            ->leftJoin('laboratorios', 'laboratorios.id', '=', 'asistencias.laboratorio_id')
+            ->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id')
+            ->where('asistencias.usuario_id', '=', $usuario_id)
+            ->whereNotNull('asistencias.hora_salida')
+            ->select(
+                'asistencias.*',
+                'users.dni',
+                'users.nombres',
+                'users.apellidos',
+                'users.rol',
+                'laboratorios.nombre as laboratorio',
+                'proyectos.nombre as proyecto'
+            )
+            ->orderBy('asistencias.hora_entrada', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return Inertia::render('Asistencia/MiAsistencia', [
+            'token' => csrf_token(),
+            'asistencias' => $asistenciasCompletas,
+            'asistenciasCompletas' => $asistenciasCompletas,
+            'asistenciasIncompletas' => []
+        ]);
+    }
+
+    public function misAsistenciasIncompletas(Request $request) {
+        $usuario_id = Auth::id();
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 10);
+
+        $asistenciasIncompletas = DB::table('asistencias')
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
+            ->leftJoin('laboratorios', 'laboratorios.id', '=', 'asistencias.laboratorio_id')
+            ->leftJoin('proyectos', 'proyectos.id', '=', 'asistencias.proyecto_id')
+            ->where('asistencias.usuario_id', '=', $usuario_id)
+            ->whereNull('asistencias.hora_salida')
+            ->select(
+                'asistencias.*',
+                'users.dni',
+                'users.nombres',
+                'users.apellidos',
+                'users.rol',
+                'laboratorios.nombre as laboratorio',
+                'proyectos.nombre as proyecto'
+            )
+            ->orderBy('asistencias.hora_entrada', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return Inertia::render('Asistencia/MiAsistencia', [
+            'token' => csrf_token(),
+            'asistencias' => $asistenciasIncompletas,
+            'asistenciasCompletas' => [],
+            'asistenciasIncompletas' => $asistenciasIncompletas
+        ]);
+    }
 
     public function test() {
         return $asistencias = DB::table('asistencias')

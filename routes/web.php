@@ -91,6 +91,7 @@ Route::middleware([
     // Catalogo
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
     Route::get('/catalogo/reservas/{tipo}/{id}', [CatalogoController::class, 'listaDeReservados'])->name('catalogo.horarios');
+    Route::get('/catalogo/reservas/{tipo}/{id}', [CatalogoController::class, 'listaDeReservados'])->name('catalogo.horarios');
 
     // Áreas
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');
@@ -104,6 +105,9 @@ Route::middleware([
     Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
     Route::put('/reservas/{reserva}', [ReservaController::class, 'update'])->name('reservas.update');
     Route::delete('/reservas/{reserva}', [ReservaController::class, 'destroy'])->name('reservas.destroy');
+    Route::patch('/reservas/{reserva}/aprobar', [ReservaController::class, 'aprobar'])->name('reservas.aprobar');
+    Route::patch('/reservas/{reserva}/desaprobar', [ReservaController::class, 'desaprobar'])->name('reservas.desaprobar');
+
 
     // Proyectos
     Route::resource('proyectos', ProyectoController::class);

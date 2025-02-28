@@ -36,4 +36,11 @@ class Area extends Model
     {
         return $this->hasMany(Equipo::class);
     }
+
+    // Un área puede tener varias fotos
+    public function fotos()
+    {
+        return $this->hasMany(FotoArea::class);
+    }
+
 }
