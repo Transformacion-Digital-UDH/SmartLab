@@ -101,7 +101,7 @@ Route::middleware([
 
     // Reservas
     Route::get('/reservas', [ReservaController::class, 'index'])->name('reservas.index');
-    Route::post('/reserva/create', [ReservaController::class, 'create'])->name('reserva.create');
+    Route::post('/reserva', [ReservaController::class, 'create'])->name('reserva.create');
     Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
     Route::put('/reservas/{reserva}', [ReservaController::class, 'update'])->name('reservas.update');
     Route::delete('/reservas/{reserva}', [ReservaController::class, 'destroy'])->name('reservas.destroy');
