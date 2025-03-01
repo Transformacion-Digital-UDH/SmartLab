@@ -16,11 +16,14 @@ return new class extends Migration
             $table->dateTime('hora_inicio');
             $table->dateTime('hora_fin');
             $table->enum('estado', allowed: ['Por aprobar', 'Aprobada', 'No aprobada', 'Finalizada'])->default('Por aprobar');
+            $table->string('google_event_id')->nullable();
+
             $table->boolean('is_active')->default(true);
 
             $table->foreignId('usuario_id')->constrained('users')->onDelete('restrict');
             $table->foreignId('equipo_id')->nullable()->constrained('equipos')->onDelete('restrict');
             $table->foreignId('recurso_id')->nullable()->constrained('recursos')->onDelete('restrict');
+            $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('restrict');
 
             $table->timestamps();
         });

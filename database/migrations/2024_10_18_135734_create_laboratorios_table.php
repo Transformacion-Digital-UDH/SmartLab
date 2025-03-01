@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('aforo')->nullable();
             $table->string('email', 100)->nullable();
             $table->string('inauguracion')->nullable();
+            $table->string('google_calendar_id')->nullable();
             $table->boolean('is_active')->default(true);
 
             $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('set null');

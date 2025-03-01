@@ -1,6 +1,6 @@
 <template>
     <Modal
-        title="Agregar Reserva"
+        title="Agregar reserva"
         :open="visible"
         @cancel="cerrarModal"
         centered
@@ -33,11 +33,11 @@
                 />
             </FormItem>
 
-            <FormItem label="Hora de Inicio" name="hora_inicio">
+            <FormItem label="Hora de inicio" name="hora_inicio">
                 <Input type="datetime-local" v-model:value="reserva.hora_inicio" />
             </FormItem>
 
-            <FormItem label="Hora de Fin" name="hora_fin">
+            <FormItem label="Hora de fin" name="hora_fin">
                 <Input type="datetime-local" v-model:value="reserva.hora_fin" />
             </FormItem>
 

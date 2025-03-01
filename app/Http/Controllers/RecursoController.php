@@ -39,7 +39,10 @@ class RecursoController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $areas = Area::with('laboratorio')->orderBy('id', 'desc')->get();
+        $areas = Area::with('laboratorio')
+            ->where('is_active', true)
+            ->orderBy('id', 'desc')
+            ->get();
 
         $tab = $request->query('tab', 1);
 
