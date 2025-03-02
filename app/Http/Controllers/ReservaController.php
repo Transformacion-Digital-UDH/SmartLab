@@ -32,7 +32,7 @@ class ReservaController extends Controller
     // Listar las reservas en la vista
     public function index()
     {
-        $reservas = Reserva::with(['usuario', 'equipo', 'recurso'])
+        $reservas = Reserva::with(['usuario', 'equipo', 'recurso', 'area'])
             ->where('is_active', true)
             ->orderBy('id', 'desc')
             ->get();
@@ -58,6 +58,7 @@ class ReservaController extends Controller
             'hora_fin' => 'required|date_format:Y-m-d\TH:i|after:hora_inicio',
             'recurso_id' => 'nullable|integer|exists:recursos,id',
             'equipo_id' => 'nullable|integer|exists:equipos,id',
+            'area_id' => 'nullable|integer|exists:areas,id',
         ]);
 
         Reserva::create([
@@ -66,6 +67,7 @@ class ReservaController extends Controller
             'usuario_id' => Auth::id(),
             'equipo_id' => $validatedData['equipo_id'],
             'recurso_id' => $validatedData['recurso_id'],
+            'area_id' => $validatedData['area_id'],
         ]);
 
         return response()->noContent(201);
@@ -175,9 +177,6 @@ class ReservaController extends Controller
         }
 
     }
-
-
-
 
     // Desaprobar una reserva
     public function desaprobar(Reserva $reserva)

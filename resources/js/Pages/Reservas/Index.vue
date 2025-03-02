@@ -41,6 +41,7 @@
                 :usuarios="props.usuarios"
                 :equipos="props.equipos"
                 :recursos="props.recursos"
+                :areas="props.areas"
                 @actualizar-tabla="actualizarTabla"
             />
 
