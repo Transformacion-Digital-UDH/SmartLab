@@ -10,17 +10,13 @@
             <div class="flex flex-col-reverse justify-end mb-6 gap-y-4 sm:flex-row sm:justify-between sm:items-center gap-x-4">
                 <div class="w-full">
                     <InputSearch 
-                        :value="valorBuscar"
-                        @update:value="(val) => valorBuscar = val || ''"
+                        v-model:value="valorBuscar"
                         placeholder="Buscar usuario por nombre, apellidos, dni o código" 
                         class="w-full"
                         size="large" 
-                        @pressEnter="buscarUsuarios" 
-                        @search="buscarUsuarios"
                         @change="buscarUsuarios"
                         :allowClear="true" 
                     />
-                    <p class="text-sm text-gray-500 mt-1">La búsqueda comienza a partir del tercer carácter.</p>
                 </div>
 
                 <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium">
@@ -51,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Button, InputSearch } from 'ant-design-vue';
@@ -66,7 +62,17 @@ const mostrarModalEditar = ref(false);
 const mostrarModalAreas = ref(false);
 const userSeleccionado = ref(null);
 const valorBuscar = ref('');
-const usersFiltrados = ref([...usuarios.value]);
+
+// Filtrar usuarios
+const usersFiltrados = computed(() => {
+    return usuarios.value.filter((usuario) => {
+        const nombreCompleto = `${usuario.nombres} ${usuario.apellidos}`.toLowerCase();
+        const dni = usuario.dni ? usuario.dni.toLowerCase() : '';
+        const codigo = usuario.codigo ? usuario.codigo.toLowerCase() : '';
+        const searchValue = valorBuscar.value.toLowerCase();
+        return nombreCompleto.includes(searchValue) || dni.includes(searchValue) || codigo.includes(searchValue);
+    });
+});
 
 // Actualizar la tabla al cerrar modales
 const actualizarTabla = () => {
@@ -92,13 +98,8 @@ const abrirModalAreas = (usuario) => {
     mostrarModalAreas.value = true;
 };
 
-// Función de búsqueda con validación
+// Función de búsqueda
 const buscarUsuarios = () => {
-    if (valorBuscar.value.length >= 3) {
-        router.visit(route('usuarios.index', { search: valorBuscar.value }), { preserveScroll: true });
-
-    } else {
-        usersFiltrados.value = [...usuarios.value]; // Restaurar lista si el input tiene menos de 3 caracteres
-    }
+    // No se necesita hacer nada aquí ya que el filtrado se hace a nivel de front-end
 };
 </script>
