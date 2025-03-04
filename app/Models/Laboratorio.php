@@ -17,6 +17,7 @@ class Laboratorio extends Model
         'aforo',
         'email',
         'inauguracion',
+        'ubicacion',
         'google_calendar_id',
         'is_active',
         'responsable_id',

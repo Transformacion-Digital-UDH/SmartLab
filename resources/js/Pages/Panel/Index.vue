@@ -47,63 +47,62 @@ const abrirModalEditar = (reserva) => {
 </script>
 
 <template>
-    <AppLayout :title="$t('Dashboard')">
+    <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="text-lg font-medium text-gray-800 dark:text-gray-200 leading-tight">
-                {{ $t("Dashboard") }}
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0">
+                Dashboard
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-                <!-- Métricas -->
-                <div class="bg-gray-50 dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-medium mb-4">Métricas claves</h3>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="grid grid-cols-2 gap-4">
-                            <CardItems name="Usuarios" des="Registros" />
-                            <CardItems name="Proyectos" des="Ejecutándose" />
-                            <CardItems name="Asistencias" des="Ingresos hoy" />
-                            <CardItems name="Equipos" des="Activos" />
-                        </div>
-                        <div class="lg:col-span-2">
-                            <BarraIngresos class="w-full" />
-                        </div>
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 px-4 space-y-6">
+            <!-- Métricas -->
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                <h3 class="text-lg font-medium mb-4">Métricas claves</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <CardItems name="Usuarios" des="Registros" />
+                        <CardItems name="Proyectos" des="Ejecutándose" />
+                        <CardItems name="Asistencias" des="Ingresos hoy" />
+                        <CardItems name="Equipos" des="Activos" />
+                    </div>
+                    <div class="lg:col-span-2">
+                        <BarraIngresos class="w-full" />
                     </div>
                 </div>
+            </div>
 
-                <!-- Sección de reservas -->
-                <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
-                    <h3 class="text-lg font-medium mb-4">Reservas por aprobar</h3>
-                    <TablaReservas
-                        :reservas="reservas"
-                        @editar="abrirModalEditar"
-                        @actualizar-tabla="actualizarTabla"
-                    />
-                </div>
+            <!-- Sección de reservas -->
+            <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium mb-4">Reservas por aprobar</h3>
+                <TablaReservas
+                    :reservas="reservas"
+                    @editar="abrirModalEditar"
+                    @actualizar-tabla="actualizarTabla"
+                />
+            </div>
 
-                <!-- Calendario -->
-                <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
-                    <!-- Encabezado con título y select a la derecha -->
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium">Calendario de reservas</h3>
-                        <Select v-model:value="selectedCalendarId"                             :options="labOptions"
+            <!-- Calendario -->
+            <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
+                <!-- Encabezado con título y select a la derecha -->
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium">Calendario de reservas</h3>
+                    <Select v-model:value="selectedCalendarId"
+                        :options="labOptions"
                         style="width: 300px;"
                         size="middle"
-                        >
-                            <template #suffixIcon>
-                                <ExperimentOutlined />
-                            </template>
+                    >
+                        <template #suffixIcon>
+                            <ExperimentOutlined />
+                        </template>
 
-                        </Select>
+                    </Select>
 
-                    </div>
-                    <iframe
-                        :src="`https://calendar.google.com/calendar/embed?src=${selectedCalendarId}&ctz=America%2FLima&mode=WEEK`"
-                        class="w-full border-none rounded-lg"
-                        height="600px"
-                    ></iframe>
                 </div>
+                <iframe
+                    :src="`https://calendar.google.com/calendar/embed?src=${selectedCalendarId}&ctz=America%2FLima&mode=WEEK`"
+                    class="w-full border-none rounded-lg"
+                    height="600px"
+                ></iframe>
             </div>
         </div>
 
