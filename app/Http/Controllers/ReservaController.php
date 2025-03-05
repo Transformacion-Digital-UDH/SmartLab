@@ -10,19 +10,20 @@ use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
 use Google_Client;
 use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Carbon\Carbon;
+use App\Services\GoogleCalendarService;
 
 class ReservaController extends Controller
 {
     protected $rules = [
         'hora_inicio' => 'required|date',
         'hora_fin' => 'required|date|after:hora_inicio',
-        'estado' => 'nullable|in:Por aprobar,Aprobada,No aprobada,Finalizada',
+        'estado' => 'nullable|in:Por aprobar,Aprobada,No aprobada,Cancelada',
         'usuario_id' => 'nullable|exists:users,id',
         'equipo_id' => 'nullable|exists:equipos,id',
         'recurso_id' => 'nullable|exists:recursos,id',
@@ -32,7 +33,7 @@ class ReservaController extends Controller
     // Listar las reservas en la vista
     public function index()
     {
-        $reservas = Reserva::with(['usuario', 'equipo', 'recurso'])
+        $reservas = Reserva::with(['usuario', 'equipo', 'recurso', 'area'])
             ->where('is_active', true)
             ->orderBy('id', 'desc')
             ->get();
@@ -62,8 +63,6 @@ class ReservaController extends Controller
         return response()->noContent(201);
     }
 
-
-
     // Actualizar una reserva
     public function update(Request $request, Reserva $reserva)
     {
@@ -86,7 +85,7 @@ class ReservaController extends Controller
         $reserva->save();
 
         // Instanciar el servicio de Google Calendar (con credenciales de la cuenta de servicio)
-        $googleCalendarService = new \App\Services\GoogleCalendarService();
+        $googleCalendarService = new GoogleCalendarService();
 
         // Determinar el laboratorio correspondiente a la reserva
         $laboratorio = null;
@@ -109,11 +108,11 @@ class ReservaController extends Controller
             ),
             'description' => 'Reserva aprobada por ' . $reserva->usuario->nombres,
             'start' => [
-                'dateTime' => \Carbon\Carbon::parse($reserva->hora_inicio)->toAtomString(),
+                'dateTime' => Carbon::parse($reserva->hora_inicio)->toAtomString(),
                 'timeZone' => 'America/Lima',
             ],
             'end' => [
-                'dateTime' => \Carbon\Carbon::parse($reserva->hora_fin)->toAtomString(),
+                'dateTime' => Carbon::parse($reserva->hora_fin)->toAtomString(),
                 'timeZone' => 'America/Lima',
             ],
         ];
@@ -133,7 +132,7 @@ class ReservaController extends Controller
                 // Opcional: almacenar el ID del evento en la reserva
                 $reserva->google_event_id = $createdLabEvent->getId();
                 $reserva->save();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error("Error al crear el evento en el calendario del laboratorio: " . $e->getMessage());
             }
         }
@@ -148,29 +147,25 @@ class ReservaController extends Controller
             }
 
             // Crear un nuevo cliente para el usuario
-            $userClient = new \Google_Client();
+            $userClient = new Google_Client();
             $userClient->setAccessToken($tokenData);
-            $userClient->addScope(\Google_Service_Calendar::CALENDAR);
-            $userClient->addScope(\Google_Service_Calendar::CALENDAR_EVENTS);
+            $userClient->addScope(Google_Service_Calendar::CALENDAR);
+            $userClient->addScope(Google_Service_Calendar::CALENDAR_EVENTS);
 
             // Crear un servicio de calendario con el cliente del usuario
-            $userCalendarService = new \Google_Service_Calendar($userClient);
+            $userCalendarService = new Google_Service_Calendar($userClient);
 
             try {
                 // Al usar "primary", se crea el evento en el calendario predeterminado del usuario
-                $event = new \Google_Service_Calendar_Event($eventData);
+                $event = new Google_Service_Calendar_Event($eventData);
                 $createdUserEvent = $userCalendarService->events->insert('primary', $event);
-                \Log::debug('Evento creado en el calendario del usuario:', (array) $createdUserEvent);
+                Log::debug('Evento creado en el calendario del usuario:', (array) $createdUserEvent);
                 // Opcional: guardar el ID del evento en la reserva u otro registro
-            } catch (\Exception $e) {
-                \Log::error("Error al crear el evento en el calendario del usuario: " . $e->getMessage());
+            } catch (Exception $e) {
+                Log::error("Error al crear el evento en el calendario del usuario: " . $e->getMessage());
             }
         }
-
     }
-
-
-
 
     // Desaprobar una reserva
     public function desaprobar(Reserva $reserva)
@@ -178,5 +173,4 @@ class ReservaController extends Controller
         $reserva->estado = 'No aprobada';
         $reserva->save();
     }
-
 }

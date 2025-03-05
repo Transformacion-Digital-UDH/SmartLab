@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->dateTime('hora_inicio');
             $table->dateTime('hora_fin');
-            $table->enum('estado', allowed: ['Por aprobar', 'Aprobada', 'No aprobada', 'Finalizada'])->default('Por aprobar');
+            $table->enum('estado', allowed: ['Por aprobar', 'Aprobada', 'No aprobada', 'Cancelada'])->default('Por aprobar');
             $table->string('google_event_id')->nullable();
 
             $table->boolean('is_active')->default(true);

@@ -17,17 +17,17 @@
 
             <!-- Renderizado personalizado para la columna 'Fecha' -->
             <template v-if="column.key === 'fecha'">
-                <div>
-                    <div class="font-medium">{{ dayjs(record.hora_inicio).format("YYYY-MM-DD") }}</div>
-                    <div>{{ dayjs(record.hora_inicio).format("HH:mm") }} - {{ dayjs(record.hora_fin).format("HH:mm") }}</div>
+                <div :style="getFechaStyle(record)">
+                    <div class="font-medium">{{ dayjs(record.hora_inicio).format('YYYY-MM-DD') }}</div>
+                    <div>{{ dayjs(record.hora_inicio).format('HH:mm') }} - {{ dayjs(record.hora_fin).format('HH:mm') }}</div>
                 </div>
             </template>
 
             <!-- Renderizado personalizado para la columna 'Fecha de Creación' -->
             <template v-if="column.key === 'created_at'">
                 <div>
-                    <div>{{ dayjs(record.created_at).format("YYYY-MM-DD") }}</div>
-                    <div>{{ dayjs(record.created_at).format("HH:mm") }}</div>
+                    <div>{{ dayjs(record.created_at).format('YYYY-MM-DD') }}</div>
+                    <div>{{ dayjs(record.created_at).format('HH:mm') }}</div>
                 </div>
             </template>
         </template>
@@ -52,9 +52,22 @@ const estadoColor = (estado) => {
         "Por aprobar": "warning",
         "Aprobada": "success",
         "No aprobada": "error",
-        "Finalizada": "default",
+        "Cancelada": "default",
     };
     return colores[estado] || "default";
+};
+
+// Función para aplicar estilos según la hora de inicio
+const getFechaStyle = (record) => {
+    const now = dayjs();
+    const startTime = dayjs(record.hora_inicio);
+    if (startTime.isBefore(now) || startTime.isSame(now)) {
+        return { color: "orangered" };
+    }
+    if (startTime.diff(now, "hour", true) < 3) {
+        return { color: "orange" };
+    }
+    return {};
 };
 
 // Definir las columnas de la tabla de reservas
@@ -66,18 +79,19 @@ const columnas = [
         customRender: ({ record }) => {
             return `${dayjs(record.hora_inicio).format("YYYY-MM-DD")} \n ${dayjs(record.hora_inicio).format("HH:mm")} - ${dayjs(record.hora_fin).format("HH:mm")}`;
         },
-        width: 200,
+        width: 120,
         sorter: (a, b) => new Date(a.hora_inicio) - new Date(b.hora_inicio),
+        defaultSortOrder: "ascend" // Orden por defecto: de los más prontos a los más lejanos
     },
     {
         title: "Reservable",
         key: "recurso_equipo",
         customRender: ({ record }) =>
-            record.equipo?.nombre || record.recurso?.nombre || "No especificado",
+            record.equipo?.nombre || record.recurso?.nombre || record.area?.nombre || "No especificado",
         sorter: (a, b) => {
-            const equipoA = a.equipo?.nombre || a.recurso?.nombre || "";
-            const equipoB = b.equipo?.nombre || b.recurso?.nombre || "";
-            return equipoA.localeCompare(equipoB);
+            const reservableA = a.equipo?.nombre || a.recurso?.nombre || a.area?.nombre || "";
+            const reservableB = b.equipo?.nombre || b.recurso?.nombre || b.area?.nombre || "";
+            return reservableA.localeCompare(reservableB);
         },
     },
     {
@@ -97,7 +111,7 @@ const columnas = [
         title: "Fecha registro",
         key: "created_at",
         dataIndex: "created_at",
-        width: 200,
+        width: 150,
         sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at),
     },
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },

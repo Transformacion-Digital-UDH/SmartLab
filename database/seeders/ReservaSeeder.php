@@ -59,7 +59,7 @@ class ReservaSeeder extends Seeder
             $reservation = [
             'hora_inicio' => $startDate,
             'hora_fin' => $endDate,
-            'estado' => ['Por aprobar', 'Aprobada', 'No aprobada', 'Finalizada'][rand(0, 3)],
+            'estado' => ['Por aprobar', 'Aprobada', 'No aprobada', 'Cancelada'][rand(0, 3)],
             'is_active' => rand(0, 1),
             'usuario_id' => $userIds[array_rand($userIds)],
             'equipo_id' => $equipoId,
@@ -70,6 +70,6 @@ class ReservaSeeder extends Seeder
 
             Reserva::create($reservation);
         }
-        
+
     }
 }

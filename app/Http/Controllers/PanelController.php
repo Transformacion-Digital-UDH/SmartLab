@@ -18,9 +18,10 @@ class PanelController extends Controller
             ->orderBy('hora_inicio')
             ->get();
 
-        $equipos = Equipo::all();
-        $recursos = Recurso::all();
-        $areas = Area::all();
+        $equipos = Equipo::where('is_active', true)->get();
+        $recursos = Recurso::where('is_active', true)->get();
+        $areas = Area::where('is_active', true)->get();
+        
         $laboratorios = Laboratorio::whereNotNull('google_calendar_id')->get();
 
         return Inertia::render('Panel/Index', [
