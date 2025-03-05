@@ -28,6 +28,7 @@
 	const disabled = ref(true)
 	const reservas = ref([])
 
+    console.log("recurso", recurso.value);
 	const fecha = ref(new Date().getHours() > 17 ? new Date(Date.now() + 1000 * 60 * 60 * 24) : new Date())
 
 	const hora_inicio = ref({
@@ -65,19 +66,12 @@
 
 					cargando.value = false
 
-					// Invalid
-					recurso.value.fotos = [
-						{id:3,ruta: 'https://raw.githubusercontent.com/vueComponent/ant-design-vue/main/components/carousel/demo/abstract04.jpg'},
-						{id:30,ruta: 'https://raw.githubusercontent.com/vueComponent/ant-design-vue/main/components/carousel/demo/abstract02.jpg'}
-					]
 
 					if (recurso.value.fotos.length < 1) {
 						recurso.value.fotos = [
 							{	id: 1, ruta: 'https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png'},
 						]
 					}
-
-					console.log(recurso.value);
 
 					horasLimit.value = horasLimit.value.map()
 					for (const reserva of reservas.value) {
@@ -116,12 +110,12 @@
 		}
 
 		cargando.value = true;
-		console.log();
 		data.hora_inicio = `${dayjs(fecha.value).format('YYYY-MM-DD')} ${hora_inicio.value.value}:00`
 		data.hora_fin = `${dayjs(fecha.value).format('YYYY-MM-DD')} ${hora_fin.value.value}:00`
-		try {
-			const response = await axios.post(route('reserva.create'), {...data});
 
+		try {
+			const response = await axios.post(route('reservas.store'), {...data});
+            console.log("data", data);
 			if (response.status === 201) {
 				message.success('Solicitud de reserva enviada correctamente');
 				emitir('close');
@@ -232,7 +226,7 @@
 					<img
 						v-if="recurso.fotos && recurso.fotos.length > 0"
 						v-for="foto of recurso.fotos"
-						:src="`${foto.ruta}`"
+						:src="`/storage/${foto.ruta}`"
 						class="w-44 h-44 object-cover rounded"
 					/>
 				</Carousel>
@@ -331,10 +325,6 @@
 	</Modal>
 </template>
 <style scoped>
-	* {
-		font-family: Geist !important;
-	}
-
 	:deep(.slick-slide) {
 		text-align: center;
 		width: 170px;

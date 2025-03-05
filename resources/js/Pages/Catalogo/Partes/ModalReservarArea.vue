@@ -67,7 +67,7 @@
 		cargando.value = true;
 
 		try {
-			const response = await axios.post(route('reserva.create'), {...data});
+			const response = await axios.post(route('reservas.store'), {...data});
 			console.log(response.data);
 			if (response.status === 201) {
 				message.success('Solicitud de reserva enviada correctamente');

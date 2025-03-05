@@ -109,6 +109,7 @@ const enviarFormulario = async () => {
     cargando.value = true;
     try {
         const response = await axios.post(route('reservas.store'), reserva.value);
+        
         message.success('Reserva creada exitosamente');
         cerrarModal();
         emitir('actualizar-tabla', response.data);
