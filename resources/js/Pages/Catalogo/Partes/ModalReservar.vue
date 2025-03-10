@@ -12,8 +12,12 @@
 
 	const page = usePage()
 
+	// Cambiar la definición de props para aceptar Object en lugar de Array
 	const props = defineProps({
-		recurso: Array,
+		recurso: {
+			type: Object,
+			default: () => ({})
+		},
 		open: Boolean,
 		tipo: String
 	});
@@ -26,61 +30,86 @@
 	const disabled = ref(true)
 	const reservas = ref([])
 	const fecha = ref(dayjs())
+	const value1 = ref(null)
+	
+	// Definir las funciones que faltan para evitar errores
+	function focus() {
+		// Función vacía para evitar error
+		console.log("Focus called");
+	}
+
+	function handleChange(value) {
+		console.log("Selected value:", value);
+	}
 
 	const data = {
 		hora_inicio: null,
 		hora_fin: null,
 	}
 
-	watch(() => props.open, (val)=>{
+	watch(() => props.open, (val) => {
 		if (val) {
-			recurso.value = { ...props.recurso };
-			console.log(recurso.value);
+			recurso.value = props.recurso ? { ...props.recurso } : {};
 			tipo.value = props.tipo;
-			cargando.value = true
+			cargando.value = true;
 			reservas.value = [];
-			axios.get(`/api/reservas/${tipo.value}/${recurso.id}`)
-				.then(({ data }) => {
-					// Serealizando
-					data.reservas = data.reservas.map((reserva) => {
-						return {
-							...reserva,
-							hora_inicio: new Date(reserva.hora_inicio),
-							hora_fin: new Date(reserva.hora_fin),
+			
+			// Inicializar fotos para evitar errores
+			if (!recurso.value.fotos) {
+				recurso.value.fotos = [];
+			}
+			
+			// Si tenemos un ID, intentar cargar las reservas
+			if (recurso.value && recurso.value.id) {
+				axios.get(`/api/reservas/${tipo.value}/${recurso.value.id}`)
+					.then(({ data }) => {
+						// Serializando
+						if (data && data.reservas) {
+							data.reservas = data.reservas.map((reserva) => {
+								return {
+									...reserva,
+									hora_inicio: new Date(reserva.hora_inicio),
+									hora_fin: new Date(reserva.hora_fin),
+								}
+							});
+							reservas.value = data.reservas;
+						}
+						
+						cargando.value = false;
+						
+						// Si no hay fotos, añadir placeholders
+						if (recurso.value.fotos.length < 1) {
+							recurso.value.fotos = [
+								{ id: 1, ruta: 'https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png' },
+							];
 						}
 					})
-					reservas.value = data.reservas
-
-					cargando.value = false
-
-					// Invalid
-					recurso.value.fotos = [
-						{id:3,ruta: 'https://raw.githubusercontent.com/vueComponent/ant-design-vue/main/components/carousel/demo/abstract04.jpg'},
-						{id:30,ruta: 'https://raw.githubusercontent.com/vueComponent/ant-design-vue/main/components/carousel/demo/abstract02.jpg'}
-					]
-
-					if (recurso.value.fotos.length < 1) {
-						recurso.value.fotos = [
-							{	id: 1, ruta: 'https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png'},
-						]
-					}
-
-					console.log(recurso.value);
-
-					horasLimit.value = horasLimit.value.map()
-					for (const reserva of reservas.value) {
-						for (const limit of horasLimit) {
-							if (reserva.hora_inicio.getHours() >= limit.time[0][0]) {
-
-							}
+					.catch(error => {
+						console.error("Error al cargar reservas:", error);
+						cargando.value = false;
+						
+						// Asegurar que tenemos fotos incluso en caso de error
+						if (!recurso.value.fotos || recurso.value.fotos.length < 1) {
+							recurso.value.fotos = [
+								{ id: 1, ruta: 'https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png' },
+							];
 						}
-					}
-
-				})
+					});
+			} else {
+				cargando.value = false;
+				// Asegurar que tenemos fotos
+				if (!recurso.value.fotos || recurso.value.fotos.length < 1) {
+					recurso.value.fotos = [
+						{ id: 1, ruta: 'https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png' },
+					];
+				}
+			}
 		}
-	})
+	});
 
 	function onRangeChange([start,end]) {
+		if (!start || !end) return;
+		
 		const h = Math.floor(dayjs(end).diff(dayjs(start),'hour',true))
 		const m = Math.floor(dayjs(end).diff(dayjs(start),'minute',true))%60
 
@@ -95,17 +124,36 @@
 	}
 
 	function onRangeOk([start,end]){
+		if (!start || !end) return;
+		
 		data.hora_inicio = dayjs(start).format('YYYY-MM-DD HH:mm:ss')
 		data.hora_fin = dayjs(end).format('YYYY-MM-DD HH:mm:ss')
 	}
 
 	const handleOk = async () => {
+		// Verificar que recurso.value y tipo.value existan
+		if (!recurso.value || !tipo.value) {
+			message.error("Faltan datos para realizar la reserva");
+			return;
+		}
+
 		if (tipo.value == 'equipo') {
 			data.equipo_id = recurso.value.id;
 			data.recurso_id = null;
+			data.area_id = null;
 		} else if(tipo.value == 'recurso'){
 			data.equipo_id = null;
 			data.recurso_id = recurso.value.id;
+			data.area_id = null;
+		} else if(tipo.value == 'area'){
+			data.equipo_id = null;
+			data.recurso_id = null;
+			data.area_id = recurso.value.id;
+		}
+
+		if (!data.hora_inicio || !data.hora_fin) {
+			message.error("Debe seleccionar un horario");
+			return;
 		}
 
 		cargando.value = true;
@@ -147,19 +195,19 @@
 	]
 
 	const horasLimit = ref([
-		{ label: '08:00 AM a 08:45 AM', color: 'bg-neutral-300', time: [[8,0], [8,45]]}, // Generated by Copilot
-		{ label: '08:45 AM a 09:30 AM', color: 'bg-neutral-300', time: [[8,45], [9,30]]}, // Generated by Copilot
-		{ label: '09:30 AM a 10:15 AM', color: 'bg-neutral-300', time: [[9,30], [10,15]]}, // Generated by Copilot
-		{ label: '10:15 AM a 11:00 AM', color: 'bg-neutral-300', time: [[10,15], [11,0]]}, // Generated by Copilot
-		{ label: '11:00 AM a 11:45 AM', color: 'bg-neutral-300', time: [[11,0], [11,45]]}, // Generated by Copilot
-		{ label: '11:45 AM a 12:30 PM', color: 'bg-neutral-300', time: [[11,45], [12,30]]}, // Generated by Copilot
-		{ label: '12:30 PM a 01:15 PM', color: 'bg-neutral-300', time: [[12,30], [13,15]]}, // Generated by Copilot
-		{ label: '01:15 PM a 02:00 PM', color: 'bg-neutral-300', time: [[13,15], [14,0]]}, // Generated by Copilot
-		{ label: '02:00 PM a 02:45 PM', color: 'bg-neutral-300', time: [[14,0], [14,45]]}, // Generated by Copilot
-		{ label: '02:45 PM a 03:30 PM', color: 'bg-neutral-300', time: [[14,45], [15,30]]}, // Generated by Copilot
-		{ label: '03:30 PM a 04:15 PM', color: 'bg-neutral-300', time: [[15,30], [16,15]]}, // Generated by Copilot
-		{ label: '04:15 PM a 05:00 PM', color: 'bg-neutral-300', time: [[16,15], [17,0]]}, // Generated by Copilot
-		{ label: '05:00 PM a 05:45 PM', color: 'bg-neutral-300', time: [[17,0], [17,45]]} // Generated by Copilot
+		{ label: '08:00 AM a 08:45 AM', color: 'bg-neutral-300', time: [[8,0], [8,45]]},
+		{ label: '08:45 AM a 09:30 AM', color: 'bg-neutral-300', time: [[8,45], [9,30]]},
+		{ label: '09:30 AM a 10:15 AM', color: 'bg-neutral-300', time: [[9,30], [10,15]]},
+		{ label: '10:15 AM a 11:00 AM', color: 'bg-neutral-300', time: [[10,15], [11,0]]},
+		{ label: '11:00 AM a 11:45 AM', color: 'bg-neutral-300', time: [[11,0], [11,45]]},
+		{ label: '11:45 AM a 12:30 PM', color: 'bg-neutral-300', time: [[11,45], [12,30]]},
+		{ label: '12:30 PM a 01:15 PM', color: 'bg-neutral-300', time: [[12,30], [13,15]]},
+		{ label: '01:15 PM a 02:00 PM', color: 'bg-neutral-300', time: [[13,15], [14,0]]},
+		{ label: '02:00 PM a 02:45 PM', color: 'bg-neutral-300', time: [[14,0], [14,45]]},
+		{ label: '02:45 PM a 03:30 PM', color: 'bg-neutral-300', time: [[14,45], [15,30]]},
+		{ label: '03:30 PM a 04:15 PM', color: 'bg-neutral-300', time: [[15,30], [16,15]]},
+		{ label: '04:15 PM a 05:00 PM', color: 'bg-neutral-300', time: [[16,15], [17,0]]},
+		{ label: '05:00 PM a 05:45 PM', color: 'bg-neutral-300', time: [[17,0], [17,45]]}
 	])
 
 	const deshabilitarFechas = (current) => {
@@ -168,10 +216,10 @@
 </script>
 <template>
 	<Modal v-model:open="props.open" title="Reservación" width="min(620px,100%)" @cancel="emitir('close')" @ok="handleOk">
-		<div class="flex w-auto  flex-wrap sm:flex-nowrap sm:justify-end gap-3">
+		<div class="flex w-auto flex-wrap sm:flex-nowrap sm:justify-end gap-3">
 			<!-- portada -->
 			<div>
-				<Carousel :arrows="true" class="w-44 rounded-lg overflow-hidden self-start">
+				<Carousel v-if="recurso && recurso.fotos && recurso.fotos.length > 0" :arrows="true" class="w-44 rounded-lg overflow-hidden self-start">
 					<template v-slot:prevArrow>
 						<div class="custom-slick-arrow" style="left: 10px; z-index: 1">
 							<LeftCircleOutlined />
@@ -182,13 +230,21 @@
 							<RightCircleOutlined />
 						</div>
 					</template>
-					<img
-						v-if="recurso.fotos.length > 0"
-						v-for="foto of recurso.fotos"
-						:src="`${foto.ruta}`"
-						class="w-44 h-44 object-cover rounded"
-					/>
+					<div v-for="foto of recurso.fotos" :key="foto.id" class="w-44 h-44">
+						<img
+							:src="foto.ruta.startsWith('http') ? foto.ruta : `/storage/${foto.ruta}`"
+							class="w-full h-full object-cover rounded"
+							alt="Imagen del recurso"
+						/>
+					</div>
 				</Carousel>
+				<div v-else class="w-44 h-44 bg-gray-200 rounded-lg flex items-center justify-center">
+					<img 
+						src="https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png"
+						class="w-full h-full object-cover rounded"
+						alt="Imagen por defecto"
+					/>
+				</div>
 				<!-- Area y Laboratorio -->
 				<div class="pb-1 text-gray-500 pt-2">
 					<div class="flex items-center gap-2">
