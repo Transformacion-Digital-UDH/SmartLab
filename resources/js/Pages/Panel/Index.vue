@@ -15,6 +15,7 @@ const props = defineProps({
     recursos: Array,
     areas: Array,
     laboratorios: Array,
+    metricas: Object,
 });
 
 const reservas = ref(props.reservas || []);
@@ -61,10 +62,10 @@ const abrirModalEditar = (reserva) => {
                     <h3 class="text-lg font-medium mb-4">Métricas claves</h3>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="grid grid-cols-2 gap-4">
-                            <CardItems name="Usuarios" des="Registros" />
-                            <CardItems name="Proyectos" des="Ejecutándose" />
-                            <CardItems name="Asistencias" des="Ingresos hoy" />
-                            <CardItems name="Equipos" des="Activos" />
+                            <CardItems name="Usuarios" des="Registros" :valor="metricas.usuarios" />
+                            <CardItems name="Proyectos" des="Ejecutándose" :valor="metricas.proyectos" />
+                            <CardItems name="Asistencias" des="Ingresos hoy" :valor="metricas.asistencias" />
+                            <CardItems name="Reservas" des="Hoy" :valor="metricas.equipos" />
                         </div>
                         <div class="lg:col-span-2">
                             <BarraIngresos class="w-full" />
