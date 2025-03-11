@@ -1,6 +1,5 @@
 <?php
 
-use App\Actions\Fortify\CompletarRegistro;
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\LaboratorioController;
 use App\Http\Controllers\RecursoController;
@@ -16,9 +15,9 @@ use App\Http\Controllers\UserController;
 use App\Models\Proyecto;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-// Las rutas que serán accedidas por aplicaciones externas se definen en api.php,
-// las que se usarán internamente en esta app laravel se definen en web.php
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 // Página principal
 Route::get('/', function () {
@@ -33,9 +32,33 @@ Route::middleware('guest')->controller(GoogleController::class)->group(function 
     Route::get('/google/callback', 'callback');
 });
 
-Route::middleware('auth')->controller(CompletarRegistro::class)->group(function () {
-    Route::get('/completar-registro', 'create')->name('completar.registro');
-    Route::post('/completar-registro', 'store');
+// ÚNICA DEFINICIÓN DE RUTAS PARA COMPLETAR REGISTRO
+Route::middleware(['auth'])->group(function () {
+    // Muestra el formulario CompletarRegistro.vue
+    Route::get('/completar-registro', function () {
+        return Inertia::render('Auth/CompletarRegistro', [
+            'user' => Auth::user(),
+        ]);
+    })->name('completar.registro');
+
+    // Procesa el POST del formulario
+    Route::post('/completar-registro', function (Request $request) {
+        // El middleware CompletarRegistro.php procesará los datos
+        // Usamos DB directo para evitar problemas con el middleware
+        DB::table('users')
+            ->where('id', Auth::id())
+            ->update([
+                'dni'            => $request->dni,
+                'nombres'        => $request->nombres,
+                'apellidos'      => $request->apellidos,
+                'celular'        => $request->celular,
+                'codigo'         => $request->codigo ?? null,
+                'razon_registro' => $request->razon_registro ?? null,
+                'se_registro'    => true,
+            ]);
+        
+        return redirect()->route('dashboard');
+    });
 });
 
 // Grupo de rutas con middleware de autenticación (sesión interna)

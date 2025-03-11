@@ -38,6 +38,8 @@ class User extends Authenticatable
         'rol',
         'is_active',
         'google_token_json',
+        'razon_registro', 
+        'se_registro', 
     ];
 
     /**
@@ -130,5 +132,10 @@ class User extends Authenticatable
     public function setApellidosAttribute($value)
     {
         $this->attributes['apellidos'] = mb_strtoupper(trim($value), 'UTF-8');
+    }
+
+    public function setRazonRegistroAttribute($value)
+    {
+        $this->attributes['razon_registro'] = $value ? trim($value) : null;
     }
 }

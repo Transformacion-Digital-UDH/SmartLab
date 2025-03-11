@@ -36,6 +36,12 @@ const idLabSelected = ref(-1);
 const options = [{ value: -1, label: 'Todo' }, ...laboratorios.value.map((lab) => ({ value: lab.id, label: lab.nombre }))];
 const tipo = ref('')
 
+// Añadir la función buscar que falta
+function buscar(value) {
+    valorBuscar.value = value;
+    // Opcionalmente puedes implementar lógica adicional de búsqueda aquí
+}
+
 // Filtrar equipos
 const equiposFiltrados = computed(() => equipos.value.filter((equipo) => {
     const a = equipo?.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase());

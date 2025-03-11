@@ -14,8 +14,12 @@
 
 	const page = usePage()
 
+	// Cambiar la definición de props para aceptar Object en lugar de Array
 	const props = defineProps({
-		recurso: Array,
+		recurso: {
+			type: Object,
+			default: () => ({})
+		},
 		open: Boolean,
 		tipo: String
 	});
@@ -45,12 +49,11 @@
 		hora_fin: null,
 	}
 
-	watch(() => props.open, (val)=>{
+	watch(() => props.open, (val) => {
 		if (val) {
-			recurso.value = { ...props.recurso };
-			console.log(recurso.value);
+			recurso.value = props.recurso ? { ...props.recurso } : {};
 			tipo.value = props.tipo;
-			cargando.value = true
+			cargando.value = true;
 			reservas.value = [];
 			axios.get(`/api/reservas/${tipo.value}/${recurso.value.id}`)
 				.then(({ data }) => {
@@ -101,12 +104,29 @@
 	}
 
 	const handleOk = async () => {
+		// Verificar que recurso.value y tipo.value existan
+		if (!recurso.value || !tipo.value) {
+			message.error("Faltan datos para realizar la reserva");
+			return;
+		}
+
 		if (tipo.value == 'equipo') {
 			data.equipo_id = recurso.value.id;
 			data.recurso_id = null;
+			data.area_id = null;
 		} else if(tipo.value == 'recurso'){
 			data.equipo_id = null;
 			data.recurso_id = recurso.value.id;
+			data.area_id = null;
+		} else if(tipo.value == 'area'){
+			data.equipo_id = null;
+			data.recurso_id = null;
+			data.area_id = recurso.value.id;
+		}
+
+		if (!data.hora_inicio || !data.hora_fin) {
+			message.error("Debe seleccionar un horario");
+			return;
 		}
 
 		cargando.value = true;
@@ -209,10 +229,10 @@
 </script>
 <template>
 	<Modal v-model:open="props.open" title="Reservación" width="min(620px,100%)" @cancel="emitir('close')" @ok="handleOk">
-		<div class="flex w-auto  flex-wrap sm:flex-nowrap sm:justify-end gap-3">
+		<div class="flex w-auto flex-wrap sm:flex-nowrap sm:justify-end gap-3">
 			<!-- portada -->
 			<div>
-				<Carousel :arrows="true" class="w-44 rounded-lg overflow-hidden self-start">
+				<Carousel v-if="recurso && recurso.fotos && recurso.fotos.length > 0" :arrows="true" class="w-44 rounded-lg overflow-hidden self-start">
 					<template v-slot:prevArrow>
 						<div class="custom-slick-arrow" style="left: 10px; z-index: 1">
 							<LeftCircleOutlined />

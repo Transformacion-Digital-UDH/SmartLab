@@ -15,6 +15,7 @@ const props = defineProps({
     recursos: Array,
     areas: Array,
     laboratorios: Array,
+    metricas: Object,
 });
 
 const reservas = ref(props.reservas || []);
@@ -54,22 +55,23 @@ const abrirModalEditar = (reserva) => {
             </h2>
         </template>
 
-        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 px-4 space-y-6">
-            <!-- Métricas -->
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
-                <h3 class="text-lg font-medium mb-4">Métricas claves</h3>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="grid grid-cols-2 gap-4">
-                        <CardItems name="Usuarios" des="Registros" />
-                        <CardItems name="Proyectos" des="Ejecutándose" />
-                        <CardItems name="Asistencias" des="Ingresos hoy" />
-                        <CardItems name="Equipos" des="Activos" />
-                    </div>
-                    <div class="lg:col-span-2">
-                        <BarraIngresos class="w-full" />
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+                <!-- Métricas -->
+                <div class="bg-gray-50 dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Métricas claves</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <CardItems name="Usuarios" des="Registros" :valor="metricas.usuarios" />
+                            <CardItems name="Proyectos" des="Ejecutándose" :valor="metricas.proyectos" />
+                            <CardItems name="Asistencias" des="Ingresos hoy" :valor="metricas.asistencias" />
+                            <CardItems name="Reservas" des="Hoy" :valor="metricas.equipos" />
+                        </div>
+                        <div class="lg:col-span-2">
+                            <BarraIngresos class="w-full" />
+                        </div>
                     </div>
                 </div>
-            </div>
 
             <!-- Sección de reservas -->
             <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">

@@ -5,13 +5,17 @@
 	import { Button, message, Modal, RangePicker, Space } from 'ant-design-vue';
 	import { InfoCircleOutlined } from '@ant-design/icons-vue';
 	import { usePage, router } from "@inertiajs/vue3";
+	import axios from "axios";
 
 	dayjs.locale('es');
 
 	const page = usePage()
 
 	const props = defineProps({
-		recurso: Array,
+		recurso: {
+			type: Object,
+			default: () => ({})
+		},
 		open: Boolean,
 		tipo: String
 	});
@@ -30,13 +34,14 @@
 
 	watch(() => props.open, (val)=>{
 		if (val) {
-			recurso.value = { ...props.recurso };
+			recurso.value = props.recurso ? { ...props.recurso } : {};
 			tipo.value = props.tipo
 		}
 	})
 
-
 	function onRangeChange([start,end]) {
+		if (!start || !end) return;
+		
 		const h = Math.floor(dayjs(end).diff(dayjs(start),'hour',true))
 		const m = Math.floor(dayjs(end).diff(dayjs(start),'minute',true))%60
 
@@ -51,18 +56,38 @@
 	}
 
 	function onRangeOk([start,end]){
+		if (!start || !end) return;
+		
 		data.hora_inicio = dayjs(start).format('YYYY-MM-DD HH:mm:ss')
 		data.hora_fin = dayjs(end).format('YYYY-MM-DD HH:mm:ss')
 	}
 
 	const handleOk = async () => {
+		// Verificar que recurso.value exista
+		if (!recurso.value || !tipo.value) {
+			message.error("Faltan datos para realizar la reserva");
+			return;
+		}
+
+		if (!data.hora_inicio || !data.hora_fin) {
+			message.error("Debe seleccionar un horario");
+			return;
+		}
+
 		if (tipo.value == 'equipo') {
 			data.equipo_id = recurso.value.id;
 			data.recurso_id = null;
+			data.area_id = null;
 		} else if(tipo.value == 'recurso'){
 			data.equipo_id = null;
 			data.recurso_id = recurso.value.id;
-		}
+			data.area_id = null;
+		} else if(tipo.value == 'area'){
+			data.equipo_id = null;
+			data.recurso_id = null;
+			data.area_id = recurso.value.id;
+			}
+		
 		console.log(data);
 		cargando.value = true;
 
@@ -76,15 +101,15 @@
 				throw new Error('Error al reservar')
 			}
 		} catch (error) {
-				message.error('Error al reservar');
-				console.log(error);
+			message.error('Error al reservar');
+			console.log(error);
 		} finally {
-				cargando.value = false;
+			cargando.value = false;
 		}
 	};
 </script>
 <template>
-	<Modal :open="open" title="Reservación" width="min(620px,100%)">
+	<Modal :open="open" title="Reservación" width="min(620px,100%)" @cancel="emitir('close')" @ok="handleOk">
 		<div class="flex w-auto  flex-wrap sm:flex-nowrap sm:justify-end gap-3">
 			<!-- portada -->
 			<div>

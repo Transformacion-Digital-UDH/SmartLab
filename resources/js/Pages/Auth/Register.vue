@@ -6,6 +6,7 @@ import InputError from "@/Components/Inputs/InputError.vue";
 import InputLabel from "@/Components/Inputs/InputLabel.vue";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import InputText from "@/Components/Inputs/InputText.vue";
+import { ref } from "vue"; // Importar ref para estado reactivo
 
 const form = useForm({
     email: "",
@@ -14,10 +15,41 @@ const form = useForm({
     terms: false,
 });
 
-const submit = () => {
+// Estado para controlar la visualización del modal
+const showModal = ref(false);
+
+// Función para validar si el correo es de la UDH
+const isUDHEmail = (email) => {
+    return email.endsWith('@udh.edu.pe');
+};
+
+// Método para enviar el formulario
+const submitForm = () => {
     form.post(route("register"), {
         onFinish: () => form.reset("password", "password_confirmation"),
     });
+};
+
+// Método para cambiar el correo (limpiar el formulario)
+const changeEmail = () => {
+    form.email = "";
+    showModal.value = false;
+};
+
+// Método para continuar con el registro a pesar de no ser correo UDH
+const continueRegistration = () => {
+    showModal.value = false;
+    submitForm();
+};
+
+const submit = () => {
+    if (!isUDHEmail(form.email)) {
+        // Si no es correo de la UDH, mostrar el modal
+        showModal.value = true;
+    } else {
+        // Si es correo de la UDH, enviar el formulario normalmente
+        submitForm();
+    }
 };
 </script>
 
@@ -25,6 +57,35 @@ const submit = () => {
     <Head :title="$t('Register')" />
 
     <GuestLayout>
+        <!-- Modal para correo no UDH -->
+        <div v-if="showModal" class="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center">
+            <div class="fixed inset-0 transition-opacity">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full p-6 z-50 relative">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Correo externo detectado</h3>
+                <p class="mb-4 text-gray-600">
+                    El correo usado no pertenece a la Universidad de Huánuco. Los correos externos requieren aprobación del administrador.
+                    ¿Desea cambiar de correo o continuar?
+                </p>
+                <div class="flex justify-end space-x-3">
+                    <button 
+                        @click="changeEmail"
+                        class="bg-gray-200 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-300"
+                    >
+                        Cambiar correo
+                    </button>
+                    <button 
+                        @click="continueRegistration"
+                        class="bg-primario px-4 py-2 rounded-md text-white hover:bg-primario-dark"
+                    >
+                        Continuar
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="text-center mb-6">
             <h1 class="block text-2xl font-bold text-prim">
                 {{ $t("Register") }}
