@@ -31,20 +31,21 @@ class PanelController extends Controller
 
         // Calcular métricas para el dashboard
         $usuariosCount = User::where('is_active', true)
-                           ->where('rol', '!=', 'Admin')
-                           ->count();
+                            ->where('rol', '!=', 'Admin')
+                            ->count();
 
-        $proyectosCount = Proyecto::where('is_active', 1)
-                                 ->where('estado', 'En proceso')
-                                 ->count();
+        $proyectosCount = Proyecto::where('is_active', true)
+                            ->where('estado', 'En proceso')
+                            ->count();
 
         $asistenciasCount = Asistencia::whereDate('created_at', Carbon::today())
-                                    ->count();
+                                ->where('is_active', true)
+                                ->count();
 
         // Cambiar equipos por reservas de hoy
         $reservasHoyCount = Reserva::whereDate('hora_inicio', Carbon::today())
-                                 ->where('is_active', true)
-                                 ->count();
+                                ->where('is_active', true)
+                                ->count();
 
         return Inertia::render('Panel/Index', [
             'reservas' => $reservas,
@@ -56,7 +57,7 @@ class PanelController extends Controller
                 'usuarios' => $usuariosCount,
                 'proyectos' => $proyectosCount,
                 'asistencias' => $asistenciasCount,
-                'equipos' => $reservasHoyCount // Mantenemos la clave "equipos" para evitar cambios en el frontend
+                'equipos' => $reservasHoyCount
             ]
         ]);
     }

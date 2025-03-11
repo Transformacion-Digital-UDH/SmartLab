@@ -55,7 +55,7 @@ const abrirModalEditar = (reserva) => {
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="py-6">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
                 <!-- Métricas -->
                 <div class="bg-gray-50 dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
@@ -100,11 +100,12 @@ const abrirModalEditar = (reserva) => {
                     </Select>
 
                 </div>
-                <iframe
-                    :src="`https://calendar.google.com/calendar/embed?src=${selectedCalendarId}&ctz=America%2FLima&mode=WEEK`"
-                    class="w-full border-none rounded-lg"
-                    height="600px"
-                ></iframe>
+                    <iframe
+                        :src="`https://calendar.google.com/calendar/embed?src=${selectedCalendarId}&ctz=America%2FLima&mode=WEEK`"
+                        class="w-full border-none rounded-lg"
+                        height="600px"
+                    ></iframe>
+                </div>
             </div>
         </div>
 
