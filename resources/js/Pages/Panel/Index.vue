@@ -16,6 +16,14 @@ const props = defineProps({
     areas: Array,
     laboratorios: Array,
     metricas: Object,
+    asistenciasMensuales: {
+        type: Array,
+        default: () => []
+    },
+    etiquetasMeses: {
+        type: Array,
+        default: () => []
+    }
 });
 
 const reservas = ref(props.reservas || []);
@@ -65,10 +73,14 @@ const abrirModalEditar = (reserva) => {
                             <CardItems name="Usuarios" des="Registros" :valor="metricas.usuarios" />
                             <CardItems name="Proyectos" des="Ejecutándose" :valor="metricas.proyectos" />
                             <CardItems name="Asistencias" des="Ingresos hoy" :valor="metricas.asistencias" />
-                            <CardItems name="Reservas" des="Hoy" :valor="metricas.equipos" />
+                            <CardItems name="Reservas" des="Hoy" :valor="metricas.reservas" />
                         </div>
                         <div class="lg:col-span-2">
-                            <BarraIngresos class="w-full" />
+                            <BarraIngresos
+                                class="w-full"
+                                :datos="asistenciasMensuales"
+                                :etiquetas="etiquetasMeses"
+                            />
                         </div>
                     </div>
                 </div>
@@ -83,13 +95,12 @@ const abrirModalEditar = (reserva) => {
                 />
             </div>
 
-            <!-- Calendario -->
-            <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
-                <!-- Encabezado con título y select a la derecha -->
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-medium">Calendario de reservas</h3>
-                    <Select v-model:value="selectedCalendarId"
-                        :options="labOptions"
+                <!-- Calendario -->
+                <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
+                    <!-- Encabezado con título y select a la derecha -->
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium">Calendario de reservas</h3>
+                        <Select v-model:value="selectedCalendarId"                             :options="labOptions"
                         style="width: 300px;"
                         size="middle"
                     >
