@@ -66,7 +66,7 @@ const abrirModalEditar = (reserva) => {
         <div class="py-6">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
                 <!-- Métricas -->
-                <div class="bg-gray-50 dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-medium mb-4">Métricas claves</h3>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="grid grid-cols-2 gap-4">

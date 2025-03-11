@@ -58,17 +58,31 @@ class ReservaController extends Controller
         $validatedData = $request->validate($this->rules);
         $validatedData['usuario_id'] = Auth::id();
 
-        Reserva::create($validatedData);
+        $reserva = Reserva::create($validatedData);
+
+        // Si la reserva se crea con estado "Aprobada", se genera el evento en Google Calendar
+        if ($reserva->estado === 'Aprobada') {
+            $this->aprobar($reserva);
+        }
 
         return response()->noContent(201);
     }
+
 
     // Actualizar una reserva
     public function update(Request $request, Reserva $reserva)
     {
         $request->validate($this->rules);
+        $oldEstado = $reserva->estado; // Guardar el estado anterior
+
         $reserva->update($request->all());
+
+        // Verificar si el estado cambió a "Aprobada" y si anteriormente no estaba aprobado
+        if ($reserva->estado === 'Aprobada' && $oldEstado !== 'Aprobada') {
+            $this->aprobar($reserva);
+        }
     }
+
 
     // Eliminar una reserva
     public function destroy(Reserva $reserva)

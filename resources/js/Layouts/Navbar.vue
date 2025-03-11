@@ -17,8 +17,8 @@ import {
   ProjectOutlined,
   CalendarOutlined,
   UserOutlined,
-  // OJO: Usamos ExportOutlined en lugar de LogoutOutlined
-  ExportOutlined,
+  // OJO: Usamos LogoutOutlined en lugar de LogoutOutlined
+  LogoutOutlined,
   BarChartOutlined
 } from "@ant-design/icons-vue";
 
@@ -136,8 +136,7 @@ const navigationLinks = [
       <div class="px-4 py-4 border-t border-gray-200 dark:border-gray-600">
         <!-- Perfil -->
         <div class="mb-4 text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center">
-          <component v-if="isCollapsed" :is="UserOutlined" class="text-lg mr-2" />
-          <span v-else>{{ $page.props.auth.user.nombres }}</span>
+          <span v-if="!isCollapsed">{{ $page.props.auth.user.nombres }}</span>
         </div>
 
         <nav class="flex flex-col space-y-4">
@@ -159,13 +158,13 @@ const navigationLinks = [
               as="button"
               :class="isCollapsed ? 'flex items-center justify-center' : 'flex items-center space-x-2'"
             >
-              <!-- Aquí usamos ExportOutlined en vez de LogoutOutlined -->
+              <!-- Aquí usamos LogoutOutlined en vez de LogoutOutlined -->
               <a-tooltip v-if="isCollapsed" title="Cerrar sesión" placement="right">
-                <component :is="ExportOutlined" class="text-lg text-red-600" />
+                <component :is="LogoutOutlined" class="text-lg text-red-600" />
               </a-tooltip>
               <component
                 v-else
-                :is="ExportOutlined"
+                :is="LogoutOutlined"
                 class="text-lg text-red-600"
               />
               <span v-if="!isCollapsed">Cerrar sesión</span>
@@ -238,8 +237,8 @@ const navigationLinks = [
 
           <form @submit.prevent="logout">
             <ResponsiveNavLink as="button">
-              <!-- Aquí también ExportOutlined -->
-              <component :is="ExportOutlined" class="text-lg mr-2 text-red-500" />
+              <!-- Aquí también LogoutOutlined -->
+              <component :is="LogoutOutlined" class="text-lg mr-2 text-red-500" />
               <span>Cerrar sesión</span>
             </ResponsiveNavLink>
           </form>

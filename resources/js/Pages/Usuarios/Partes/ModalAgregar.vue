@@ -91,9 +91,7 @@ const cargando = ref(false);
 const opcionesRoles = ref([
     { label: 'Invitado', value: 'Invitado' },
     { label: 'Miembro', value: 'Miembro' },
-    { label: 'Coordinador', value: 'Coordinador' },
-    { label: 'Responsable', value: 'Responsable' },
-    { label: 'Admin', value: 'Admin' },
+    { label: 'Administrador', value: 'Admin' },
 ]);
 
 const cerrarModal = () => {

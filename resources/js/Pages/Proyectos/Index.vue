@@ -39,6 +39,7 @@
             <ModalAgregar
                 v-model:visible="mostrarModalCrear"
                 :responsables="props.responsables"
+                :laboratorios="props.laboratorios"
                 @actualizar-tabla="actualizarTabla"
             />
 
@@ -48,6 +49,7 @@
                 v-model:visible="mostrarModalEditar"
                 :proyecto="proyectoSeleccionado"
                 :responsables="props.responsables"
+                :laboratorios="props.laboratorios"
                 @actualizar-tabla="actualizarTabla"
             />
 

@@ -50,26 +50,30 @@
                 </FormItem>
             </div>
 
+            <!-- Agrupamos Correo y Fecha de inauguración en la misma fila -->
+            <div class="block md:flex gap-x-3">
+                <FormItem label="Correo del laboratorio" name="email" class="w-full">
+                    <Input
+                        v-model:value="laboratorio.email"
+                        placeholder="Ingrese el correo electrónico"
+                    />
+                    <InputError :message="errors.email?.[0]" />
+                </FormItem>
+
+                <FormItem label="Fecha de inauguración" name="inauguracion" class="w-full">
+                    <Input type="date" v-model:value="laboratorio.inauguracion" />
+                    <InputError :message="errors.inauguracion?.[0]" />
+                </FormItem>
+            </div>
+
             <FormItem label="Descripción" name="descripcion">
                 <Textarea
                     auto-size
+
                     v-model:value="laboratorio.descripcion"
                     placeholder="Ingrese una descripción"
                 />
                 <InputError :message="errors.descripcion?.[0]" />
-            </FormItem>
-
-            <FormItem label="Correo del laboratorio" name="email">
-                <Input
-                    v-model:value="laboratorio.email"
-                    placeholder="Ingrese el correo electrónico"
-                />
-                <InputError :message="errors.email?.[0]" />
-            </FormItem>
-
-            <FormItem label="Fecha de inauguración" name="inauguracion">
-                <Input type="date" v-model:value="laboratorio.inauguracion" />
-                <InputError :message="errors.inauguracion?.[0]" />
             </FormItem>
 
             <FormItem class="flex justify-end mb-0">
@@ -106,9 +110,7 @@ const props = defineProps({
 });
 
 const cargando = ref(false);
-const opcionesResponsables = ref([]);
 const errors = ref({});
-
 const laboratorio = ref({
     nombre: "",
     codigo: "",
@@ -126,7 +128,7 @@ const cerrarModal = () => {
 };
 
 const buscarResponsable = (input, option) => {
-    return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    return option.label.toLowerCase().includes(input.toLowerCase());
 };
 
 // Envía el formulario
@@ -152,7 +154,8 @@ const enviarFormulario = async () => {
     }
 };
 
-// Verificar si el modal se abre por primera vez y cargar responsables
+// Al abrir el modal se reinicia el formulario y se cargan las opciones de responsables con el label completo
+const opcionesResponsables = ref([]);
 watch(
     () => props.visible,
     (val) => {
@@ -168,13 +171,10 @@ watch(
                 responsable_id: null,
             };
 
-            // Cargar las opciones de los responsables
-            opcionesResponsables.value = props.responsables.map(
-                (responsable) => ({
-                    label: responsable.nombres + " " + responsable.apellidos,
-                    value: responsable.id,
-                })
-            );
+            opcionesResponsables.value = props.responsables.map((responsable) => ({
+                label: `${responsable.nombres} ${responsable.apellidos} - ${responsable.dni} - ${responsable.email}`,
+                value: responsable.id,
+            }));
         }
     }
 );

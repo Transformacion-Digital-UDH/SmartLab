@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Proyecto;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ProyectoController extends Controller
 {
     protected $rules = [
         'nombre' => 'required|max:100',
-        'descripcion' => 'nullable|max:255',
+        'descripcion' => 'nullable',
         'fecha_inicio' => 'nullable|date',
         'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
         'estado' => 'required|in:Sin iniciar,En proceso,Completado,Cancelado',
@@ -29,9 +30,15 @@ class ProyectoController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        // Por ahora cualquier usuario puede ser responsable de un proyecto
         $responsables = User::all();
-        $laboratorios = Laboratorio::all();
+        $user = Auth::user();
+
+        if ($user->rol !== 'Admin') {
+            // Combinar laboratorios del usuario en los que es responsable o coordinador.
+            $laboratorios = $user->laboratoriosResponsable->merge($user->laboratoriosCoordinador);
+        } else {
+            $laboratorios = Laboratorio::all();
+        }
 
         return Inertia::render('Proyectos/Index', [
             'proyectos' => $proyectos,
@@ -87,7 +94,7 @@ class ProyectoController extends Controller
         foreach ($request->usuario_ids as $usuarioId) {
             $proyecto->participantes()->updateOrCreate(
                 ['usuario_id' => $usuarioId],
-                ['is_active' => true] 
+                ['is_active' => true]
             );
         }
 

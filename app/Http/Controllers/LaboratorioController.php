@@ -31,7 +31,7 @@ class LaboratorioController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $responsables = User::where('rol', 'Responsable')->get();
+        $responsables = User::where('is_active', true)->get();
 
         return Inertia::render('Laboratorios/Index', [
             'laboratorios' => $laboratorios,
