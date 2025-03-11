@@ -17,13 +17,11 @@ class PanelController extends Controller
 {
     public function index()
     {
-        // Obtener reservas pendientes por aprobar
         $reservas = Reserva::with(['usuario', 'equipo', 'recurso', 'area'])
             ->where('estado', 'Por aprobar')
             ->orderBy('hora_inicio')
             ->get();
 
-        // Datos para formularios y modales
         $equipos = Equipo::all();
         $recursos = Recurso::all();
         $areas = Area::all();
@@ -41,9 +39,9 @@ class PanelController extends Controller
         $asistenciasCount = Asistencia::whereDate('created_at', Carbon::today())
                                     ->count();
         
-        // Cambiar equipos por reservas de hoy
         $reservasHoyCount = Reserva::whereDate('hora_inicio', Carbon::today())
                                  ->where('is_active', true)
+                                 ->where('estado', 'Aprobada')
                                  ->count();
 
         return Inertia::render('Panel/Index', [
@@ -56,7 +54,7 @@ class PanelController extends Controller
                 'usuarios' => $usuariosCount,
                 'proyectos' => $proyectosCount,
                 'asistencias' => $asistenciasCount,
-                'equipos' => $reservasHoyCount // Mantenemos la clave "equipos" para evitar cambios en el frontend
+                'reservas' => $reservasHoyCount
             ]
         ]);
     }
