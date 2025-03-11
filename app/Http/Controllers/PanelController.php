@@ -43,6 +43,22 @@ class PanelController extends Controller
                                  ->where('is_active', true)
                                  ->where('estado', 'Aprobada')
                                  ->count();
+        
+        // Calcular asistencias mensuales para la gráfica (últimos 6 meses)
+        $asistenciasMensuales = [];
+        $etiquetasMeses = [];
+        
+        for ($i = 5; $i >= 0; $i--) {
+            $mes = Carbon::now()->subMonths($i);
+            $nombreMes = $mes->translatedFormat('F'); 
+            $etiquetasMeses[] = $nombreMes;
+            
+            $conteo = Asistencia::whereYear('hora_entrada', $mes->year)
+                              ->whereMonth('hora_entrada', $mes->month)
+                              ->count();
+            
+            $asistenciasMensuales[] = $conteo;
+        }
 
         return Inertia::render('Panel/Index', [
             'reservas' => $reservas,
@@ -55,7 +71,9 @@ class PanelController extends Controller
                 'proyectos' => $proyectosCount,
                 'asistencias' => $asistenciasCount,
                 'reservas' => $reservasHoyCount
-            ]
+            ],
+            'asistenciasMensuales' => $asistenciasMensuales,
+            'etiquetasMeses' => $etiquetasMeses,
         ]);
     }
 }

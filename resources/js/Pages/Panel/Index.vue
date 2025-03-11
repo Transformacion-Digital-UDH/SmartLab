@@ -16,6 +16,14 @@ const props = defineProps({
     areas: Array,
     laboratorios: Array,
     metricas: Object,
+    asistenciasMensuales: {
+        type: Array,
+        default: () => []
+    },
+    etiquetasMeses: {
+        type: Array,
+        default: () => []
+    }
 });
 
 const reservas = ref(props.reservas || []);
@@ -68,7 +76,11 @@ const abrirModalEditar = (reserva) => {
                             <CardItems name="Reservas" des="Hoy" :valor="metricas.reservas" />
                         </div>
                         <div class="lg:col-span-2">
-                            <BarraIngresos class="w-full" />
+                            <BarraIngresos 
+                                class="w-full" 
+                                :datos="asistenciasMensuales" 
+                                :etiquetas="etiquetasMeses" 
+                            />
                         </div>
                     </div>
                 </div>
