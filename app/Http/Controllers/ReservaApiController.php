@@ -7,7 +7,6 @@ use Carbon\Carbon;
 
 class ReservaApiController extends Controller
 {
-    
     public function index($tipo, $id)
     {
         $reservas = [];

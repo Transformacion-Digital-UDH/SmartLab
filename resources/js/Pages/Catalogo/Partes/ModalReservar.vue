@@ -28,7 +28,6 @@
 	const disabled = ref(true)
 	const reservas = ref([])
 
-    console.log("recurso", recurso.value);
 	const fecha = ref(new Date().getHours() > 17 ? new Date(Date.now() + 1000 * 60 * 60 * 24) : new Date())
 
 	const hora_inicio = ref({
@@ -63,25 +62,15 @@
 						}
 					})
 					reservas.value = data.reservas
-
+					
 					cargando.value = false
 
-
+					
 					if (recurso.value.fotos.length < 1) {
 						recurso.value.fotos = [
 							{	id: 1, ruta: 'https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png'},
 						]
 					}
-
-					horasLimit.value = horasLimit.value.map()
-					for (const reserva of reservas.value) {
-						for (const limit of horasLimit) {
-							if (reserva.hora_inicio.getHours() >= limit.time[0][0]) {
-
-							}
-						}
-					}
-
 				})
 		}
 	})
@@ -110,12 +99,12 @@
 		}
 
 		cargando.value = true;
+		console.log();
 		data.hora_inicio = `${dayjs(fecha.value).format('YYYY-MM-DD')} ${hora_inicio.value.value}:00`
 		data.hora_fin = `${dayjs(fecha.value).format('YYYY-MM-DD')} ${hora_fin.value.value}:00`
-
 		try {
-			const response = await axios.post(route('reservas.store'), {...data});
-            console.log("data", data);
+			const response = await axios.post(route('reserva.create'), {...data});
+			
 			if (response.status === 201) {
 				message.success('Solicitud de reserva enviada correctamente');
 				emitir('close');
@@ -156,7 +145,7 @@
 		// Verificar si es el día actual y si ya son más de las 6 PM
 		const isTodayAndLate = current && current.isSame(now, "day") && now.hour() >= 18;
 
-		return isPastDate || isTodayAndLate;
+		return isPastDate || isTodayAndLate; 
 	};
 
 	function onFechaCambio({ $d }) {
@@ -191,7 +180,7 @@
 		console.log(90);
 		const ini = new Date(...DateTime.toDateList(fecha.value), ...hora_inicio.value.value.split(':').map(n => Number(n))).getTime()
 		const fn = new Date(...DateTime.toDateList(fecha.value), ...hora_fin.value.value.split(':').map(n => Number(n))).getTime()
-
+		
 		disabled.value = reservas.value.every((reserva) => {
 			if (ini <= reserva.hora_inicio.getTime() && fn <= reserva.hora_inicio.getTime()) {
 				data.hora_inicio = `${fecha.value.toDateString()} ${hora_inicio.value}`
@@ -199,7 +188,7 @@
 				return false
 			}
 			if (ini >= reserva.hora_fin.getTime() && fn >= reserva.hora_fin.getTime()) {
-
+	
 				return false
 			}
 			return true
@@ -226,7 +215,7 @@
 					<img
 						v-if="recurso.fotos && recurso.fotos.length > 0"
 						v-for="foto of recurso.fotos"
-						:src="`/storage/${foto.ruta}`"
+						:src="`${foto.ruta}`"
 						class="w-44 h-44 object-cover rounded"
 					/>
 				</Carousel>
@@ -293,9 +282,9 @@
 								style="width: 120px"
 								@change="onHoraInicioCambio"
 							>
-								<SelectOption
-									v-for="hora in horas.slice(0, -1)"
-									:key="hora.value"
+								<SelectOption 
+									v-for="hora in horas.slice(0, -1)" 
+									:key="hora.value" 
 									:value="hora.value"
 								>{{hora.label}}</SelectOption>
 							</Select>
@@ -304,8 +293,8 @@
 								style="width: 120px"
 								@change="onHoraFinCambio"
 							>
-								<SelectOption
-									v-for="hora in horas.filter(({value2}) => value2 > hora_inicio.count).slice(1,4)"
+								<SelectOption 
+									v-for="hora in horas.filter(({value2}) => value2 > hora_inicio.count).slice(1,4)" 
 									:value="hora.value"
 									:key="Math.random()"
 								>{{hora.label}}</SelectOption>
@@ -325,6 +314,10 @@
 	</Modal>
 </template>
 <style scoped>
+	* {
+		font-family: Geist !important;
+	}
+
 	:deep(.slick-slide) {
 		text-align: center;
 		width: 170px;

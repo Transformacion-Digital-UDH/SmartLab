@@ -117,8 +117,7 @@ function handleChange(value) {
                 </div>
             </section>
             <ModalReservar :recurso="recursoSeleccionado" :tipo="tipo" v-model:open="open" @close="open = false" />
-            <ModalReservarArea v-if="tipo === 'area'" :recurso="recursoSeleccionado" :open="open" :tipo="tipo"
-                @close="open = false" />
+            <ModalReservarArea v-if="tipo === 'area'" :area="recursoSeleccionado" :open="open" @close="open = false" />
         </div>
     </AppLayout>
 </template>
