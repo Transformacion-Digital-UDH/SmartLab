@@ -14,12 +14,8 @@
 
 	const page = usePage()
 
-	// Cambiar la definición de props para aceptar Object en lugar de Array
 	const props = defineProps({
-		recurso: {
-			type: Object,
-			default: () => ({})
-		},
+		recurso: Array,
 		open: Boolean,
 		tipo: String
 	});
@@ -32,7 +28,6 @@
 	const disabled = ref(true)
 	const reservas = ref([])
 
-    console.log("recurso", recurso.value);
 	const fecha = ref(new Date().getHours() > 17 ? new Date(Date.now() + 1000 * 60 * 60 * 24) : new Date())
 
 	const hora_inicio = ref({
@@ -49,11 +44,12 @@
 		hora_fin: null,
 	}
 
-	watch(() => props.open, (val) => {
+	watch(() => props.open, (val)=>{
 		if (val) {
-			recurso.value = props.recurso ? { ...props.recurso } : {};
+			recurso.value = { ...props.recurso };
+			console.log(recurso.value);
 			tipo.value = props.tipo;
-			cargando.value = true;
+			cargando.value = true
 			reservas.value = [];
 			axios.get(`/api/reservas/${tipo.value}/${recurso.value.id}`)
 				.then(({ data }) => {
@@ -75,16 +71,6 @@
 							{	id: 1, ruta: 'https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png'},
 						]
 					}
-
-					horasLimit.value = horasLimit.value.map()
-					for (const reserva of reservas.value) {
-						for (const limit of horasLimit) {
-							if (reserva.hora_inicio.getHours() >= limit.time[0][0]) {
-
-							}
-						}
-					}
-
 				})
 		}
 	})
@@ -104,38 +90,21 @@
 	}
 
 	const handleOk = async () => {
-		// Verificar que recurso.value y tipo.value existan
-		if (!recurso.value || !tipo.value) {
-			message.error("Faltan datos para realizar la reserva");
-			return;
-		}
-
 		if (tipo.value == 'equipo') {
 			data.equipo_id = recurso.value.id;
 			data.recurso_id = null;
-			data.area_id = null;
 		} else if(tipo.value == 'recurso'){
 			data.equipo_id = null;
 			data.recurso_id = recurso.value.id;
-			data.area_id = null;
-		} else if(tipo.value == 'area'){
-			data.equipo_id = null;
-			data.recurso_id = null;
-			data.area_id = recurso.value.id;
-		}
-
-		if (!data.hora_inicio || !data.hora_fin) {
-			message.error("Debe seleccionar un horario");
-			return;
 		}
 
 		cargando.value = true;
+		console.log();
 		data.hora_inicio = `${dayjs(fecha.value).format('YYYY-MM-DD')} ${hora_inicio.value.value}:00`
 		data.hora_fin = `${dayjs(fecha.value).format('YYYY-MM-DD')} ${hora_fin.value.value}:00`
-
 		try {
 			const response = await axios.post(route('reservas.store'), {...data});
-            console.log("data", data);
+
 			if (response.status === 201) {
 				message.success('Solicitud de reserva enviada correctamente');
 				emitir('close');
@@ -229,10 +198,10 @@
 </script>
 <template>
 	<Modal v-model:open="props.open" title="Reservación" width="min(620px,100%)" @cancel="emitir('close')" @ok="handleOk">
-		<div class="flex w-auto flex-wrap sm:flex-nowrap sm:justify-end gap-3">
+		<div class="flex w-auto  flex-wrap sm:flex-nowrap sm:justify-end gap-3">
 			<!-- portada -->
 			<div>
-				<Carousel v-if="recurso && recurso.fotos && recurso.fotos.length > 0" :arrows="true" class="w-44 rounded-lg overflow-hidden self-start">
+				<Carousel :arrows="true" class="w-44 rounded-lg overflow-hidden self-start">
 					<template v-slot:prevArrow>
 						<div class="custom-slick-arrow" style="left: 10px; z-index: 1">
 							<LeftCircleOutlined />
@@ -246,7 +215,7 @@
 					<img
 						v-if="recurso.fotos && recurso.fotos.length > 0"
 						v-for="foto of recurso.fotos"
-						:src="`/storage/${foto.ruta}`"
+						:src="`${foto.ruta}`"
 						class="w-44 h-44 object-cover rounded"
 					/>
 				</Carousel>
@@ -345,6 +314,10 @@
 	</Modal>
 </template>
 <style scoped>
+	* {
+		font-family: Geist !important;
+	}
+
 	:deep(.slick-slide) {
 		text-align: center;
 		width: 170px;
