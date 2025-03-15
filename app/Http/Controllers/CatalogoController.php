@@ -19,7 +19,7 @@ class CatalogoController extends Controller
         $laboratorioId = $request->input('laboratorio_id');
 
         $laboratorios = Laboratorio::where('is_active', true)->get();
-        
+
         $areas = Area::with('laboratorio')
             ->where('tipo', 'Reservable')
             ->where('is_active', true)
@@ -45,7 +45,7 @@ class CatalogoController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $equipos = Equipo::with('area', 'area.laboratorio')
+        $equipos = Equipo::with('area', 'area.laboratorio', 'fotos')
             ->where('is_active', true)
             ->where('tipo', 'Reservable')
             ->when($laboratorioId !== null, function ($q) use ($laboratorioId) {

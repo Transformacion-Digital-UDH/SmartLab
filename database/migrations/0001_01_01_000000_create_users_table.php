@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('se_registro')->default(0);
             $table->enum('rol', ['Libre', 'Invitado', 'Miembro', 'Coordinador', 'Responsable', 'Admin']);
             $table->string('profile_photo_path', 2048)->nullable();
+            $table->text('razon_registro')->nullable();
             $table->boolean('is_active')->default(true);
 
             $table->text('google_token_json')->nullable();

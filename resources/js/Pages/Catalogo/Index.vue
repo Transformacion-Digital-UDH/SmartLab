@@ -27,6 +27,8 @@ const equipos = ref(props.equipos.map(equipo => ({
         laboratorio: laboratorios.value.find(lab => lab.id === equipo.area?.laboratorio_id) || { nombre: 'Sin definir' }
     }
 })) || []);
+
+console.log(equipos.value);
 const areas = ref(props.areas || []);
 const recursoSeleccionado = ref(null);
 const valorBuscar = ref('');
