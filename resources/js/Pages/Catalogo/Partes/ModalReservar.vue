@@ -10,12 +10,9 @@ import {
     DatePicker,
     message,
     Modal,
-    RangePicker,
-    Tooltip,
     Select,
     Carousel,
     SelectOption,
-    Space,
 } from "ant-design-vue";
 import {
     InfoCircleOutlined,
@@ -26,7 +23,6 @@ import {
 } from "@ant-design/icons-vue";
 import { usePage } from "@inertiajs/vue3";
 import { DateTime } from "@/lib/utils/datetime";
-import { Typography } from "ant-design-vue";
 
 dayjs.locale("es");
 
