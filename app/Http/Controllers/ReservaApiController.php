@@ -7,22 +7,25 @@ use Carbon\Carbon;
 
 class ReservaApiController extends Controller
 {
-    
+
     public function index($tipo, $id)
     {
-        $reservas = [];
-        if ($tipo == 'equipo') {
-            $reservas = Reserva::where('equipo_id', $id)->orderBy('hora_inicio', 'asc')->get();
-        } else if ($tipo == 'recurso') {
-            $reservas = Reserva::where('recurso_id', $id)->orderBy('hora_inicio', 'asc')->get();
+        $query = Reserva::where('is_active', true)
+            ->where('estado', 'Aprobada')
+            ->whereDate('hora_inicio', '>=', now()->toDateString()) 
+            ->orderBy('hora_inicio', 'asc');
+
+        if ($tipo === 'equipo') {
+            $query->where('equipo_id', $id);
+        } elseif ($tipo === 'recurso') {
+            $query->where('recurso_id', $id);
+        } elseif ($tipo === 'area') {
+            $query->where('area_id', $id);
         }
 
-        $filteredReservas = $reservas->filter(function ($reserva) {
-            return now()->timestamp < strtotime($reserva->hora_fin);
-        });
-
         return response()->json([
-            'reservas' => $filteredReservas -> values()
+            'reservas' => $query->get()
         ]);
     }
+
 }

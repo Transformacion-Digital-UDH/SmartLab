@@ -9,6 +9,8 @@ class FotoArea extends Model
 {
     use HasFactory;
 
+    protected $table = 'fotos_areas';
+
     protected $fillable = [
         'area_id',
         'ruta',
