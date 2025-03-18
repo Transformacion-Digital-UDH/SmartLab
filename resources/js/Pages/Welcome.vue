@@ -159,7 +159,26 @@ function prev() {
                     <li><a href="/galeria" class="hover:text-green-400">Galeria</a></li>
                 </ul>
             </nav>
-            <a href="/login" class="px-4 py-2 text-black bg-yellow-300 rounded-lg hover:bg-teal-200">Login</a>
+            <div class="flex space-x-2">
+                <template v-if="$page.props.auth && $page.props.auth.user">
+                    <!-- Usuario autenticado -->
+                    <Link :href="route('dashboard')" class="px-4 py-2 text-black bg-yellow-300 rounded-lg hover:bg-teal-200">
+                        Ingresar
+                    </Link>
+                    <Link :href="route('logout')" method="post" as="button" class="px-4 py-2 text-black bg-red-300 rounded-lg hover:bg-red-400">
+                        Cerrar sesión
+                    </Link>
+                </template>
+                <template v-else>
+                    <!-- Usuario no autenticado -->
+                    <Link :href="route('login')" class="px-4 py-2 text-black bg-yellow-300 rounded-lg hover:bg-teal-200">
+                        Login
+                    </Link>
+                    <Link v-if="canRegister" :href="route('register')" class="px-4 py-2 text-black bg-teal-300 rounded-lg hover:bg-yellow-200">
+                        Registrarse
+                    </Link>
+                </template>
+            </div>
         </header>
 
         <!-- Hero Section -->
