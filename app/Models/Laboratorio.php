@@ -26,7 +26,7 @@ class Laboratorio extends Model
 
     // Relaciones
 
-        /**
+    /**
      * Un laboratorio tiene muchos proyectos.
      */
     public function proyectos()
@@ -56,5 +56,13 @@ class Laboratorio extends Model
     public function asistencias()
     {
         return $this->hasMany(Asistencia::class, 'laboratorio_id');
+    }
+
+    public function usuarios()
+    {
+        return $this->belongsToMany(User::class)
+            ->withPivot('rol')
+            ->withTimestamps()
+            ->using(LaboratorioUser::class);
     }
 }

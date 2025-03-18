@@ -38,8 +38,8 @@ class User extends Authenticatable
         'rol',
         'is_active',
         'google_token_json',
-        'razon_registro', 
-        'se_registro', 
+        'razon_registro',
+        'se_registro',
     ];
 
     /**
@@ -91,6 +91,14 @@ class User extends Authenticatable
     public function miembroProyectos()
     {
         return $this->hasMany(MiembroProyecto::class);
+    }
+
+    public function laboratorios()
+    {
+        return $this->belongsToMany(Laboratorio::class)
+            ->withPivot('rol')
+            ->withTimestamps()
+            ->using(LaboratorioUser::class);
     }
 
     public function laboratoriosResponsable()
