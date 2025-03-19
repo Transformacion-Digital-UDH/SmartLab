@@ -158,7 +158,7 @@ function prev() {
         <!-- Navbar -->
         <header class="flex items-center justify-between p-6">
             <div class="text-2xl font-bold">
-                <img src="/img/UDHdark.webp" alt="" width="160px" class="w-16 sm:w-24 md:w-48 lg:w-48">
+                <img src="/img/UDHdark.webp" alt="" width="160px" class="w-16 sm:w-24 md:w-40 lg:w-40">
             </div>
             <nav>
                 <ul class="flex gap-6 pt-4">
