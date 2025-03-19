@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'is_active', 'codigo', 'celular', 'password')
+        $query = User::select('id', 'nombres', 'apellidos', 'dni', 'email', 'rol', 'estado_cuenta', 'codigo', 'celular', 'password')
             ->where('rol', '!=', 'Admin')
             ->where('is_active', true);
 
@@ -26,11 +26,29 @@ class UserController extends Controller
 
         $usuarios = $query->orderBy('id', 'desc')->get();
 
+        // Se separan en dos arrays según el rol
+        $usuarios_registrados = $usuarios->where('rol', 'Invitado')->values();
+        $usuarios_libres = $usuarios->where('rol', 'Libre')->values();
+
+        // Agregar el campo laboratorio_registro a cada usuario libre
+        $usuarios_libres->transform(function ($usuario) {
+            // Usamos la relación para obtener la primera asistencia del usuario
+            $primerAsistencia = $usuario->asistencias()->oldest('created_at')->first();
+
+            $usuario->laboratorio_registro = $primerAsistencia && $primerAsistencia->laboratorio
+            ? $primerAsistencia->laboratorio->nombre : null;
+
+            return $usuario;
+        });
+
         return Inertia::render('Usuarios/Index', [
-            'usuarios' => $usuarios,
+            'usuarios_registrados' => $usuarios_registrados,
+            'usuarios_libres' => $usuarios_libres,
             'search' => $request->input('search', ''),
         ]);
     }
+
+
 
     public function store(Request $request)
     {
@@ -42,7 +60,7 @@ class UserController extends Controller
             'password' => 'required|min:6',
             'is_active' => 'boolean',
             'celular' => 'nullable|numeric|digits:9',
-            'rol' => 'required|in:Invitado,Miembro,Coordinador,Responsable,Admin',
+            'rol' => 'required|in:Libre,Invitado,Admin',
         ], [
             'required' => 'Este campo es obligatorio.',
             'email' => 'Ingrese un correo electrónico válido.',
@@ -70,9 +88,9 @@ class UserController extends Controller
     public function update(Request $request, User $usuario)
     {
         $request->validate([
-            'nombres' => 'required|max:255',
+            'nombres' => 'nullable|max:255',
             'apellidos' => 'nullable|max:255',
-            'rol' => 'required|in:Invitado,Miembro,Coordinador,Responsable',
+            'rol' => 'required|in:Libre,Invitado,Admin',
             'celular' => 'nullable|numeric|digits:9',
         ], [
             'required' => 'Este campo es obligatorio.',
@@ -90,7 +108,6 @@ class UserController extends Controller
             'codigo' => $request->codigo,
             'rol' => $request->rol,
             'is_active' => $request->is_active ?? true,
-            'celular' => $request->celular,
         ]);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente');

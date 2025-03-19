@@ -7,7 +7,7 @@
         :footer="null"
     >
         <Form layout="vertical" @finish="enviarFormulario" :model="usuario">
-            <div class="block md:flex gap-x-3">
+            <div class="block md:flex gap-x-3 pt-3">
                 <FormItem label="Nombres" name="nombres" class="w-full"
                     :rules="[{ required: true, message: 'Por favor ingrese los nombres' }]">
                     <Input v-model:value="usuario.nombres" placeholder="Ingrese los nombres" class="rounded-lg"
@@ -20,39 +20,39 @@
                 </FormItem>
             </div>
 
+            <!-- Email y contraseña en filas separadas -->
+            <FormItem label="Email" name="email" class="w-full"
+                :rules="[{ required: true, message: 'Por favor ingrese un correo válido' }, { type: 'email', message: 'Correo inválido' }]">
+                <Input v-model:value="usuario.email" placeholder="Ingrese el correo electrónico" class="rounded-lg"
+                    autocomplete="off" />
+            </FormItem>
+
+            <FormItem label="Contraseña" name="password" class="w-full"
+                :rules="[{ required: true, message: 'Por favor ingrese una contraseña' }]">
+                <Input.Password v-model:value="usuario.password" placeholder="Ingrese la contraseña"
+                    class="rounded-lg" autocomplete="new-password" />
+            </FormItem>
+
             <div class="block md:flex gap-x-3">
                 <FormItem label="DNI" name="dni" class="w-full"
                     :rules="[{ required: true, message: 'Por favor ingrese el DNI' }]">
                     <Input v-model:value="usuario.dni" placeholder="Ingrese el DNI" class="rounded-lg" />
                 </FormItem>
 
-                <FormItem label="Email" name="email" class="w-full"
-                    :rules="[{ type: 'email', message: 'Por favor ingrese un correo válido' }]">
-                    <Input v-model:value="usuario.email" placeholder="Ingrese el correo electrónico"
-                        class="rounded-lg" />
-                </FormItem>
-            </div>
-
-            <div class="block md:flex gap-x-3">
                 <FormItem label="Celular" name="celular" class="w-full">
                     <Input v-model:value="usuario.celular" placeholder="Ingrese número de celular" />
                 </FormItem>
-
-                <FormItem label="Código" name="codigo" class="w-full">
-                    <Input v-model:value="usuario.codigo" placeholder="Ingrese el código" class="rounded-lg" />
-                </FormItem>
             </div>
 
+            <!-- Código y rol en una misma fila -->
             <div class="block md:flex gap-x-3">
-                <FormItem label="Rol" name="rol" class="w-full"
-                    :rules="[{ required: true, message: 'Por favor seleccione un rol' }]">
-                    <Select v-model:value="usuario.rol" placeholder="Seleccione un rol" :options="opcionesRoles" />
+                <FormItem label="Código universitario" name="codigo" class="w-full">
+                    <Input v-model:value="usuario.codigo" placeholder="Ingrese el código" class="rounded-lg" />
                 </FormItem>
 
-                <FormItem label="Contraseña" name="password" class="w-full"
-                    :rules="[{ required: true, message: 'Por favor ingrese una contraseña' }]">
-                    <Input type="password" v-model:value="usuario.password" placeholder="Ingrese la contraseña"
-                        class="rounded-lg" />
+                <FormItem label="Tipo de cuenta" name="rol" class="w-full"
+                    :rules="[{ required: true, message: 'Por favor seleccione un rol' }]">
+                    <Select v-model:value="usuario.rol" placeholder="Seleccione un rol" :options="opcionesRoles" />
                 </FormItem>
             </div>
 
@@ -89,9 +89,8 @@ const usuario = ref({
 const cargando = ref(false);
 
 const opcionesRoles = ref([
-    { label: 'Invitado', value: 'Invitado' },
-    { label: 'Miembro', value: 'Miembro' },
-    { label: 'Administrador', value: 'Admin' },
+    { label: 'Cuenta de usuario', value: 'Invitado' },
+    { label: 'Cunta de administrador', value: 'Admin' },
 ]);
 
 const cerrarModal = () => {

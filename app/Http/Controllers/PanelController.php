@@ -17,6 +17,9 @@ class PanelController extends Controller
 {
     public function index()
     {
+        $usuarios = User::where('is_active', false)
+                        ->get();
+                        
         $reservas = Reserva::with(['usuario', 'equipo', 'recurso', 'area'])
             ->where('estado', 'Por aprobar')
             ->orderBy('hora_inicio')
