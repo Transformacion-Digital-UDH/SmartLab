@@ -1,11 +1,13 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { Select } from 'ant-design-vue';
+import { ref, computed } from "vue";
+import { Select } from "ant-design-vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import CardItems from "./Partes/CardItems.vue";
 import BarraIngresos from "./Charts/BarraIngresos.vue";
 import TablaReservas from "./Partes/Reservas/TablaReservas.vue";
-import ModalEditar from "./Partes/Reservas/ModalEditar.vue";
+import ModalEditarReserva from "./Partes/Reservas/ModalEditar.vue";
+import TablaUsuarios from "./Partes/Usuarios/TablaUsuarios.vue";
+import ModalEditarUsuario from "./Partes/Usuarios/ModalEditar.vue";
 import { router } from "@inertiajs/vue3";
 import { ExperimentOutlined } from "@ant-design/icons-vue";
 
@@ -18,28 +20,35 @@ const props = defineProps({
     metricas: Object,
     asistenciasMensuales: {
         type: Array,
-        default: () => []
+        default: () => [],
     },
     etiquetasMeses: {
         type: Array,
-        default: () => []
-    }
+        default: () => [],
+    },
+    usuarios_solicitud: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const reservas = ref(props.reservas || []);
-const mostrarModalEditar = ref(false);
+const mostrarModalEditarReserva = ref(false);
 const reservaSeleccionada = ref(null);
+
+const mostrarModalEditarUsuario = ref(false);
+const usuarioSeleccionado = ref(null);
 
 // Para seleccionar el calendario del laboratorio
 const selectedCalendarId = ref(
-    props.laboratorios.length ? props.laboratorios[0].google_calendar_id : ''
+    props.laboratorios.length ? props.laboratorios[0].google_calendar_id : ""
 );
 
 // Opciones para el Select (etiqueta: laboratorio, valor: google_calendar_id)
 const labOptions = computed(() =>
-    props.laboratorios.map(lab => ({
+    props.laboratorios.map((lab) => ({
         label: lab.nombre,
-        value: lab.google_calendar_id
+        value: lab.google_calendar_id,
     }))
 );
 
@@ -48,17 +57,25 @@ const actualizarTabla = () => {
     router.visit(route("dashboard"), { preserveScroll: true });
 };
 
-// Abrir el modal de edición
-const abrirModalEditar = (reserva) => {
-    mostrarModalEditar.value = true;
+// Abrir el modal de edición de reserva
+const abrirModalEditarReserva = (reserva) => {
+    mostrarModalEditarReserva.value = true;
     reservaSeleccionada.value = { ...reserva };
+};
+
+// Abrir el modal de edición de usuario
+const abrirModalEditarUsuario = (usuario) => {
+    mostrarModalEditarUsuario.value = true;
+    usuarioSeleccionado.value = { ...usuario };
 };
 </script>
 
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0">
+            <h2
+                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0"
+            >
                 Dashboard
             </h2>
         </template>
@@ -66,14 +83,32 @@ const abrirModalEditar = (reserva) => {
         <div class="py-6">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
                 <!-- Métricas -->
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                <div
+                    class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6"
+                >
                     <h3 class="text-lg font-medium mb-4">Métricas claves</h3>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="grid grid-cols-2 gap-4">
-                            <CardItems name="Usuarios" des="Registros" :valor="metricas.usuarios" />
-                            <CardItems name="Proyectos" des="Ejecutándose" :valor="metricas.proyectos" />
-                            <CardItems name="Asistencias" des="Ingresos hoy" :valor="metricas.asistencias" />
-                            <CardItems name="Reservas" des="Hoy" :valor="metricas.reservas" />
+                            <CardItems
+                                name="Usuarios"
+                                des="Registros"
+                                :valor="metricas.usuarios"
+                            />
+                            <CardItems
+                                name="Proyectos"
+                                des="Ejecutándose"
+                                :valor="metricas.proyectos"
+                            />
+                            <CardItems
+                                name="Asistencias"
+                                des="Ingresos hoy"
+                                :valor="metricas.asistencias"
+                            />
+                            <CardItems
+                                name="Reservas"
+                                des="Hoy"
+                                :valor="metricas.reservas"
+                            />
                         </div>
                         <div class="lg:col-span-2">
                             <BarraIngresos
@@ -85,49 +120,75 @@ const abrirModalEditar = (reserva) => {
                     </div>
                 </div>
 
-            <!-- Sección de reservas -->
-            <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
-                <h3 class="text-lg font-medium mb-4">Reservas por aprobar</h3>
-                <TablaReservas
-                    :reservas="reservas"
-                    @editar="abrirModalEditar"
-                    @actualizar-tabla="actualizarTabla"
-                />
-            </div>
+                <!-- Sección de reservas -->
+                <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-medium mb-4">
+                        Reservas por aprobar
+                    </h3>
+                    <TablaReservas
+                        :reservas="reservas"
+                        @editar="abrirModalEditarReserva"
+                        @actualizar-tabla="actualizarTabla"
+                    />
+                </div>
 
                 <!-- Calendario -->
                 <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
-                    <!-- Encabezado con título y select a la derecha -->
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium">Calendario de reservas</h3>
-                        <Select v-model:value="selectedCalendarId"                             :options="labOptions"
-                        style="width: 300px;"
-                        size="middle"
-                    >
-                        <template #suffixIcon>
-                            <ExperimentOutlined />
-                        </template>
-
-                    </Select>
-
-                </div>
+                        <h3 class="text-lg font-medium">
+                            Calendario de reservas
+                        </h3>
+                        <Select
+                            v-model:value="selectedCalendarId"
+                            :options="labOptions"
+                            style="width: 300px"
+                            size="middle"
+                        >
+                            <template #suffixIcon>
+                                <ExperimentOutlined />
+                            </template>
+                        </Select>
+                    </div>
                     <iframe
                         :src="`https://calendar.google.com/calendar/embed?src=${selectedCalendarId}&ctz=America%2FLima&mode=WEEK`"
                         class="w-full border-none rounded-lg"
                         height="600px"
                     ></iframe>
                 </div>
+
+                <!-- Sección de usuarios en solicitud -->
+                <div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-medium mb-4">
+                        Usuarios por aprobar
+                    </h3>
+                    <TablaUsuarios
+                        :usuarios_solicitud="usuarios_solicitud"
+                        @editar="abrirModalEditarUsuario"
+                        @actualizar-tabla="actualizarTabla"
+                    />
+                </div>
             </div>
         </div>
 
+        <!-- Modal para editar reserva -->
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-            <ModalEditar
+            <ModalEditarReserva
                 v-if="reservaSeleccionada"
-                v-model:visible="mostrarModalEditar"
+                v-model:visible="mostrarModalEditarReserva"
                 :reserva="reservaSeleccionada"
                 :equipos="props.equipos"
                 :recursos="props.recursos"
                 :areas="props.areas"
+                @actualizar-tabla="actualizarTabla"
+            />
+        </div>
+
+        <!-- Modal para editar usuario -->
+        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+            <ModalEditarUsuario
+                v-if="usuarioSeleccionado"
+                v-model:visible="mostrarModalEditarUsuario"
+                :usuario="usuarioSeleccionado"
                 @actualizar-tabla="actualizarTabla"
             />
         </div>

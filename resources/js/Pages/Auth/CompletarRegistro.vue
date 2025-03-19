@@ -12,6 +12,11 @@ const props = defineProps({
     user: Object,
 });
 
+// Determinar si el correo es de la UDH
+const esCorreoUDH = props.user.email
+    ? props.user.email.endsWith('@udh.edu.pe')
+    : false;
+
 const form = useForm({
     dni: props.user.dni,
     codigo: props.user.codigo,
@@ -20,10 +25,11 @@ const form = useForm({
     celular: props.user.celular,
     razon_registro: props.user.razon_registro || '',
     is_active: true,
+    // Si el correo es de la UDH se aprueba automáticamente; de lo contrario, queda en revisión.
+    estado_cuenta: esCorreoUDH ? "Aprobada" : "En revisión",
 });
 
 const esEstudiante = isCodigo(form.codigo);
-const esCorreoUDH = props.user.email ? props.user.email.endsWith('@udh.edu.pe') : false;
 
 const submit = () => {
     form.errors = {};
@@ -167,4 +173,3 @@ const submit = () => {
         </form>
     </GuestLayout>
 </template>
-

@@ -64,10 +64,11 @@ const columnas = [
             const apellidos = record.apellidos || "";
             return `${nombres} ${apellidos}`.trim();
         },
+        width: 180
     },
 
     { title: "DNI", dataIndex: "dni", key: "dni", width: 100 },
-    { title: "Email", dataIndex: "email", key: "email" },
+    { title: "Email", dataIndex: "email", key: "email", width: 220 },
     { title: "Celular", dataIndex: "celular", key: "celular", width: 120 },
     {
         title: "Estado cuenta",

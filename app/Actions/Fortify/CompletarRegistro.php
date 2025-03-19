@@ -35,6 +35,7 @@ class CompletarRegistro
             'codigo'         => ['nullable', 'integer', 'digits:10'],
             'celular'        => ['required', 'integer', 'digits:9'],
             'razon_registro' => ['nullable', 'string'],
+            'estado_cuenta'  => ['nullable', 'string'],
             'is_active'      => ['boolean'],
         ]);
 
@@ -47,6 +48,8 @@ class CompletarRegistro
         $user->celular   = $request->celular;
         $user->rol       = "Invitado";
         $user->se_registro = 1;
+        $user->razon_registro = $request->razon_registro;
+        $user->estado_cuenta = $request->estado_cuenta;
         $user->save();
 
         return redirect()->route('dashboard');
