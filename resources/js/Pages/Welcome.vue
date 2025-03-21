@@ -74,6 +74,24 @@ const items = ref([
             "LTD - IA: Asistente de Voz",
         description: "Découvrez les événements récents qui méritent votre attention.",
     },
+    {
+        image: "https://via.placeholder.com/400x200",
+        title: "LTD - Recolector Digital",
+        description:
+            "Découvrez les événements récents qui méritent votre attention.",
+    },
+    {
+        image: "https://via.placeholder.com/400x200",
+        title: "LTD - San Sebastián Digital",
+        description:
+            "Découvrez les événements récents qui méritent votre attention.",
+    },
+    {
+        image: "https://via.placeholder.com/400x200",
+        title: "LTD - Turismo VR",
+        description:
+            "Découvrez les événements récents qui méritent votre attention.",
+    },
 ]);
 
 const currentIndex = ref(0);
