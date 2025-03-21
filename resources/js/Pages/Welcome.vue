@@ -95,14 +95,34 @@ const items = ref([
 ]);
 
 const currentIndex = ref(0);
+const totalItems = ref(items.value.length);
+const visibleItems = ref(3); // Número de elementos visibles en desktop
 
 function next() {
-    currentIndex.value = (currentIndex.value + 1) % items.value.length;
+    if (currentIndex.value >= totalItems.value - visibleItems.value) {
+        // Si estamos cerca del final, volvemos al principio con una transición suave
+        currentIndex.value = 0;
+    } else {
+        currentIndex.value++;
+    }
 }
 
 function prev() {
-    currentIndex.value =
-        (currentIndex.value - 1 + items.value.length) % items.value.length;
+    if (currentIndex.value <= 0) {
+        // Si estamos al principio, vamos al último elemento posible
+        currentIndex.value = totalItems.value - visibleItems.value;
+    } else {
+        currentIndex.value--;
+    }
+}
+
+// Función para mostrar un elemento específico
+function goToSlide(index) {
+    if (index > totalItems.value - visibleItems.value) {
+        currentIndex.value = totalItems.value - visibleItems.value;
+    } else {
+        currentIndex.value = index;
+    }
 }
 
 </script>
@@ -438,11 +458,13 @@ function prev() {
 
                 <!-- Carrusel -->
                 <div class="relative overflow-hidden">
-                    <div class="flex transition-transform duration-700 ease-in-out"
-                        :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
+                    <!-- Contenedor del carrusel con transición mejorada -->
+                    <div class="flex transition-all duration-500 ease-out"
+                        :style="{ transform: `translateX(-${currentIndex * (100 / visibleItems)}%)` }">
+                        <!-- Elementos del carrusel, ahora cada uno ocupa 1/3 del ancho total en desktop -->
                         <div v-for="(item, index) in items" :key="index" class="flex-shrink-0 w-full px-4 md:w-1/3">
-                            <div class="overflow-hidden bg-white rounded-lg shadow-lg">
-                                <img :src="item.image" alt="Actualité" class="object-cover w-full h-48" />
+                            <div class="h-full overflow-hidden bg-white rounded-lg shadow-lg">
+                                <img :src="item.image" alt="Proyecto" class="object-cover w-full h-48" />
                                 <div class="p-4">
                                     <h2 class="mb-2 text-lg font-bold text-gray-600">{{ item.title }}</h2>
                                     <p class="text-sm leading-relaxed text-gray-600">{{ item.description }}</p>
@@ -450,14 +472,34 @@ function prev() {
                             </div>
                         </div>
                     </div>
-                    <!-- Botones de Navegación -->
+                    
+                    <!-- Botones de Navegación mejorados -->
                     <button @click="prev"
-                        class="absolute left-0 p-2 transform -translate-y-1/2 bg-blue-800 rounded-full shadow-lg top-1/2 hover:bg-sky-500">
-                        &#8592;
+                        class="absolute left-0 p-3 text-white transform -translate-y-1/2 bg-blue-800 rounded-full shadow-lg opacity-80 hover:opacity-100 top-1/2 hover:bg-sky-500 transition-all">
+                        <span class="sr-only">Anterior</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
                     </button>
                     <button @click="next"
-                        class="absolute right-0 p-2 transform -translate-y-1/2 bg-blue-800 rounded-full shadow-lg top-1/2 hover:bg-sky-500">
-                        &#8594;
+                        class="absolute right-0 p-3 text-white transform -translate-y-1/2 bg-blue-800 rounded-full shadow-lg opacity-80 hover:opacity-100 top-1/2 hover:bg-sky-500 transition-all">
+                        <span class="sr-only">Siguiente</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Indicadores de paginación -->
+                <div class="flex justify-center mt-4 space-x-2">
+                    <button 
+                        v-for="i in (totalItems - visibleItems + 1)" 
+                        :key="i"
+                        @click="goToSlide(i-1)"
+                        :class="[
+                            'w-3 h-3 rounded-full transition-all', 
+                            currentIndex === i-1 ? 'bg-blue-800' : 'bg-gray-300 hover:bg-blue-400'
+                        ]">
                     </button>
                 </div>
             </div>
