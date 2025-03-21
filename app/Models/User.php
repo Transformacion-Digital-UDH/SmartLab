@@ -36,10 +36,11 @@ class User extends Authenticatable
         'codigo',
         'celular',
         'rol',
-        'is_active',
+        'estado_cuenta',
         'google_token_json',
         'razon_registro',
         'se_registro',
+        'is_active',
     ];
 
     /**

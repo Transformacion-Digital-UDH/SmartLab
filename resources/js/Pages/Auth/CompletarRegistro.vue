@@ -12,6 +12,11 @@ const props = defineProps({
     user: Object,
 });
 
+// Determinar si el correo es de la UDH
+const esCorreoUDH = props.user.email
+    ? props.user.email.endsWith('@udh.edu.pe')
+    : false;
+
 const form = useForm({
     dni: props.user.dni,
     codigo: props.user.codigo,
@@ -19,27 +24,17 @@ const form = useForm({
     apellidos: props.user.apellidos,
     celular: props.user.celular,
     razon_registro: props.user.razon_registro || '',
+    is_active: true,
+    // Si el correo es de la UDH se aprueba automáticamente; de lo contrario, queda en revisión.
+    estado_cuenta: esCorreoUDH ? "Aprobada" : "En revisión",
 });
 
 const esEstudiante = isCodigo(form.codigo);
-const esCorreoUDH = props.user.email ? props.user.email.endsWith('@udh.edu.pe') : false;
 
 const submit = () => {
     form.errors = {};
-    
-    // Asegurar que razon_registro se incluye siempre en la solicitud si el usuario no es de UDH
-    if (!esCorreoUDH) {
-        // Asegurarnos de que el valor nunca sea undefined o null
-        form.razon_registro = form.razon_registro || '';
-        
-        // Mostrar en consola para depuración
-        console.log('Enviando razon_registro:', form.razon_registro);
-        
-        // Agregamos un helper para debugging
-        window.formData = form.data();
-        console.log('Todos los datos del formulario:', window.formData);
-    }
-    
+    form.is_active = esCorreoUDH;
+
     // Antes de enviar el formulario, agregar un evento para ver qué se está enviando
     form.post(route("completar.registro"), {
         onSuccess: () => {
@@ -58,11 +53,11 @@ const submit = () => {
 <template>
     <Head title="Completar Registro" />
     <GuestLayout>
-        <div class="text-center mb-5">
+        <!-- <div class="text-center mb-5">
             <h1 class="block text-xl font-bold text-alterno">
                 Datos Personales
             </h1>
-        </div>
+        </div> -->
 
         <div class="mb-6">
             <p class="text-sm text-gray-600">
@@ -72,18 +67,36 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="dni" :value="$t('DNI')" />
-                <InputText
-                    id="dni"
-                    v-model="form.dni"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="off"
-                />
-                <InputError class="mt-2" :message="form.errors.dni" />
+            <!-- DNI y Celular en la misma fila -->
+            <div class="mt-4 flex gap-4">
+                <div class="w-1/2">
+                    <InputLabel for="dni" :value="$t('DNI')" />
+                    <InputText
+                        id="dni"
+                        maxlength="8"
+                        v-model="form.dni"
+                        type="text"
+                        class="mt-1 block w-full"
+                        required
+                        autocomplete="off"
+                    />
+                    <InputError class="mt-2" :message="form.errors.dni" />
+                </div>
+
+                <div class="w-1/2">
+                    <InputLabel for="celular" :value="$t('Cellular')" />
+                    <InputText
+                        id="celular"
+                        v-model="form.celular"
+                        type="text"
+                        class="mt-1 block w-full"
+                        required
+                        autocomplete="off"
+                    />
+                    <InputError class="mt-2" :message="form.errors.celular" />
+                </div>
             </div>
+
             <div class="mt-4" v-if="esEstudiante">
                 <InputLabel for="codigo" :value="$t('Código de estudiante')" />
                 <InputText
@@ -96,6 +109,7 @@ const submit = () => {
                 />
                 <InputError class="mt-2" :message="form.errors.codigo" />
             </div>
+
             <div class="mt-4">
                 <InputLabel for="nombres" :value="$t('Names')" />
                 <InputText
@@ -121,34 +135,20 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.apellidos" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="celular" :value="$t('Cellular')" />
-                <InputText
-                    id="celular"
-                    v-model="form.celular"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="off"
-                />
-                <InputError class="mt-2" :message="form.errors.celular" />
-            </div>
-
-            <!-- Campo de razón de registro (solo para correos externos) -->
+            <!-- Campo de razón de registro con mismo estilo que los inputs -->
             <div class="mt-4" v-if="!esCorreoUDH">
                 <InputLabel for="razon_registro" value="Razón de registro" />
-                <!-- Asegurar que tiene un nombre para el formulario -->
+                <p class="text-xs text-gray-500 mt-1">
+                    Como usuario externo, por favor indique el motivo por el cual desea registrarse para utilizar los recursos de la UDH.
+                </p>
                 <textarea
                     id="razon_registro"
                     v-model="form.razon_registro"
-                    name="razon_registro"
-                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                    rows="4"
-                    placeholder="Explique brevemente por qué desea utilizar los recursos de la Universidad de Huánuco"
-                ></textarea>
-                <p class="text-sm text-gray-500 mt-1">
-                    Como usuario externo, por favor indique el motivo por el cual desea registrarse para utilizar los recursos de la Universidad.
-                </p>
+                    class="w-full border-gray-300 border outline-none p-3 focus:border-primario focus:ring-primario rounded-md shadow-sm"
+                    required
+                    autocomplete="off"
+                />
+
                 <InputError class="mt-2" :message="form.errors.razon_registro" />
             </div>
 

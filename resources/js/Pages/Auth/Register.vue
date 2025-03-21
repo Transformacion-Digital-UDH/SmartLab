@@ -62,7 +62,7 @@ const submit = () => {
             <div class="fixed inset-0 transition-opacity">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            
+
             <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full p-6 z-50 relative">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Correo externo detectado</h3>
                 <p class="mb-4 text-gray-600">
@@ -70,13 +70,13 @@ const submit = () => {
                     ¿Desea cambiar de correo o continuar?
                 </p>
                 <div class="flex justify-end space-x-3">
-                    <button 
+                    <button
                         @click="changeEmail"
                         class="bg-gray-200 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-300"
                     >
                         Cambiar correo
                     </button>
-                    <button 
+                    <button
                         @click="continueRegistration"
                         class="bg-primario px-4 py-2 rounded-md text-white hover:bg-primario-dark"
                     >

@@ -17,6 +17,14 @@ class PanelController extends Controller
 {
     public function index()
     {
+        // Obtener usuarios de solicitud: estado "En revisión" y rol "Invitado"
+        $usuarios_solicitud = User::where('estado_cuenta', 'En revisión')
+                                ->where('rol', 'Invitado')
+                                // ->where('se_registro', 1)
+                                ->where('is_active', true)
+                                ->orderBy('created_at', 'desc')
+                                ->get();
+
         $reservas = Reserva::with(['usuario', 'equipo', 'recurso', 'area'])
             ->where('estado', 'Por aprobar')
             ->orderBy('hora_inicio')
@@ -34,18 +42,18 @@ class PanelController extends Controller
                             ->count();
 
         $proyectosCount = Proyecto::where('is_active', true)
-                            ->where('estado', 'En proceso')
-                            ->count();
+                                ->where('estado', 'En proceso')
+                                ->count();
 
         $asistenciasCount = Asistencia::whereDate('created_at', Carbon::today())
-                            ->where('is_active', true)
-                            ->count();
+                                    ->where('is_active', true)
+                                    ->count();
 
         // Cambiar equipos por reservas de hoy
         $reservasHoyCount = Reserva::whereDate('hora_inicio', Carbon::today())
-                                 ->where('is_active', true)
-                                 ->where('estado', 'Aprobada')
-                                 ->count();
+                                ->where('is_active', true)
+                                ->where('estado', 'Aprobada')
+                                ->count();
 
         // Calcular asistencias mensuales para la gráfica (últimos 6 meses)
         $asistenciasMensuales = [];
@@ -57,13 +65,14 @@ class PanelController extends Controller
             $etiquetasMeses[] = $nombreMes;
 
             $conteo = Asistencia::whereYear('hora_entrada', $mes->year)
-                              ->whereMonth('hora_entrada', $mes->month)
-                              ->count();
+                                ->whereMonth('hora_entrada', $mes->month)
+                                ->count();
 
             $asistenciasMensuales[] = $conteo;
         }
 
         return Inertia::render('Panel/Index', [
+            'usuarios_solicitud' => $usuarios_solicitud,
             'reservas' => $reservas,
             'equipos' => $equipos,
             'recursos' => $recursos,
@@ -79,4 +88,5 @@ class PanelController extends Controller
             'etiquetasMeses' => $etiquetasMeses,
         ]);
     }
+
 }
