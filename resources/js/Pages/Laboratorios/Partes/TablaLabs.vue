@@ -36,6 +36,7 @@ const props = defineProps({
     laboratorios: Array,
 });
 
+console.log(props.laboratorios);
 const emitir = defineEmits(["editar", "mostrar-areas", "actualizar-tabla"]);
 
 // Definir las columnas de la tabla de laboratorios

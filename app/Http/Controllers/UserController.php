@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
 
@@ -126,7 +127,7 @@ class UserController extends Controller
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente');
     }
 
-    
+
     public function destroy(User $usuario)
     {
         $usuario->is_active = false;
@@ -143,5 +144,14 @@ class UserController extends Controller
             ->where('is_active', true)
             ->orderBy('nombres')
             ->get();
+    }
+
+
+    public function seleccionarLaboratorio(Request $request)
+    {
+        $user = User::find(Auth::id());
+        $user->laboratorio_seleccionado = $request->laboratorio_id;
+        $user->save();
+
     }
 }

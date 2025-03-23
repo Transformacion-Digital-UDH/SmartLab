@@ -16,9 +16,7 @@ use App\Http\Controllers\UserController;
 use App\Models\Proyecto;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+
 
 // Página principal
 Route::get('/', function () {
@@ -73,6 +71,8 @@ Route::middleware([
     Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
     Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
     Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+    Route::post('/usuario/seleccionar-laboratorio', [UserController::class, 'seleccionarLaboratorio'])
+    ->name('usuario.seleccionarLaboratorio');
 
     // miembros
     Route::get('/miembros', [MiembroController::class, 'index'])->name('miembros.index');

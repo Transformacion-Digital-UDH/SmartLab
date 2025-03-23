@@ -31,5 +31,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(ReservaSeeder::class);
 
+        $this->call(LaboratorioUserSeeder::class);
+
     }
 }

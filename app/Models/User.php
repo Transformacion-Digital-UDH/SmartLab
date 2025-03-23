@@ -41,6 +41,7 @@ class User extends Authenticatable
         'razon_registro',
         'se_registro',
         'is_active',
+        'laboratorio_seleccionado',
     ];
 
     /**
@@ -94,22 +95,9 @@ class User extends Authenticatable
         return $this->hasMany(MiembroProyecto::class);
     }
 
-    public function laboratorios()
+    public function laboratoriosParticipante()
     {
-        return $this->belongsToMany(Laboratorio::class)
-            ->withPivot('rol')
-            ->withTimestamps()
-            ->using(LaboratorioUser::class);
-    }
-
-    public function laboratoriosResponsable()
-    {
-        return $this->hasMany(Laboratorio::class, 'responsable_id');
-    }
-
-    public function laboratoriosCoordinador()
-    {
-        return $this->hasMany(Laboratorio::class, 'coordinador_id');
+        return $this->hasMany(LaboratorioUser::class, 'user_id');
     }
 
     // Setters

@@ -102,7 +102,6 @@ const cargandoUsuarios = ref(false);
 
 // Actualiza el array de usuarios seleccionados
 const actualizarUsuariosSeleccionados = (value) => {
-    console.log("Usuarios seleccionados: ", value); // Verifica si los datos están llegando correctamente
     usuariosSeleccionados.value = value;
 };
 
@@ -124,7 +123,6 @@ const cargarParticipantes = async () => {
             correo: participante.usuario.email,
             celular: participante.usuario.celular,
         }));
-        console.log("Participantes: ", participantes.value);
         cargarUsuarios(); // Cargar usuarios después de cargar participantes
     } catch (error) {
         console.error('Error al cargar los participantes:', error);
@@ -147,7 +145,6 @@ const cargarUsuarios = async () => {
                 label: `${usuario.dni} - ${usuario.nombres} ${usuario.apellidos} - ${usuario.email}`,
                 value: usuario.id,
             }));
-        console.log("Opciones de usuarios: ", opcionesUsuarios.value);
     } catch (error) {
         console.error("Error al cargar usuarios:", error);
         message.error('Error al cargar usuarios');
@@ -158,7 +155,6 @@ const cargarUsuarios = async () => {
 
 // Agregar participantes al proyecto
 const agregarParticipantes = async () => {
-    console.log("Usuarios seleccionados para agregar: ", usuariosSeleccionados.value);
     if (usuariosSeleccionados.value.length === 0) {
         message.warning('Selecciona al menos un usuario');
         return;

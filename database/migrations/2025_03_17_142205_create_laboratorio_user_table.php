@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('laboratorio_user', function (Blueprint $table) {
             $table->id();
+            $table->enum('rol', ['Miembro', 'Coordinador', 'Responsable']);
+            $table->boolean('is_active')->default(true);
+
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('laboratorio_id')->constrained()->onDelete('cascade');
-            $table->enum('rol', ['Miembro', 'Coordinador', 'Responsable']);
-            $table->timestamps();
 
             $table->unique(['user_id', 'laboratorio_id']);
+            $table->timestamps();
         });
     }
 

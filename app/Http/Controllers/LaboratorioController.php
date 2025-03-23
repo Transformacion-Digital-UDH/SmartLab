@@ -26,16 +26,16 @@ class LaboratorioController extends Controller
     // Listar los laboratorios en la vista
     public function index()
     {
-        $laboratorios = Laboratorio::with('responsable')
-            ->where('is_active', true)
+        $laboratorios = Laboratorio::where('is_active', true)
             ->orderBy('id', 'desc')
             ->get();
 
-        $responsables = User::where('is_active', true)->get();
+        $usuarios = User::where('is_active', true)
+            ->get();
 
         return Inertia::render('Laboratorios/Index', [
             'laboratorios' => $laboratorios,
-            'responsables' => $responsables,
+            'usuarios' => $usuarios,
         ]);
     }
 

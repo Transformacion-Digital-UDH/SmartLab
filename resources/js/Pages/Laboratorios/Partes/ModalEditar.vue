@@ -1,12 +1,14 @@
 <template>
-    <Modal
+    <Drawer
         title="Editar laboratorio"
         :open="visible"
-        @cancel="cerrarModal"
-        centered
+        @close="cerrarModal"
+        placement="right"
         :footer="null"
+        width="100&"
+        class="sm:min-w-[560px]"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="laboratorio" class="mt-4">
+        <Form layout="vertical" @finish="enviarFormulario" :model="laboratorio">
             <FormItem label="Nombre *" name="nombre">
                 <Input
                     v-model:value="laboratorio.nombre"
@@ -27,6 +29,18 @@
                 <InputError :message="errors.responsable_id?.[0]" />
             </FormItem>
 
+            <FormItem label="Coordinador" name="coordinador_id">
+                <Select
+                    v-model:value="laboratorio.coordinador_id"
+                    placeholder="Seleccione un coordinador"
+                    :options="opcionesResponsables"
+                    show-search
+                    :filter-option="buscarResponsable"
+                    allowClear
+                />
+                <InputError :message="errors.coordinador_id?.[0]" />
+            </FormItem>
+
             <div class="block md:flex gap-x-3">
                 <FormItem label="Código *" name="codigo" class="w-full">
                     <Input
@@ -36,7 +50,6 @@
                     />
                     <InputError :message="errors.codigo?.[0]" />
                 </FormItem>
-
                 <FormItem label="Aforo" name="aforo" class="w-full">
                     <InputNumber
                         v-model:value="laboratorio.aforo"
@@ -50,7 +63,6 @@
                 </FormItem>
             </div>
 
-            <!-- Agrupamos Email y Fecha de inauguración en la misma fila -->
             <div class="block md:flex gap-x-3">
                 <FormItem label="Email" name="email" class="w-full">
                     <Input
@@ -59,8 +71,11 @@
                     />
                     <InputError :message="errors.email?.[0]" />
                 </FormItem>
-
-                <FormItem label="Fecha de inauguración" name="inauguracion" class="w-full">
+                <FormItem
+                    label="Fecha de inauguración"
+                    name="inauguracion"
+                    class="w-full"
+                >
                     <Input
                         type="date"
                         v-model:value="laboratorio.inauguracion"
@@ -70,24 +85,28 @@
                 </FormItem>
             </div>
 
-            <!-- Campo Descripción al final -->
             <FormItem label="Descripción" name="descripcion">
                 <Textarea
                     v-model:value="laboratorio.descripcion"
                     placeholder="Ingrese una descripción"
-                    auto-size
+                    :auto-size="{ minRows: 3 }"
                 />
                 <InputError :message="errors.descripcion?.[0]" />
             </FormItem>
-
-            <FormItem class="flex justify-end mb-0">
-                <Button class="mr-3" @click="cerrarModal"> Cancelar </Button>
-                <Button type="primary" htmlType="submit" :loading="cargando">
-                    Actualizar
-                </Button>
-            </FormItem>
         </Form>
-    </Modal>
+
+        <template #extra>
+            <Button class="mr-3" @click="cerrarModal">Cancelar</Button>
+            <Button
+                type="primary"
+                htmlType="submit"
+                @click="enviarFormulario"
+                :loading="cargando"
+            >
+                Actualizar
+            </Button>
+        </template>
+    </Drawer>
 </template>
 
 <script setup>
@@ -95,7 +114,7 @@ import { ref, watch } from "vue";
 import InputError from "@/Components/Inputs/InputError.vue";
 import axios from "axios";
 import {
-    Modal,
+    Drawer,
     Form,
     FormItem,
     Input,
@@ -108,7 +127,7 @@ import {
 
 const props = defineProps({
     visible: Boolean,
-    responsables: Array,
+    usuarios: Array,
     laboratorio: {
         type: Object,
         default: () => ({
@@ -118,7 +137,10 @@ const props = defineProps({
             aforo: null,
             email: "",
             inauguracion: null,
+            responsable: null,
+            coordinador: null,
             responsable_id: "",
+            coordinador_id: "",
         }),
     },
 });
@@ -130,29 +152,25 @@ const cargando = ref(false);
 const errores = ref({});
 const errors = errores; // alias para utilizar "errors" en el template
 
-// Incluimos en el label el nombre, el DNI y el correo del responsable
+// Configuramos las opciones para el select de responsables
 const opcionesResponsables = ref(
-    props.responsables.map((responsable) => ({
+    props.usuarios.map((responsable) => ({
         label: `${responsable.nombres} ${responsable.apellidos} - ${responsable.dni} - ${responsable.email}`,
         value: responsable.id,
     }))
 );
 
-// Cierra el modal
 const cerrarModal = () => {
     emitir("update:visible", false);
 };
 
-// La función de búsqueda revisa todo el label para encontrar coincidencias
 const buscarResponsable = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
 };
 
-// Envía el formulario
 const enviarFormulario = async () => {
     cargando.value = true;
     errors.value = {};
-
     try {
         const response = await axios.put(
             route("laboratorios.update", props.laboratorio.id),
@@ -162,7 +180,7 @@ const enviarFormulario = async () => {
         emitir("actualizar-tabla", response.data["laboratorio"]);
         cerrarModal();
     } catch (error) {
-        message.error("Error al agregar el laboratorio");
+        message.error("Error al actualizar el laboratorio");
         if (error.response && error.response.data.errors) {
             errors.value = error.response.data.errors;
         }
@@ -171,14 +189,22 @@ const enviarFormulario = async () => {
     }
 };
 
-// Verificar si el modal se abre
 watch(
     () => props.visible,
     (val) => {
         errors.value = {};
         if (val) {
             laboratorio.value = { ...props.laboratorio };
+            if (laboratorio.value.responsable) {
+                laboratorio.value.responsable_id =
+                    laboratorio.value.responsable.id;
+            }
+            if (laboratorio.value.coordinador) {
+                laboratorio.value.coordinador_id =
+                    laboratorio.value.coordinador.id;
+            }
         }
-    }
+    },
+    { immediate: true }
 );
 </script>

@@ -18,7 +18,6 @@ class LaboratorioSeeder extends Seeder
             'email' => 'starlab@udh.edu.pe',
             'inauguracion' => '2024-05-13',
             'is_active' => true,
-            'responsable_id' => 3,
         ]);
 
         Laboratorio::create([
@@ -29,7 +28,6 @@ class LaboratorioSeeder extends Seeder
             'email' => 'starlab@udh.edu.pe',
             'inauguracion' => '2024-05-13',
             'is_active' => true,
-            'responsable_id' => 3,
         ]);
 
         Laboratorio::create([
@@ -40,7 +38,6 @@ class LaboratorioSeeder extends Seeder
             'email' => 'transformaciondigital@udh.edu.pe',
             'inauguracion' => '2024-05-13',
             'is_active' => true,
-            'responsable_id' => 2,
         ]);
     }
 }
