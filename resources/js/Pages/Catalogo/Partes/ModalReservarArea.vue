@@ -41,11 +41,10 @@
 
 	function onRangeChange([start,end]) {
 		if (!start || !end) return;
-		
+
 		const h = Math.floor(dayjs(end).diff(dayjs(start),'hour',true))
 		const m = Math.floor(dayjs(end).diff(dayjs(start),'minute',true))%60
 
-		console.log(`${Math.floor(h)}h ${m%60}m`);
 		tiempo.value = `: ${h}h ${m}m`
 
 		if (h < 3) {
@@ -57,7 +56,7 @@
 
 	function onRangeOk([start,end]){
 		if (!start || !end) return;
-		
+
 		data.hora_inicio = dayjs(start).format('YYYY-MM-DD HH:mm:ss')
 		data.hora_fin = dayjs(end).format('YYYY-MM-DD HH:mm:ss')
 	}
@@ -87,13 +86,11 @@
 			data.recurso_id = null;
 			data.area_id = recurso.value.id;
 			}
-		
-		console.log(data);
+
 		cargando.value = true;
 
 		try {
 			const response = await axios.post(route('reservas.store'), {...data});
-			console.log(response.data);
 			if (response.status === 201) {
 				message.success('Solicitud de reserva enviada correctamente');
 				emitir('close');
@@ -102,7 +99,6 @@
 			}
 		} catch (error) {
 			message.error('Error al reservar');
-			console.log(error);
 		} finally {
 			cargando.value = false;
 		}

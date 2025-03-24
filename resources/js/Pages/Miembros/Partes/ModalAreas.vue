@@ -201,7 +201,6 @@ const cargarAreas = async () => {
             key: index.toString(),
             ...area,
         }));
-        console.log("Áreas cargadas:", areas.value);
     } catch (error) {
         console.error("Error al cargar las áreas:", error);
     }

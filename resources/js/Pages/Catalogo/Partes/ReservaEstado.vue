@@ -3,7 +3,6 @@
 		estado: String
 	});
 
-  console.log(props);
 </script>
 <template>
   <div v-if="props.estado == 'Aprobada'" class="size-3 rounded-full success"></div>

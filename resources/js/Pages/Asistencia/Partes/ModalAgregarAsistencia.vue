@@ -2,7 +2,7 @@
     import { ref, watch } from 'vue';
     import { Modal, Form, FormItem, Input, Select, InputNumber, Button, message, SelectOption } from 'ant-design-vue';
     import { CheckCircleFilled, CheckCircleOutlined, AppleOutlined, AndroidOutlined, ExclamationCircleOutlined, UserOutlined, InfoCircleOutlined } from '@ant-design/icons-vue';
-    
+
 
     import axios from 'axios';
 
@@ -42,26 +42,24 @@
     const enviarFormulario = async () => {
         console.clear()
         cargando.value = true;
-        console.log({...asistencia.value})
         try {
             const data = {
                 ...asistencia.value,
                 hora_entrada: asistencia.value.hora_entrada.replace('T',' ').concat(':00'),
                 hora_salida: asistencia.value.hora_salida.replace('T',' ').concat(':00')
             }
-            console.log(data)
             // Enviar la solicitud para crear el laboratorio
             const response = await axios.post(route('asistencias.registroCompleto'), data);
 
             if (response.status === 201) {
-                
+
                 message.success('La asistencia a sido registrado exitosamente');
                 cerrarModal();
                 emitir('actualizar-tabla', response.data["asistencia"]);
             } else {
                 throw new 'Error al registrar la asistencia'
             }
-           
+
         } catch (error) {
             message.error('Error al registrar la asistencia');
         } finally {
@@ -75,10 +73,10 @@
         const response = await fetch(`/api/asistencia/user/${dni.value}`);
         cargando.value = false
         if (response.ok) {
-            
+
             const data = await response.json();
-    
-    
+
+
             asistencia.value.usuario_id = data.id
             proyectos.value = data.proyectos
             usuarioInfo.value = {
@@ -107,7 +105,7 @@
     >
         <div>
             <div v-if="asistencia.usuario_id == null">
-                
+
                 <Input v-model:value="dni" placeholder="Ingrese el DNI" autofocus class=" placeholder:text-neutral-400 mb-2" />
                 <!-- Error -->
                  <div v-if="usuarioEncontrado" class="flex items-center gap-2 px-2 text-red-500 pb-4">
@@ -123,7 +121,7 @@
                         <UserOutlined class="text-xl"/> {{ usuarioInfo.nombres }} {{  usuarioInfo.apellidos }}
                     </div>
                 </div>
-                
+
                 <h1 class="font-bold mb-2">Selecione su proyecto</h1>
                 <Select
                     ref="select"
@@ -137,8 +135,8 @@
 
                 <h1 class="font-bold mb-2 mt-4">Selecione la fecha de entrada</h1>
                 <Input type="datetime-local" v-model:value="asistencia.hora_entrada"   class="w-full rounded-xl"/>
-                
-              
+
+
                 <h1 class="font-bold mb-2 mt-3">Selecione la fecha de salida</h1>
                 <Input type="datetime-local" v-model:value="asistencia.hora_salida" class="rounded-xl" />
 

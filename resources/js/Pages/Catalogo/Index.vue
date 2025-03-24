@@ -31,7 +31,6 @@ const equipos = ref(
 	})) || []
 );
 
-console.log(equipos.value);
 const areas = ref(props.areas || []);
 const recursoSeleccionado = ref(null);
 const valorBuscar = ref('');

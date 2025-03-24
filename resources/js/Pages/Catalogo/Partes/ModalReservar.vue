@@ -94,7 +94,6 @@ watch(
                         };
                     });
                     reservas.value = data.reservas;
-                    console.log("reservas", reservas.value);
                     cargando.value = false;
 
                     // Asigna imagen por defecto si no existen fotos (aplica para área, recurso o equipo)
@@ -114,7 +113,6 @@ watch(
 function onRangeChange([start, end]) {
     const h = Math.floor(dayjs(end).diff(dayjs(start), "hour", true));
     const m = Math.floor(dayjs(end).diff(dayjs(start), "minute", true)) % 60;
-    console.log(`${Math.floor(h)}h ${m % 60}m`);
     tiempo.value = `: ${h}h ${m}m`;
     disabled.value = h < 3 ? false : true;
 }
@@ -145,7 +143,6 @@ const handleOk = async () => {
 
     try {
         const response = await axios.post(route("reservas.store"), { ...data });
-        console.log("data", data);
         if (response.status === 201) {
             message.success("Solicitud de reserva enviada correctamente");
             emitir("close");
@@ -154,7 +151,6 @@ const handleOk = async () => {
         }
     } catch (error) {
         message.error("Error al reservar");
-        console.log(error);
     } finally {
         cargando.value = false;
     }
@@ -222,7 +218,6 @@ function onHoraFinCambio(v) {
 }
 
 function validation() {
-    console.log(90);
     const ini = new Date(
         ...DateTime.toDateList(fecha.value),
         ...hora_inicio.value.value.split(":").map((n) => Number(n))

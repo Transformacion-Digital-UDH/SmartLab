@@ -24,21 +24,21 @@ class ProyectoController extends Controller
     // Listar los proyectos en la vista
     public function index()
     {
-        $proyectos = Proyecto::with('responsable')
-            ->with('laboratorio')
-            ->where('is_active', true)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        $responsables = User::all();
         $user = Auth::user();
 
-        if ($user->rol !== 'Admin') {
-            // Combinar laboratorios del usuario en los que es responsable o coordinador.
-            $laboratorios = $user->laboratoriosResponsable->merge($user->laboratoriosCoordinador);
-        } else {
-            $laboratorios = Laboratorio::all();
+        $proyectosQuery = Proyecto::with('responsable')
+            ->with('laboratorio')
+            ->where('is_active', true);
+
+        // Filtrar por laboratorio si el usuario no es Admin o tiene un laboratorio seleccionado
+        if ($user->rol !== 'Admin' || $user->laboratorio_seleccionado !== null) {
+            $proyectosQuery->where('laboratorio_id', $user->laboratorio_seleccionado);
         }
+
+        $proyectos = $proyectosQuery->orderBy('id', 'desc')->get();
+
+        $responsables = User::all();
+        $laboratorios = Laboratorio::all();
 
         return Inertia::render('Proyectos/Index', [
             'proyectos' => $proyectos,

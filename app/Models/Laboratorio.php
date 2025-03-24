@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Laboratorio extends Model
 {
     use HasFactory;
+
+    protected $appends = ['responsable', 'coordinador'];
+
 
     // Campos que se pueden asignar de forma masiva (al crear o actualizar un registro).
     protected $fillable = [
@@ -20,8 +24,6 @@ class Laboratorio extends Model
         'ubicacion',
         'google_calendar_id',
         'is_active',
-        'responsable_id',
-        'coordinador_id',
     ];
 
     // Relaciones
@@ -40,29 +42,58 @@ class Laboratorio extends Model
         return $this->hasMany(Area::class);
     }
 
-    // Un laboratorio tiene un responsable que es un usuario.
-    public function responsable()
-    {
-        return $this->belongsTo(User::class, 'responsable_id');
-    }
-
-    // Un laboratorio tiene un coordinador que es un usuario.
-    public function coordinador()
-    {
-        return $this->belongsTo(User::class, 'coordinador_id');
-    }
-
     // Un laboratorio puede tener muchas asistencias.
     public function asistencias()
     {
         return $this->hasMany(Asistencia::class, 'laboratorio_id');
     }
 
-    public function usuarios()
+    // Relación muchos a muchos con usuarios (participantes del laboratorio).
+    public function participantes()
     {
-        return $this->belongsToMany(User::class)
-            ->withPivot('rol')
-            ->withTimestamps()
-            ->using(LaboratorioUser::class);
+        return $this->belongsToMany(User::class, 'laboratorio_user')
+                    ->withPivot('rol')
+                    ->using(LaboratorioUser::class);
     }
+
+    public function miembros()
+    {
+        return $this->belongsToMany(User::class, 'laboratorio_user')
+                    ->withPivot('rol')
+                    ->wherePivot('rol', 'Miembro')
+                    ->using(LaboratorioUser::class);
+    }
+
+    public function responsable()
+    {
+        // Devuelve el primer responsable encontrado
+        return $this->belongsToMany(User::class, 'laboratorio_user')
+                    ->withPivot('rol')
+                    ->wherePivot('rol', 'Responsable')
+                    ->using(LaboratorioUser::class)
+                    ->oldest('laboratorio_user.created_at')  // Ordena por el más antiguo primero
+                    ->limit(1);
+    }
+
+    public function getResponsableAttribute()
+    {
+        return $this->responsable()->first();
+    }
+
+    public function coordinador()
+    {
+        // Devuelve el primer coordinador encontrado
+        return $this->belongsToMany(User::class, 'laboratorio_user')
+                    ->withPivot('rol')
+                    ->wherePivot('rol', 'Coordinador')
+                    ->using(LaboratorioUser::class)
+                    ->oldest('laboratorio_user.created_at')  // Ordena por el más antiguo primero
+                    ->limit(1);
+    }
+
+    public function getCoordinadorAttribute()
+    {
+        return $this->coordinador()->first();
+    }
+
 }

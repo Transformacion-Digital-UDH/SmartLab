@@ -21,21 +21,22 @@ class LaboratorioController extends Controller
         'email' => ['nullable', 'email', 'min:5', 'max:100'],
         'inauguracion' => ['nullable', 'date'],
         'responsable_id' => ['required', 'integer', 'exists:users,id'],
+        'coordinador_id' => ['nullable', 'integer', 'exists:users,id'],
     ];
 
     // Listar los laboratorios en la vista
     public function index()
     {
-        $laboratorios = Laboratorio::with('responsable')
-            ->where('is_active', true)
+        $laboratorios = Laboratorio::where('is_active', true)
             ->orderBy('id', 'desc')
             ->get();
 
-        $responsables = User::where('is_active', true)->get();
+        $usuarios = User::where('is_active', true)
+            ->get();
 
         return Inertia::render('Laboratorios/Index', [
             'laboratorios' => $laboratorios,
-            'responsables' => $responsables,
+            'usuarios' => $usuarios,
         ]);
     }
 
@@ -47,20 +48,27 @@ class LaboratorioController extends Controller
         // Crear el laboratorio en la BD
         $laboratorio = Laboratorio::create($request->all());
 
-        // Crear el calendario en Google Calendar
+        // Asociar usuarios con roles
+        $laboratorio->participantes()->attach($request->responsable_id, [
+            'rol' => 'Responsable',
+            'is_active' => true
+        ]);
+
+        $laboratorio->participantes()->attach($request->coordinador_id, [
+            'rol' => 'Coordinador',
+            'is_active' => true
+        ]);
+
         try {
             $calendarId = $googleCalendarService->createCalendar($laboratorio->nombre);
             $laboratorio->update(['google_calendar_id' => $calendarId]);
         } catch (\Exception $e) {
-            // Puedes loguear el error si lo deseas
             Log::error("Error al crear calendario: " . $e->getMessage());
-
             return response()->json([
                 'error' => 'No se pudo crear el calendario en Google: ' . $e->getMessage()
             ], 500);
         }
 
-        // Crear un área general por defecto
         Area::create([
             'nombre' => 'General',
             'descripcion' => 'Área general del laboratorio',
@@ -75,12 +83,46 @@ class LaboratorioController extends Controller
         ]);
     }
 
-
     // Actualizar laboratorio
     public function update(Request $request, Laboratorio $laboratorio)
     {
         $request->validate($this->rules);
+
+        // Verificar si el responsable ha cambiado
+        if ($request->responsable_id != $laboratorio->responsable_id) {
+            // Eliminar todos los responsables actuales del laboratorio
+            $laboratorio->participantes()
+                ->wherePivot('rol', 'Responsable')
+                ->detach();
+
+            // Asignar el nuevo responsable
+            $laboratorio->participantes()->attach($request->responsable_id, [
+                'rol' => 'Responsable',
+                'is_active' => true
+            ]);
+        }
+
+        // Verificar si el coordinador ha cambiado
+        if ($request->coordinador_id != $laboratorio->coordinador_id) {
+            // Eliminar todos los coordinadores actuales del laboratorio
+            $laboratorio->participantes()
+                ->wherePivot('rol', 'Coordinador')
+                ->detach();
+
+            // Asignar el nuevo coordinador
+            $laboratorio->participantes()->attach($request->coordinador_id, [
+                'rol' => 'Coordinador',
+                'is_active' => true
+            ]);
+        }
+
+        // Actualizar los demás campos del laboratorio
         $laboratorio->update($request->all());
+
+        return response()->json([
+            'message' => 'Laboratorio actualizado correctamente',
+            'laboratorio' => $laboratorio
+        ]);
     }
 
     // Eliminar laboratorio

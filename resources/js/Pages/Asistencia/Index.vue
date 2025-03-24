@@ -19,7 +19,6 @@
 
     let asistencias = asistenciasPaginate.data
 
-	console.log(props)
 	const token = ref(props.token || []);
 	const loading = ref(false)
 
@@ -70,8 +69,6 @@
 	function showModal(asistencia) {
 		open.value = true
 		selectedTime.value = new Date(asistencia.horaEntrada);
-		console.log(selectedTime)
-		console.log(asistencia.horaEntrada)
 	}
 
 	const actualizarTabla = () => {
@@ -80,7 +77,6 @@
 
 	const abrirModalEditar = (asistencia) => {
 		console.clear()
-		console.log(asistencia)
 		mostrarModalEditar.value = true;
 		asistenciaSeleccionado.value = { ...asistencia };
 	};

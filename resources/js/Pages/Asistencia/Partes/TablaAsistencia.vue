@@ -13,8 +13,6 @@
     asistencias: Array,
   });
 
-  console.log(props.asistencias);
-
   const emitir = defineEmits(["editar", "actualizar-tabla"]);
 
   // Definir las columnas de la tabla de laboratorios
