@@ -30,7 +30,7 @@ const props = defineProps({
 const emitir = defineEmits(["editar", "actualizar-tabla"]);
 
 const columnas = [
-    { title: "Código", dataIndex: "codigo", key: "codigo" },
+    { title: "Código", dataIndex: "codigo", key: "codigo", width: 110 },
     {
         title: "Nombre",
         key: "nombre",

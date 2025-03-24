@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Laboratorio;
+use App\Models\LaboratorioUser;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
@@ -11,48 +14,51 @@ class MiembroController extends Controller
 {
     public function index()
     {
-        $miembros = User::where('rol', 'Miembro')
-            ->where('is_active', true)
-            ->orderBy('id', 'desc')
+        $user = Auth::user();
+        // No filtrar por laboratorio si el usuario es "Admin" y no tiene un laboratorio seleccionado
+        if (!($user->rol === 'Admin' && $user->laboratorio_seleccionado === null)) {
+
+            $laboratorio = Laboratorio::find($user->laboratorio_seleccionado);
+
+            $participantes = $laboratorio->participantes()
+            ->where('users.is_active', true)
+            ->orderBy('users.id', 'desc')
+            ->get();
+
+        } else {
+            $participantes = collect();
+        }
+
+        $usuarios = User::where('is_active', true)
             ->get();
 
         return Inertia::render('Miembros/Index', [
-            'miembros' => $miembros,
+            'miembros' => $participantes,
+            'usuarios' => $usuarios,
         ]);
     }
 
     public function store(Request $request)
     {
+        // Validar que el usuario seleccionado existe
         $request->validate([
-            'nombres' => 'required|max:255',
-            'apellidos' => 'required|max:255',
-            'dni' => 'required|numeric|digits:8|unique:users,dni',
-            'email' => 'nullable|email|max:255|unique:users,email',
-            'password' => 'required|min:6',
-            'is_active' => 'boolean',
+            'usuario_id' => 'required|exists:users,id',
         ], [
             'required' => 'Este campo es obligatorio.',
-            'email' => 'Ingrese un correo electrónico válido.',
-            'unique' => 'Este valor ya está registrado.',
-            'max' => 'Este campo no puede exceder de :max caracteres.',
-            'numeric' => 'Este campo debe ser un número.',
-            'digits' => 'Este campo debe tener :digits dígitos.',
-            'in' => 'El rol seleccionado no es válido.',
+            'exists' => 'El usuario seleccionado no existe.',
         ]);
 
-        User::create([
-            'nombres' => $request->nombres,
-            'apellidos' => $request->apellidos,
-            'dni' => $request->dni,
-            'email' => $request->email,
-            'celular' => $request->celular,
-            'password' => Hash::make($request->password),
-            'codigo' => $request->codigo,
+        // Obtener el laboratorio seleccionado del usuario autenticado
+        $user = Auth::user();
+        $laboratorioId = $user->laboratorio_seleccionado;
+
+        // Crear la relación en la tabla laboratorio_user
+        LaboratorioUser::create([
+            'user_id' => $request->usuario_id,
+            'laboratorio_id' => $laboratorioId,
             'rol' => 'Miembro',
-            'is_active' => $request->is_active ?? true,
         ]);
 
-        return redirect()->route('miembros.index')->with('success', 'Miembro creado exitosamente');
     }
 
     public function update(Request $request, User $miembro)
