@@ -18,6 +18,7 @@ import {
     UserOutlined,
     LogoutOutlined,
     BarChartOutlined,
+    PartitionOutlined,
 } from "@ant-design/icons-vue";
 
 const showingNavigationDropdown = ref(false);
@@ -77,6 +78,7 @@ const navigationLinks = [
         route: "laboratorios.index",
         icon: ExperimentOutlined,
     },
+    { name: "Áreas", route: "areas.index", icon: PartitionOutlined },
     { name: "Inventario", route: "recursos.index", icon: AppstoreOutlined },
     { name: "Usuarios", route: "usuarios.index", icon: TeamOutlined },
     { name: "Asistencias", route: "asistencias.index", icon: SolutionOutlined },

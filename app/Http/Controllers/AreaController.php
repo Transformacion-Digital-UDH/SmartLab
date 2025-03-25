@@ -5,20 +5,43 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use App\Models\Laboratorio;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class AreaController extends Controller
 {
-    protected $reglas = [
-        'nombre' => ['required', 'string', 'max:80'],
-        'descripcion' => ['nullable', 'string', 'max:160'],
-        'aforo' => ['nullable', 'integer'],
-        'laboratorio_id' => ['nullable', 'exists:laboratorios,id'],
+    protected $rules = [
+        'nombre' => 'required|max:100',
+        'descripcion' => 'nullable',
+        'aforo' => 'nullable|integer|min:1',
+        'is_active' => 'boolean',
+        'tipo' => 'required|string|max:50',
+        'laboratorio_id' => 'required|exists:laboratorios,id',
     ];
 
-    /**
-     * API: Obtener todas las áreas activas de un laboratorio.
-     */
-    public function index($laboratorio_id)
+    // Listar las áreas en la vista
+    public function index()
+    {
+        $user = Auth::user();
+
+        $areasQuery = Area::with('laboratorio')
+            ->where('is_active', true);
+
+        // No filtrar por laboratorio si el usuario es "Admin" y no tiene un laboratorio seleccionado
+        if (!($user->rol === 'Admin' && $user->laboratorio_seleccionado === null)) {
+            $areasQuery->where('laboratorio_id', $user->laboratorio_seleccionado);
+        }
+
+        $areas = $areasQuery->orderBy('id', 'desc')->get();
+        $laboratorios = Laboratorio::all();
+
+        return Inertia::render('Areas/Index', [
+            'areas' => $areas,
+            'laboratorios' => $laboratorios,
+        ]);
+    }
+
+    public function json($laboratorio_id)
     {
         if (Laboratorio::where('id', $laboratorio_id)->exists()) {
 
@@ -31,54 +54,26 @@ class AreaController extends Controller
         }
     }
 
-    /**
-     * API: Guardar un nuevo área.
-     */
+    // Crear un área
     public function store(Request $request)
     {
-        // Validación de los datos
-        $request->validate($this->reglas);
-
-        // Crear el área
-        Area::create([
-            'nombre' => $request->nombre ?? null,
-            'descripcion' => $request->descripcion ?? null,
-            'aforo' => $request->aforo ?? null,
-            'laboratorio_id' => $request->laboratorio_id ?? null,
-            'is_active' => true,
-        ]);
+        $request->validate($this->rules);
+        Area::create($request->all());
     }
 
-    /**
-     * API: Obtener un área específica.
-     */
-    public function show(string $id)
+    // Actualizar un área
+    public function update(Request $request, Area $area)
     {
-        //
+        $request->validate($this->rules);
+        $area->update($request->all());
     }
 
-    /**
-     * API: Actualizar un área específica.
-     */
-    public function update(Request $request, $area_id)
+    // Eliminar un área (desactivar)
+    public function destroy(Area $area)
     {
-        // Validación de los datos recibidos
-        $request->validate($this->reglas);
-
-        // Buscar el área por ID y actualizarla
-        $area = Area::findOrFail($area_id);
-        $area->nombre = $request->nombre;
-        $area->descripcion = $request->descripcion;
-        $area->aforo = $request->aforo;
+        $area->is_active = false;
         $area->save();
     }
-
-    /**
-     * API: Eliminar un área específica.
-     */
-    public function destroy($area_id)
-    {
-        $area = Area::findOrFail($area_id);
-        $area->update(['is_active' => false]);
-    }
 }
+
+
