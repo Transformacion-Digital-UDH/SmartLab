@@ -50,8 +50,10 @@ const columnas = [
     },
     {
         title: "Responsable",
-        customRender: ({ record }) =>
-            `${record.responsable.nombres} ${record.responsable.apellidos}`,
+        customRender: ({ record }) => 
+            record.responsable 
+                ? `${record.responsable.nombres} ${record.responsable.apellidos}`
+                : 'Sin asignar',
         key: "nombres",
     },
     {
