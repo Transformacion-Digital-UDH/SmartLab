@@ -1,35 +1,29 @@
 <template>
     <div>
-        <!-- Buscar y Agregar Área -->
-        <div
-            class="flex flex-col-reverse justify-end gap-y-4 mb-6 sm:flex-row sm:justify-between sm:items-center gap-x-4"
-        >
-            <InputSearch
-                v-model:value="valorBuscar"
-                placeholder="Buscar área por nombre"
-                class="w-full"
-                size="large"
-            />
-
-            <Button
-                type="primary"
-                @click="abrirModalCrear"
-                size="large"
-                class="font-medium"
-            >
-                Agregar área
-            </Button>
-        </div>
-
         <!-- Tabla de Áreas -->
         <Table
             :columns="columnas"
-            :dataSource="areasFiltradas"
+            :dataSource="areas"
             rowKey="id"
             :pagination="false"
             :scroll="{ x: 800 }"
         >
             <template #bodyCell="{ column, record }">
+                <!-- Renderizar Foto -->
+                <template v-if="column.key === 'foto'">
+                    <img
+                        v-if="record.foto"
+                        :src="`/storage/${record.foto}`"
+                        alt="Foto del área"
+                        class="w-16 h-16 object-cover rounded"
+                    />
+                    <img
+                        v-else
+                        :src="`/img/default-placeholder.webp`"
+                        class="w-16 h-16 object-cover rounded"
+                    />
+                </template>
+
                 <!-- Renderizar Tags para Tipo -->
                 <template v-if="column.key === 'tipo'">
                     <Tag :color="colorTipo(record.tipo)" :bordered="false">
@@ -59,8 +53,8 @@
 </template>
 
 <script setup>
-import { ref, h, computed } from "vue";
-import { Table, Modal, message, InputSearch, Button, Tag } from "ant-design-vue";
+import { ref, h } from "vue";
+import { Table, Modal, message, Tag } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 
@@ -68,22 +62,15 @@ const props = defineProps({
     areas: Array,
 });
 
-const emitir = defineEmits(["editar", "actualizar-tabla", "abrir-crear"]);
-
-// Estado para el buscador
-const valorBuscar = ref("");
-
-// Filtrar áreas por nombre
-const areasFiltradas = computed(() =>
-    !valorBuscar.value
-        ? props.areas
-        : props.areas.filter((area) =>
-              area.nombre.toLowerCase().includes(valorBuscar.value.toLowerCase())
-          )
-);
+const emitir = defineEmits(["editar", "actualizar-tabla"]);
 
 // Definir las columnas de la tabla
 const columnas = [
+    {
+        title: "Foto",
+        key: "foto",
+        width: 120
+    },
     {
         title: "Nombre",
         dataIndex: "nombre",
@@ -103,22 +90,22 @@ const columnas = [
         key: "laboratorio",
         sorter: (a, b) => (a.laboratorio?.nombre || '').localeCompare(b.laboratorio?.nombre || ''),
     },
-    { title: "Acciones", key: "acciones", fixed: "right", width: 100 },
+    {
+        title: "Acciones",
+        key: "acciones",
+        fixed: "right",
+        width: 100
+    },
 ];
 
 // Función para determinar el color del Tag según el tipo
 const colorTipo = (tipo) => {
     const colores = {
-        Docente: "green",
-        Estudiante: "blue",
-        Administrativo: "orange",
+        Reservable: "green",
+        "No reservable": "orange",
     };
     return colores[tipo] || "default";
 };
-
-function abrirModalCrear() {
-    emitir("abrir-crear");
-}
 
 // Funciones para manejar eventos
 function editar(area) {

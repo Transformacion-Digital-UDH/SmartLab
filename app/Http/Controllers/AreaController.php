@@ -24,7 +24,7 @@ class AreaController extends Controller
     {
         $user = Auth::user();
 
-        $areasQuery = Area::with('laboratorio')
+        $areasQuery = Area::with('laboratorio',  'fotos')
             ->where('is_active', true);
 
         // No filtrar por laboratorio si el usuario es "Admin" y no tiene un laboratorio seleccionado
