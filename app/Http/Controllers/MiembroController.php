@@ -80,15 +80,18 @@ class MiembroController extends Controller
             'rol' => $request->rol,
             'is_active' => $request->is_active,
         ]);
-
-        return redirect()->route('miembros.index')->with('success', 'Miembro actualizado exitosamente');
     }
 
-    public function destroy(User $miembro)
+    public function destroy(Request $request, User $miembro)
     {
-        $miembro->is_active = false;
-        $miembro->save();
+        $request->validate([
+            'laboratorio_id' => 'required|integer',
+            'rol' => 'required|string'
+        ]);
 
-        return redirect()->route('miembros.index')->with('success', 'Miembro desactivado exitosamente');
+        LaboratorioUser::where('user_id', $miembro->id)
+            ->where('laboratorio_id', $request->laboratorio_id)
+            ->where('rol', $request->rol)
+            ->delete();
     }
 }

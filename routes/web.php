@@ -77,9 +77,9 @@ Route::middleware([
     // miembros
     Route::get('/miembros', [MiembroController::class, 'index'])->name('miembros.index');
     Route::post('/miembros', [MiembroController::class, 'store'])->name('miembros.store');
-    Route::put('/miembros/{usuario}', [MiembroController::class, 'update'])->name('miembros.update');
-    Route::delete('/miembros/{usuario}', [MiembroController::class, 'destroy'])->name('miembros.destroy');
-
+    // Route::put('/miembros/{usuario}', [MiembroController::class, 'update'])->name('miembros.update');
+    Route::delete('/miembros/{miembro}', [MiembroController::class, 'destroy'])
+    ->name('miembros.destroy');
 
     // Recursos
     Route::get('/inventario', [RecursoController::class, 'index'])->name('recursos.index');

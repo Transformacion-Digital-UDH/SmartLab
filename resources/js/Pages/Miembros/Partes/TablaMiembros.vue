@@ -1,5 +1,11 @@
 <template>
-    <Table :columns="columnas" :dataSource="miembros" rowKey="id" :pagination="false" :scroll="{ x: 800 }">
+    <Table
+        :columns="columnas"
+        :dataSource="miembros"
+        rowKey="id"
+        :pagination="false"
+        :scroll="{ x: 800 }"
+    >
         <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'acciones'">
                 <FormOutlined @click="editar(record)" class="text-blue-600" />
@@ -27,10 +33,13 @@ const props = defineProps({
     miembros: Array,
 });
 
+console.log(props.miembros);
+
+
 const emitir = defineEmits(["editar", "actualizar-tabla"]);
 
 const columnas = [
-    { title: "Código", dataIndex: "codigo", key: "codigo", width: 110 },
+    { title: "Código", dataIndex: "codigo", key: "codigo", width: 120 },
     {
         title: "Nombre",
         key: "nombre",
@@ -38,7 +47,7 @@ const columnas = [
     },
     { title: "DNI", dataIndex: "dni", key: "dni", width: 100 },
     { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Celular", dataIndex: "celular", key: "celular" },
+    { title: "Celular", dataIndex: "celular", key: "celular", width: 140 },
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 
@@ -53,7 +62,11 @@ const confirmarEliminacion = (miembro) => {
         okText: 'Confirmar',
         cancelText: 'Cancelar',
         onOk() {
-            router.delete(route('miembros.destroy', miembro), {
+            router.delete(route('miembros.destroy', miembro.id), {
+                data: {
+                    laboratorio_id: miembro.pivot.laboratorio_id,
+                    rol: miembro.pivot.rol
+                },
                 preserveScroll: true,
                 onSuccess: () => {
                     message.success('Miembro eliminado exitosamente');

@@ -147,7 +147,7 @@ const miembro = ref({
     cargo: "Miembro", // Valor fijo
 });
 
-const usuarioSeleccionado = ref(null); // ID del usuario seleccionado
+const usuarioSeleccionado = ref(props.miembros.map(m => m.id));
 const cargando = ref(false);
 
 // Computed que verifica si el usuario seleccionado ya está en miembros
