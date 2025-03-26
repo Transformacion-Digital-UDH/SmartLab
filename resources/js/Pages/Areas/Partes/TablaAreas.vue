@@ -3,7 +3,7 @@
         <!-- Tabla de Áreas -->
         <Table
             :columns="columnas"
-            :dataSource="areas"
+            :dataSource="props.areas"
             rowKey="id"
             :pagination="false"
             :scroll="{ x: 800 }"
@@ -12,8 +12,8 @@
                 <!-- Renderizar Foto -->
                 <template v-if="column.key === 'foto'">
                     <img
-                        v-if="record.foto"
-                        :src="`/storage/${record.foto}`"
+                        v-if="record.fotos && record.fotos.length > 0"
+                        :src="`/storage/${record.fotos[0].ruta}`"
                         alt="Foto del área"
                         class="w-16 h-16 object-cover rounded"
                     />
@@ -33,8 +33,9 @@
 
                 <!-- Renderizar Nombre del Laboratorio -->
                 <template v-if="column.key === 'laboratorio'">
-                    {{ record.laboratorio?.nombre || 'Sin laboratorio' }}
+                    {{ record.laboratorio?.nombre || "Sin laboratorio" }}
                 </template>
+
 
                 <!-- Acciones -->
                 <template v-if="column.key === 'acciones'">
@@ -69,13 +70,29 @@ const columnas = [
     {
         title: "Foto",
         key: "foto",
-        width: 120
+        width: 120,
     },
     {
         title: "Nombre",
         dataIndex: "nombre",
         key: "nombre",
         sorter: (a, b) => a.nombre.localeCompare(b.nombre),
+    },
+    {
+        title: "Laboratorio",
+        dataIndex: ["laboratorio", "nombre"],
+        key: "laboratorio",
+        sorter: (a, b) =>
+            (a.laboratorio?.nombre || "").localeCompare(
+                b.laboratorio?.nombre || ""
+            ),
+    },
+    {
+        title: "Aforo",
+        dataIndex: "aforo",
+        key: "aforo",
+        sorter: (a, b) => (a.aforo || 0) - (b.aforo || 0),
+        width: 150,
     },
     {
         title: "Tipo",
@@ -85,16 +102,10 @@ const columnas = [
         sorter: (a, b) => a.tipo.localeCompare(b.tipo),
     },
     {
-        title: "Laboratorio",
-        dataIndex: ["laboratorio", "nombre"],
-        key: "laboratorio",
-        sorter: (a, b) => (a.laboratorio?.nombre || '').localeCompare(b.laboratorio?.nombre || ''),
-    },
-    {
         title: "Acciones",
         key: "acciones",
         fixed: "right",
-        width: 100
+        width: 100,
     },
 ];
 

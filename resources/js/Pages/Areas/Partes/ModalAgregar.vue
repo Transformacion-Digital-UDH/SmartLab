@@ -1,177 +1,238 @@
 <template>
-    <Drawer
-        title="Agregar laboratorio"
+    <Modal
+        title="Agregar área"
         :open="visible"
-        @close="cerrarModal"
-        placement="right"
+        @cancel="cerrarModal"
+        centered
         :footer="null"
-        width="100&"
-        class="sm:min-w-[560px]"
+        width="620px"
     >
-        <Form layout="vertical" @finish="enviarFormulario" :model="laboratorio">
+        <Form
+            layout="vertical"
+            @finish="enviarFormulario"
+            :model="area"
+            class="mt-4"
+        >
+
+            <FormItem label="Laboratorio *" name="laboratorio_id">
+                <Select
+                    :disabled="!($page.props.auth.user.rol === 'Admin' && $page.props.auth.user.laboratorio_seleccionado === null)"
+                    v-model:value="area.laboratorio_id"
+                    placeholder="Seleccione laboratorio"
+                    :options="opcionesLaboratorios"
+                    show-search
+                    :filter-option="filtrarLaboratorios"
+                />
+                <InputError :message="errors.laboratorio_id?.[0]" />
+            </FormItem>
+
+
             <FormItem label="Nombre *" name="nombre">
                 <Input
-                    v-model:value="laboratorio.nombre"
-                    placeholder="Ingrese el nombre"
+                    v-model:value="area.nombre"
+                    placeholder="Ingrese el nombre del área"
                     autocomplete="off"
                 />
                 <InputError :message="errors.nombre?.[0]" />
             </FormItem>
 
-            <FormItem label="Responsable *" name="responsable_id">
-                <Select
-                    v-model:value="laboratorio.responsable_id"
-                    placeholder="Seleccione un responsable"
-                    :options="opcionesResponsables"
-                    show-search
-                    :filter-option="buscarResponsable"
-                />
-                <InputError :message="errors.responsable_id?.[0]" />
-            </FormItem>
-
-            <FormItem label="Coordinador *" name="coordinador_id">
-                <Select
-                    v-model:value="laboratorio.coordinador_id"
-                    placeholder="Seleccione un coordinador"
-                    :options="opcionesCoordinadores"
-                    show-search
-                    :filter-option="buscarResponsable"
-                />
-                <InputError :message="errors.coordinador_id?.[0]" />
-            </FormItem>
-
-            <div class="block md:flex gap-x-3">
-                <FormItem label="Código *" name="codigo" class="w-full">
-                    <Input
-                        v-model:value="laboratorio.codigo"
-                        placeholder="Ingrese el código"
-                        autocomplete="off"
+            <div class="flex gap-x-3">
+                <FormItem label="Tipo *" name="tipo" class="w-full">
+                    <Select
+                        v-model:value="area.tipo"
+                        placeholder="Seleccione el tipo"
+                        :options="opcionesTipo"
                     />
-                    <InputError :message="errors.codigo?.[0]" />
+                    <InputError :message="errors.tipo?.[0]" />
                 </FormItem>
 
                 <FormItem label="Aforo" name="aforo" class="w-full">
                     <InputNumber
-                        v-model:value="laboratorio.aforo"
+                        v-model:value="area.aforo"
                         placeholder="Ingrese el aforo"
-                        class="w-full"
-                        type="number"
-                        step="1"
-                        min="0"
+                        :min="1"
+                        style="width: 100%"
                     />
                     <InputError :message="errors.aforo?.[0]" />
                 </FormItem>
             </div>
 
-            <div class="block md:flex gap-x-3">
-                <FormItem
-                    label="Correo del laboratorio"
-                    name="email"
-                    class="w-full"
-                >
-                    <Input
-                        v-model:value="laboratorio.email"
-                        placeholder="Ingrese el correo electrónico"
-                    />
-                    <InputError :message="errors.email?.[0]" />
-                </FormItem>
-
-                <FormItem
-                    label="Fecha de inauguración"
-                    name="inauguracion"
-                    class="w-full"
-                >
-                    <Input
-                        type="date"
-                        v-model:value="laboratorio.inauguracion"
-                    />
-                    <InputError :message="errors.inauguracion?.[0]" />
-                </FormItem>
-            </div>
-
             <FormItem label="Descripción" name="descripcion">
-                <Textarea
-                    :auto-size="{ minRows: 3 }"
-                    v-model:value="laboratorio.descripcion"
-                    placeholder="Ingrese una descripción"
+                <Input.TextArea
+                    v-model:value="area.descripcion"
+                    placeholder="Ingrese una descripción del área"
+                    :rows="2"
                 />
                 <InputError :message="errors.descripcion?.[0]" />
             </FormItem>
-        </Form>
 
-        <template #extra>
-            <Button class="mr-3" @click="cerrarModal">Cancelar</Button>
-            <Button
-                type="primary"
-                htmlType="submit"
-                @click="enviarFormulario"
-                :loading="cargando"
-            >
-                Guardar
-            </Button>
-        </template>
-    </Drawer>
+
+            <!-- Fotos del área -->
+            <FormItem label="Fotos del área">
+                <Upload
+                    list-type="picture-card"
+                    :file-list="fileList"
+                    @preview="manejarPrevisualizacion"
+                    @remove="quitarFoto"
+                    :before-upload="procesarFotoNueva"
+                    :multiple="true"
+                >
+                    <div v-if="fileList.length < maxFiles">
+                        <PlusOutlined />
+                        <div class="mt-2">Subir</div>
+                    </div>
+                </Upload>
+                <Modal
+                    :open="previewVisible"
+                    title="Vista previa"
+                    :footer="null"
+                    @cancel="cerrarModalPrevisualizacion"
+                >
+                    <img
+                        alt="Vista previa"
+                        class="w-full"
+                        :src="previewImage"
+                    />
+                </Modal>
+            </FormItem>
+
+
+            <FormItem class="flex justify-end mb-0">
+                <Button class="mr-3" @click="cerrarModal"> Cancelar </Button>
+                <Button type="primary" htmlType="submit" :loading="cargando">
+                    Guardar
+                </Button>
+            </FormItem>
+        </Form>
+    </Modal>
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
+import { usePage } from "@inertiajs/vue3";
 import InputError from "@/Components/Inputs/InputError.vue";
+import { PlusOutlined } from "@ant-design/icons-vue";
 import axios from "axios";
 import {
-    Drawer,
+    Modal,
     Form,
     FormItem,
     Input,
-    Select,
     InputNumber,
+    Select,
     Button,
     message,
-    Textarea,
+    Upload,
 } from "ant-design-vue";
 
+const page = usePage();
 const props = defineProps({
     visible: Boolean,
-    usuarios: Array,
-});
-
-const cargando = ref(false);
-const errors = ref({});
-const laboratorio = ref({
-    nombre: "",
-    codigo: "",
-    descripcion: "",
-    aforo: null,
-    email: "",
-    inauguracion: null,
-    responsable_id: null,
-    coordinador_id: null,
+    laboratorios: Array,
 });
 
 const emitir = defineEmits(["update:visible", "actualizar-tabla"]);
 
+// Función para datos iniciales del formulario
+const initialFormData = () => ({
+    nombre: "",
+    descripcion: "",
+    tipo: "No reservable",
+    aforo: null,
+    laboratorio_id: page.props.auth.user.laboratorio_seleccionado || null
+});
+
+// Estado reactivo
+const area = ref(initialFormData());
+const cargando = ref(false);
+const errors = ref({});
+const fileList = ref([]);
+const previewVisible = ref(false);
+const previewImage = ref("");
+const maxFiles = 5;
+
+// Opciones del formulario
+const opcionesTipo = ref([
+    { label: "Reservable", value: "Reservable" },
+    { label: "No reservable", value: "No reservable" },
+]);
+
+// Computed para opciones de laboratorios
+const opcionesLaboratorios = computed(() => {
+    return props.laboratorios?.map(lab => ({
+        label: lab.nombre,
+        value: lab.id
+    })) || [];
+});
+
+// Función para reiniciar el formulario
+const resetForm = () => {
+    area.value = initialFormData();
+    fileList.value = [];
+    errors.value = {};
+};
+
+// Función para cerrar el modal
 const cerrarModal = () => {
+    resetForm();
     emitir("update:visible", false);
 };
 
-const buscarResponsable = (input, option) => {
+// Función para filtrar laboratorios en el select
+const filtrarLaboratorios = (input, option) => {
     return option.label.toLowerCase().includes(input.toLowerCase());
 };
 
+// Funciones para manejo de fotos
+const manejarPrevisualizacion = (file) => {
+    previewImage.value = file.url || file.thumbUrl;
+    previewVisible.value = true;
+};
+
+const cerrarModalPrevisualizacion = () => {
+    previewVisible.value = false;
+};
+
+const procesarFotoNueva = (file) => {
+    fileList.value.push({
+        uid: file.uid,
+        name: file.name,
+        status: "done",
+        originFileObj: file,
+    });
+    return false;
+};
+
+const quitarFoto = (file) => {
+    fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
+};
+
+// Función para enviar el formulario
 const enviarFormulario = async () => {
     cargando.value = true;
-    errors.value = {};
+
+    const formData = new FormData();
+    Object.keys(area.value).forEach((key) => {
+        formData.append(key, area.value[key] || "");
+    });
+
+    // Agregar fotos
+    fileList.value.forEach((file) => {
+        if (file.originFileObj) {
+            formData.append("fotos[]", file.originFileObj);
+        }
+    });
 
     try {
-        const response = await axios.post(
-            route("laboratorios.store"),
-            laboratorio.value
-        );
-        message.success("Laboratorio agregado exitosamente");
-        emitir("actualizar-tabla", response.data["laboratorio"]);
+        const response = await axios.post(route("areas.store"), formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+        message.success("Área agregada exitosamente");
         cerrarModal();
+        emitir("actualizar-tabla", response.data.area);
     } catch (error) {
-        message.error("Error al agregar el laboratorio");
-        if (error.response && error.response.data.errors) {
+        message.error("Error al agregar área");
+        if (error.response?.data?.errors) {
             errors.value = error.response.data.errors;
         }
     } finally {
@@ -179,34 +240,14 @@ const enviarFormulario = async () => {
     }
 };
 
-const opcionesResponsables = ref([]);
-const opcionesCoordinadores = ref([]);
-
+// Watcher para reiniciar el formulario al abrir el modal
 watch(
     () => props.visible,
-    (val) => {
-        errors.value = {};
-        if (val) {
-            laboratorio.value = {
-                nombre: "",
-                codigo: "",
-                descripcion: "",
-                aforo: null,
-                email: "",
-                inauguracion: "",
-                responsable_id: null,
-            };
-
-            opcionesResponsables.value = props.usuarios.map((responsable) => ({
-                label: `${responsable.nombres} ${responsable.apellidos} - ${responsable.dni} - ${responsable.email}`,
-                value: responsable.id,
-            }));
-
-            opcionesCoordinadores.value = props.usuarios.map((coordinador) => ({
-                label: `${coordinador.nombres} ${coordinador.apellidos} - ${coordinador.dni} - ${coordinador.email}`,
-                value: coordinador.id,
-            }));
+    (visible) => {
+        if (visible) {
+            resetForm();
         }
     }
 );
+
 </script>

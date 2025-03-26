@@ -101,8 +101,8 @@ Route::middleware([
     Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'json'])->name('areas.json');
     Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
     Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
-    Route::put('/areas/{area_id}', [AreaController::class, 'update'])->name('areas.update');
-    Route::delete('/areas/{area_id}', [AreaController::class, 'destroy'])->name('areas.destroy');
+    Route::put('/areas/{area}', [AreaController::class, 'update'])->name('areas.update');
+    Route::delete('/areas/{area}', [AreaController::class, 'destroy'])->name('areas.destroy');
 
     // Reservas
     Route::get('/reservas', [ReservaController::class, 'index'])->name('reservas.index');

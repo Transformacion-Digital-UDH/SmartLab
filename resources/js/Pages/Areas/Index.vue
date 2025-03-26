@@ -38,6 +38,7 @@
             <!-- Modal para agregar área -->
             <ModalAgregar
                 v-model:visible="mostrarModalCrear"
+                :laboratorios="props.laboratorios"
                 @actualizar-tabla="actualizarTabla"
             />
 
@@ -46,6 +47,7 @@
                 v-if="areaSeleccionada"
                 v-model:visible="mostrarModalEditar"
                 :area="areaSeleccionada"
+                :laboratorios="props.laboratorios"
                 @actualizar-tabla="actualizarTabla"
             />
         </div>
