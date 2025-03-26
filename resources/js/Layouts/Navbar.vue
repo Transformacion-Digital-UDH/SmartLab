@@ -1,12 +1,9 @@
-<!-- Sidebar.vue -->
 <script setup>
-import { ref, onMounted } from "vue";
-import { Link, router, usePage } from "@inertiajs/vue3";
-import NavLink from "@/Components/NavLink.vue";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
+import { ref, onMounted, computed } from "vue";
+import { router, usePage } from "@inertiajs/vue3";
 import { Tooltip, Select, Tag, message } from "ant-design-vue";
 
-// Iconos de Ant Design Vue
+// Iconos
 import {
     ExperimentOutlined,
     AppstoreOutlined,
@@ -18,57 +15,17 @@ import {
     UserOutlined,
     LogoutOutlined,
     BarChartOutlined,
+    PartitionOutlined,
 } from "@ant-design/icons-vue";
+
+import NavLink from "@/Components/NavLink.vue";
+import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 
 const showingNavigationDropdown = ref(false);
 const isCollapsed = ref(false);
 
-// Extrae la propiedad global laboratorioParticipante
 const { auth, laboratoriosParticipante } = usePage().props;
 const selectedLaboratorio = ref(null);
-
-// Establecer el valor inicial del Select
-onMounted(() => {
-    if (auth.user.laboratorio_seleccionado || auth.user.rol === "Admin") {
-        selectedLaboratorio.value = auth.user.laboratorio_seleccionado;
-    } else if (laboratoriosParticipante.length > 0 ) {
-        selectedLaboratorio.value = laboratoriosParticipante[0].laboratorio.id;
-        updateLaboratorio();
-    }
-});
-
-
-// Función para asignar colores a los roles
-const getTagColor = (rol) => {
-    const colors = {
-        Miembro: "blue",
-        Responsable: "green",
-        Coordinador: "volcano",
-        Administrador: "purple",
-    };
-    return colors[rol] || "default";
-};
-
-// Función que se ejecuta al cambiar la selección
-const updateLaboratorio = () => {
-    router.post(
-        route("usuario.seleccionarLaboratorio"),
-        { laboratorio_id: selectedLaboratorio.value },
-        {
-            onSuccess: () => {
-                message.success("Laboratorio cambiado correctamente.");
-                window.location.reload();
-            },
-            onError: () => {
-                message.error("Error al cambiado el laboratorio.");
-            },
-        }
-    );
-};
-
-const logout = () => {
-    router.post(route("logout"));
-};
 
 const navigationLinks = [
     { name: "Dashboard", route: "dashboard", icon: BarChartOutlined },
@@ -77,6 +34,7 @@ const navigationLinks = [
         route: "laboratorios.index",
         icon: ExperimentOutlined,
     },
+    { name: "Áreas", route: "areas.index", icon: PartitionOutlined },
     { name: "Inventario", route: "recursos.index", icon: AppstoreOutlined },
     { name: "Usuarios", route: "usuarios.index", icon: TeamOutlined },
     { name: "Asistencias", route: "asistencias.index", icon: SolutionOutlined },
@@ -89,6 +47,89 @@ const navigationLinks = [
     { name: "Proyectos", route: "proyectos.index", icon: ProjectOutlined },
     { name: "Reservas", route: "reservas.index", icon: CalendarOutlined },
 ];
+
+// Asignar valor inicial del Select
+onMounted(() => {
+    if (auth.user.laboratorio_seleccionado || auth.user.rol === "Admin") {
+        selectedLaboratorio.value = auth.user.laboratorio_seleccionado;
+    } else if (laboratoriosParticipante.length > 0) {
+        selectedLaboratorio.value = laboratoriosParticipante[0].laboratorio.id;
+        updateLaboratorio();
+    }
+});
+
+// Computed que filtra los links según la lógica solicitada
+const filteredNavigationLinks = computed(() => {
+    // 1) Admin sin laboratorio seleccionado => todos menos "Miembros"
+    if (auth.user.rol === "Admin" && !selectedLaboratorio.value) {
+        return navigationLinks.filter((link) => link.name !== "Miembros");
+    }
+
+    // 2) Si hay un laboratorio seleccionado
+    if (selectedLaboratorio.value) {
+        // Buscar el rol en laboratoriosParticipante
+        const labEncontrado = laboratoriosParticipante.find(
+            (labP) => labP.laboratorio.id === selectedLaboratorio.value
+        );
+        if (!labEncontrado) {
+            return []; // O ajusta según lo que quieras mostrar si no se encuentra
+        }
+
+        const rol = labEncontrado.rol;
+
+        // 2a) Rol = "Miembro"
+        if (rol === "Miembro") {
+            // Solo "Mis asistencias" y "Reservas"
+            return navigationLinks.filter((link) =>
+                ["Mis asistencias", "Reservas"].includes(link.name)
+            );
+        }
+
+        // 2b) Rol = "Coordinador" o "Responsable"
+        if (["Coordinador", "Responsable"].includes(rol)) {
+            // Mostrar todo menos "Usuarios" y "Laboratorios"
+            return navigationLinks.filter(
+                (link) => !["Usuarios", "Laboratorios"].includes(link.name)
+            );
+        }
+    }
+
+    // Si no se cumple ninguna condición anterior,
+    // puedes retornar un arreglo vacío o lo que te convenga
+    return [];
+});
+
+// Actualizar la selección de laboratorio
+const updateLaboratorio = () => {
+    router.post(
+        route("usuario.seleccionarLaboratorio"),
+        { laboratorio_id: selectedLaboratorio.value },
+        {
+            onSuccess: () => {
+                message.success("Laboratorio cambiado correctamente.");
+                window.location.reload();
+            },
+            onError: () => {
+                message.error("Error al cambiar el laboratorio.");
+            },
+        }
+    );
+};
+
+const logout = () => {
+    router.post(route("logout"));
+};
+
+// Función para asignar colores a los roles
+const getTagColor = (rol) => {
+    const colors = {
+        Miembro: "blue",
+        Responsable: "green",
+        Coordinador: "volcano",
+        Administrador: "purple",
+    };
+    return colors[rol] || "default";
+};
 </script>
 
 <template>
@@ -111,11 +152,10 @@ const navigationLinks = [
                 <div v-if="!isCollapsed" class="w-full">
                     <Select
                         placeholder="Laboratorio"
-                        style="width: 100%;"
+                        style="width: 100%"
                         v-model:value="selectedLaboratorio"
                         size="large"
                         @change="updateLaboratorio"
-
                     >
                         <template #suffixIcon>
                             <!-- Ícono de laboratorio -->
@@ -129,7 +169,10 @@ const navigationLinks = [
                             <div>
                                 <div>Todos</div>
                                 <div>
-                                    <Tag :color="getTagColor('Administrador')" size="small">
+                                    <Tag
+                                        :color="getTagColor('Administrador')"
+                                        size="small"
+                                    >
                                         Administrador
                                     </Tag>
                                 </div>
@@ -139,11 +182,14 @@ const navigationLinks = [
                             v-for="lab in laboratoriosParticipante"
                             :key="lab.laboratorio.id"
                             :value="lab.laboratorio.value"
-                                                    >
+                        >
                             <div>
                                 <div>{{ lab.laboratorio.nombre }}</div>
                                 <div>
-                                    <Tag :color="getTagColor(lab.rol)" size="small">
+                                    <Tag
+                                        :color="getTagColor(lab.rol)"
+                                        size="small"
+                                    >
                                         {{ lab.rol }}
                                     </Tag>
                                 </div>
@@ -155,7 +201,6 @@ const navigationLinks = [
                 <button
                     @click="isCollapsed = !isCollapsed"
                     class="p-2 pr-0 text-gray-500 hover:text-gray-700 transition"
-
                 >
                     <!-- Flecha para colapsar -->
                     <svg
@@ -190,11 +235,11 @@ const navigationLinks = [
 
             <!-- Menú de navegación con scroll si excede la altura -->
             <nav
-                class="flex flex-col flex-1 px-4 py-6 space-y-4 overflow-y-auto"
+                class="flex flex-col flex-1 px-4 py-6 space-y-3 overflow-y-auto"
                 :class="isCollapsed ? 'items-center' : ''"
             >
                 <NavLink
-                    v-for="link in navigationLinks"
+                    v-for="link in filteredNavigationLinks"
                     :key="link.route"
                     :href="route(link.route)"
                     :active="route().current(link.route)"
@@ -222,7 +267,6 @@ const navigationLinks = [
             <div
                 class="px-4 py-4 border-t border-gray-200 dark:border-gray-600"
             >
-
                 <nav class="flex flex-col space-y-4">
                     <NavLink
                         :href="route('profile.show')"
@@ -245,7 +289,8 @@ const navigationLinks = [
                     </NavLink>
 
                     <!-- Logout -->
-                    <form @submit.prevent="logout"
+                    <form
+                        @submit.prevent="logout"
                         :class="
                             isCollapsed
                                 ? 'flex items-center justify-center'
@@ -273,7 +318,7 @@ const navigationLinks = [
                             <component
                                 v-else
                                 :is="LogoutOutlined"
-                                class="text-lg text-red-600 "
+                                class="text-lg text-red-600"
                             />
                             <span v-if="!isCollapsed">Cerrar sesión</span>
                         </NavLink>

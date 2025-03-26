@@ -30,8 +30,8 @@ class ProyectoController extends Controller
             ->with('laboratorio')
             ->where('is_active', true);
 
-        // Filtrar por laboratorio si el usuario no es Admin o tiene un laboratorio seleccionado
-        if ($user->rol !== 'Admin' || $user->laboratorio_seleccionado !== null) {
+        // No filtrar por laboratorio si el usuario es "Admin" y no tiene un laboratorio seleccionado
+        if (!($user->rol === 'Admin' && $user->laboratorio_seleccionado === null)) {
             $proyectosQuery->where('laboratorio_id', $user->laboratorio_seleccionado);
         }
 

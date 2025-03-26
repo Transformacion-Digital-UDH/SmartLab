@@ -50,8 +50,8 @@ const estadoColor = (estado) => {
 
 // Definir las columnas de la tabla de proyectos
 const columnas = [
-    { title: "Nombre", dataIndex: "nombre", key: "nombre", sorter: (a, b) => a.nombre.localeCompare(b.nombre) },
-    { title: "Responsable", dataIndex: ["responsable", "nombres"], key: "nombres" },
+    { title: "Nombre", dataIndex: "nombre", key: "nombre", sorter: (a, b) => a.nombre.localeCompare(b.nombre), width: 220 },
+    { title: "Responsable", dataIndex: ["responsable", "nombres"], key: "nombres", width: 200 },
     {
         title: "Laboratorio",
         dataIndex: ["laboratorio", "nombre"],
@@ -60,7 +60,8 @@ const columnas = [
             const labA = a.laboratorio?.nombre?.toLowerCase() || "";
             const labB = b.laboratorio?.nombre?.toLowerCase() || "";
             return labA.localeCompare(labB);
-        }
+        },
+        width: 200,
     },
 
 
@@ -68,17 +69,17 @@ const columnas = [
         title: "Fecha inicio",
         dataIndex: "fecha_inicio",
         key: "fecha_inicio",
-        width: 150,
+        width: 120,
         sorter: (a, b) => new Date(a.fecha_inicio) - new Date(b.fecha_inicio),
     },
     {
         title: "Fecha fin",
         dataIndex: "fecha_fin",
         key: "fecha_fin",
-        width: 150,
+        width: 120,
         sorter: (a, b) => new Date(a.fecha_fin) - new Date(b.fecha_fin),
     },
-    { title: "Estado", dataIndex: "estado", key: "estado", sorter: (a, b) => a.estado.localeCompare(b.estado), width: 150 },
+    { title: "Estado", dataIndex: "estado", key: "estado", sorter: (a, b) => a.estado.localeCompare(b.estado), width: 100 },
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 
