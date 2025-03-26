@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import { usePage } from "@inertiajs/vue3";
 import { Select } from "ant-design-vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import CardItems from "./Partes/CardItems.vue";
@@ -32,6 +33,12 @@ const props = defineProps({
     },
 });
 
+const { auth, laboratoriosParticipante } = usePage().props;
+const labSeleccionado = ref(auth.user.laboratorio_seleccionado);
+
+console.log(laboratoriosParticipante);
+console.log(labSeleccionado.value);
+
 const reservas = ref(props.reservas || []);
 const mostrarModalEditarReserva = ref(false);
 const reservaSeleccionada = ref(null);
@@ -39,18 +46,27 @@ const reservaSeleccionada = ref(null);
 const mostrarModalEditarUsuario = ref(false);
 const usuarioSeleccionado = ref(null);
 
-// Para seleccionar el calendario del laboratorio
-const selectedCalendarId = ref(
-    props.laboratorios.length ? props.laboratorios[0].google_calendar_id : ""
-);
-
 // Opciones para el Select (etiqueta: laboratorio, valor: google_calendar_id)
 const labOptions = computed(() =>
     props.laboratorios.map((lab) => ({
         label: lab.nombre,
         value: lab.google_calendar_id,
+        id: lab.id, // se incluye el id para facilitar la comparación
     }))
 );
+
+// Inicializar selectedCalendarId:
+// Si labSeleccionado existe y se encuentra en labOptions, se usa su google_calendar_id,
+// de lo contrario se asigna el google_calendar_id del primer laboratorio en la lista.
+const selectedCalendarId = ref("");
+if (props.laboratorios.length) {
+    const labEncontrado = props.laboratorios.find(
+        (lab) => lab.id === labSeleccionado.value
+    );
+    selectedCalendarId.value = labEncontrado
+        ? labEncontrado.google_calendar_id
+        : props.laboratorios[0].google_calendar_id;
+}
 
 // Actualizar la tabla
 const actualizarTabla = () => {
@@ -73,9 +89,7 @@ const abrirModalEditarUsuario = (usuario) => {
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0"
-            >
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0">
                 Dashboard
             </h2>
         </template>
@@ -83,9 +97,7 @@ const abrirModalEditarUsuario = (usuario) => {
         <div class="py-6">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
                 <!-- Métricas -->
-                <div
-                    class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6"
-                >
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-medium mb-4">Métricas claves</h3>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="grid grid-cols-2 gap-4">
