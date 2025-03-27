@@ -1,5 +1,5 @@
 <template>
-    <Table :columns="columnas" :dataSource="proyectos" rowKey="id" size="larg" :pagination="false" :scroll="{ x: 800 }">
+    <Table :columns="columnas" :dataSource="proyectos.data" rowKey="id" size="larg" :pagination="false" :scroll="{ x: 800 }">
         <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'estado'">
                 <Tag :color="estadoColor(record.estado)" :bordered="false">
@@ -16,14 +16,23 @@
                     @click="mostrarParticipantes(record)"
                     class="text-green-600 ml-2"
                 />
-
             </template>
         </template>
     </Table>
+    
+    <!-- Paginación personalizada -->
+    <div class="flex justify-center mt-4">
+        <Pagination
+            :current="proyectos.current_page"
+            :total="proyectos.total"
+            :pageSize="proyectos.per_page"
+            @change="cambiarPagina"
+        />
+    </div>
 </template>
 
 <script setup>
-import { Table, Modal, message, Tag } from "ant-design-vue";
+import { Table, Modal, message, Tag, Pagination } from "ant-design-vue";
 import { router } from '@inertiajs/vue3';
 import {
     FormOutlined,
@@ -32,10 +41,10 @@ import {
 } from "@ant-design/icons-vue";
 
 const props = defineProps({
-    proyectos: Array,
+    proyectos: Object, // Ahora es un objeto de paginación
 });
 
-const emitir = defineEmits(["editar", "mostrar-participantes", "actualizar-tabla"]);
+const emitir = defineEmits(["editar", "mostrar-participantes", "actualizar-tabla", "cambiar-pagina"]);
 
 // Mapeo de estados a colores
 const estadoColor = (estado) => {
@@ -91,6 +100,10 @@ function editar(proyecto) {
 function mostrarParticipantes(laboratorio) {
     emitir("mostrar-participantes", laboratorio);
 }
+
+const cambiarPagina = (pagina) => {
+    emitir("cambiar-pagina", pagina);
+};
 
 const confirmarEliminacion = (proyecto) => {
     Modal.confirm({

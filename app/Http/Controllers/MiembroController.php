@@ -12,21 +12,34 @@ use Inertia\Inertia;
 
 class MiembroController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $search = $request->input('search');
+        
         // No filtrar por laboratorio si el usuario es "Admin" y no tiene un laboratorio seleccionado
         if (!($user->rol === 'Admin' && $user->laboratorio_seleccionado === null)) {
 
             $laboratorio = Laboratorio::find($user->laboratorio_seleccionado);
-
-            $participantes = $laboratorio->participantes()
-            ->where('users.is_active', true)
-            ->orderBy('users.id', 'desc')
-            ->get();
+            
+            $query = $laboratorio->participantes()
+                ->where('users.is_active', true);
+            
+            // Aplicar filtro de búsqueda si existe
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('users.nombres', 'like', "%{$search}%")
+                      ->orWhere('users.apellidos', 'like', "%{$search}%")
+                      ->orWhere('users.codigo', 'like', "%{$search}%");
+                });
+            }
+            
+            $participantes = $query->orderBy('users.id', 'desc')
+                ->paginate(10); 
 
         } else {
-            $participantes = collect();
+            // Colección vacía paginada si no hay laboratorio seleccionado
+            $participantes = collect()->paginate(2);
         }
 
         $usuarios = User::where('is_active', true)
