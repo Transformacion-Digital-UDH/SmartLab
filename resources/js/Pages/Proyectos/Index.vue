@@ -17,6 +17,7 @@
                     placeholder="Buscar proyecto por nombre o descripción"
                     class="w-full"
                     size="large"
+                    @change="buscarProyectos"
                 />
                 <Button
                     type="primary"
@@ -29,10 +30,11 @@
 
             <!-- Tabla de proyectos -->
             <TablaProyectos
-                :proyectos="proyectosFiltrados"
+                :proyectos="proyectos"
                 @editar="abrirModalEditar"
                 @mostrar-participantes="abrirModalParticipantes"
                 @actualizar-tabla="actualizarTabla"
+                @cambiar-pagina="cambiarPagina"
             />
 
             <!-- Modal para agregar proyecto -->
@@ -74,31 +76,65 @@ import ModalEditar from "./Partes/ModalEditar.vue";
 import ModalParticipantes from "./Partes/Participantes/ModalParticipantes.vue";
 
 const { props } = usePage();
-const proyectos = ref(props.proyectos || []);
+const proyectos = ref(props.proyectos || {});
 const mostrarModalCrear = ref(false);
 const mostrarModalEditar = ref(false);
 const mostrarModalParticipantes = ref(false);
 const proyectoSeleccionado = ref(null);
 const valorBuscar = ref("");
 
-// Filtrar proyectos según el término de búsqueda
-const proyectosFiltrados = computed(() =>
-    !valorBuscar.value
-        ? proyectos.value
-        : proyectos.value.filter(
-              (proyecto) =>
-                  proyecto.nombre
-                      .toLowerCase()
-                      .includes(valorBuscar.value.toLowerCase()) ||
-                  proyecto.descripcion
-                      ?.toLowerCase()
-                      .includes(valorBuscar.value.toLowerCase())
-          )
-);
+// Ya no necesitamos el computed proyectosFiltrados, trabajaremos con los datos paginados del servidor
 
 // Actualizar la tabla de proyectos
 const actualizarTabla = () => {
-    router.visit(route("proyectos.index"), { preserveScroll: true });
+    mostrarModalCrear.value = false;
+    mostrarModalEditar.value = false;
+    router.visit(route("proyectos.index"), { 
+        preserveScroll: true,
+        data: {
+            search: valorBuscar.value,
+            page: proyectos.value.current_page
+        }
+    });
+};
+
+// Búsqueda de proyectos
+const buscarProyectos = () => {
+    // Si el campo de búsqueda está vacío, cargamos todos los proyectos
+    if (!valorBuscar.value) {
+        router.visit(route("proyectos.index"), {
+            data: {
+                page: 1
+            },
+            preserveState: false,
+            preserveScroll: true,
+            only: ['proyectos']
+        });
+        return;
+    }
+    
+    router.visit(route("proyectos.index"), {
+        data: {
+            search: valorBuscar.value,
+            page: 1 // Volver a página 1 cuando se realiza una búsqueda
+        },
+        preserveState: false,
+        preserveScroll: true,
+        only: ['proyectos']
+    });
+};
+
+// Cambio de página
+const cambiarPagina = (pagina) => {
+    router.visit(route("proyectos.index"), {
+        data: {
+            page: pagina,
+            search: valorBuscar.value
+        },
+        preserveState: false,
+        preserveScroll: true,
+        only: ['proyectos']
+    });
 };
 
 // Abrir modal para agregar un proyecto

@@ -13,23 +13,25 @@
                     placeholder="Buscar miembro por nombre o código"
                     class="w-full"
                     size="large"
+                    @change="buscarMiembros"
                 />
                 <Button type="primary" @click="abrirModalCrear" size="large" class="font-medium">Agregar miembro</Button>
             </div>
 
             <!-- Tabla de miembros -->
             <TablaMiembros
-                :miembros="usersFiltrados"
+                :miembros="miembros"
                 @editar="abrirModalEditar"
                 @mostrar-areas="abrirModalAreas"
                 @actualizar-tabla="actualizarTabla"
+                @cambiar-pagina="cambiarPagina"
             />
 
             <!-- Modal para agregar miembro -->
             <ModalAgregar
                 v-model:visible="mostrarModalCrear"
                 :usuarios="usuarios"
-                :miembros="miembros"
+                :miembros="miembros.data || []"
                 @actualizar-tabla="actualizarTabla"
             />
 
@@ -46,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Button, InputSearch } from 'ant-design-vue';
@@ -55,7 +57,7 @@ import ModalAgregar from './Partes/ModalAgregar.vue';
 import ModalEditar from './Partes/ModalEditar.vue';
 
 const { props } = usePage();
-const miembros = ref(props.miembros || []);
+const miembros = ref(props.miembros || {});
 const usuarios = ref(props.usuarios || []);
 const mostrarModalCrear = ref(false);
 const mostrarModalEditar = ref(false);
@@ -63,19 +65,46 @@ const mostrarModalAreas = ref(false);
 const userSeleccionado = ref(null);
 const valorBuscar = ref('');
 
-const usersFiltrados = computed(() => !valorBuscar.value
-    ? miembros.value
-    : miembros.value.filter(user =>
-        user.nombres.toLowerCase().includes(valorBuscar.value.toLowerCase()) ||
-        user.codigo.toLowerCase().includes(valorBuscar.value.toLowerCase())
-    )
-);
+// Ya no necesitamos filtrar los datos aquí, lo haremos en el servidor
+// cuando cambiemos de página o busquemos
 
 const actualizarTabla = () => {
     mostrarModalCrear.value = false;
     mostrarModalEditar.value = false;
-    router.visit(route('miembros.index'), { preserveScroll: true });
+    router.visit(route('miembros.index'), { 
+        preserveScroll: true,
+        data: {
+            search: valorBuscar.value,
+            page: miembros.value.current_page
+        }
+    });
 };
+
+const buscarMiembros = () => {
+    router.visit(route('miembros.index'), {
+        data: {
+            search: valorBuscar.value,
+            page: 1 // Volver a página 1 cuando se realiza una búsqueda
+        },
+        preserveState: false, // No preservar el estado para forzar actualización
+        preserveScroll: true,
+        only: ['miembros'] // Solo actualizar los datos de miembros
+    });
+};
+
+const cambiarPagina = (pagina) => {
+    router.visit(route('miembros.index'), {
+        data: {
+            page: pagina,
+            search: valorBuscar.value
+        },
+        preserveState: false, // No preservar el estado para forzar actualización
+        preserveScroll: true,
+        only: ['miembros'] // Solo actualizar los datos de miembros
+    });
+};
+
+// Eliminamos la función cambiarTamanoPagina ya que no la necesitamos más
 
 const abrirModalCrear = () => {
     mostrarModalCrear.value = true;

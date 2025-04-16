@@ -57,40 +57,40 @@ onMounted(() => {
 
 const items = ref([
     {
-        image: "https://via.placeholder.com/400x200",
+        image: "/img/proyectos/COPILOTOlight.webp",
         title: "LTD - DEV: Copiloto",
         description:
-            "Découvrez les événements récents qui méritent votre attention.",
+            "Es una plataforma integral diseñada para apoyar a los estudiantes en su proceso de titulación, investigación y desarrollo de proyectos, con tres componentes principales: un chatbot de investigación, un banco de ideas y un sistema de trámite de titulación.",
     },
     {
-        image: "https://via.placeholder.com/400x200",
+        image: "/img/proyectos/LamparasTematicas.webp",
         title: "STARTLAB: Lamparas Temáticas",
         description:
-            "Découvrez les événements récents qui méritent votre attention.",
+            "Una colección de lámparas artísticas y personalizadas diseñadas para transformar espacios con iluminación creativa, ofreciendo diseños únicos inspirados en diversas temáticas que combinan funcionalidad y estética para crear ambientes acogedores y llenos de personalidad.",
     },
     {
-        image: "https://via.placeholder.com/400x200",
+        image: "/img/proyectos/AsistenteDeVoz.webp",
         title:
             "LTD - IA: Asistente de Voz",
-        description: "Découvrez les événements récents qui méritent votre attention.",
+        description: "Una solución tecnológica avanzada que integra inteligencia artificial para ofrecer asistencia por comandos de voz, facilitando la interacción con dispositivos y servicios digitales, con capacidades de aprendizaje y adaptación que mejoran la experiencia del usuario a través del desarrollo continuo de nuevas funcionalidades.",
     },
     {
-        image: "https://via.placeholder.com/400x200",
+        image: "/img/proyectos/RecolectorDigital.webp",
         title: "LTD - Recolector Digital",
         description:
-            "Découvrez les événements récents qui méritent votre attention.",
+            "Una plataforma innovadora diseñada para optimizar la gestión de residuos urbanos, permitiendo a los ciudadanos localizar en tiempo real los vehículos recolectores que operan en su zona, mejorando la eficiencia del servicio y promoviendo prácticas sostenibles en la comunidad.",
     },
     {
-        image: "https://via.placeholder.com/400x200",
+        image: "/img/proyectos/SanSebastianDigital.webp",
         title: "LTD - San Sebastián Digital",
         description:
-            "Découvrez les événements récents qui méritent votre attention.",
+            "Un portal web dedicado a la iglesia San Sebastián que facilita la conexión entre feligreses y la parroquia, ofreciendo información sobre servicios religiosos, eventos comunitarios y recursos espirituales, creando así un espacio virtual que extiende la presencia de la iglesia en la comunidad.",
     },
     {
-        image: "https://via.placeholder.com/400x200",
+        image: "/img/proyectos/TurismoVR.webp",
         title: "LTD - Turismo VR",
         description:
-            "Découvrez les événements récents qui méritent votre attention.",
+            "Una experiencia inmersiva que utiliza tecnología de realidad virtual para mostrar las zonas turísticas más emblemáticas de Huánuco, permitiendo a los usuarios explorar virtualmente paisajes, sitios históricos y atracciones culturales a través de dispositivos Meta, promoviendo así el turismo local con innovación tecnológica.",
     },
 ]);
 

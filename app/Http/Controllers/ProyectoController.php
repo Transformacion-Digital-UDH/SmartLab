@@ -22,9 +22,10 @@ class ProyectoController extends Controller
     ];
 
     // Listar los proyectos en la vista
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $search = $request->input('search');
 
         $proyectosQuery = Proyecto::with('responsable')
             ->with('laboratorio')
@@ -35,7 +36,15 @@ class ProyectoController extends Controller
             $proyectosQuery->where('laboratorio_id', $user->laboratorio_seleccionado);
         }
 
-        $proyectos = $proyectosQuery->orderBy('id', 'desc')->get();
+        // Aplicar filtro de búsqueda si existe
+        if ($search) {
+            $proyectosQuery->where(function($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                  ->orWhere('descripcion', 'like', "%{$search}%");
+            });
+        }
+
+        $proyectos = $proyectosQuery->orderBy('id', 'desc')->paginate(10);
 
         $responsables = User::all();
         $laboratorios = Laboratorio::all();
