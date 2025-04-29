@@ -62,6 +62,27 @@
             </TabPane>
         </Tabs>
 
+        <!-- Campos adicionales -->
+        <FormItem label="Proyecto" name="proyecto_id">
+            <Select
+                v-model:value="reserva.proyecto_id"
+                placeholder="Seleccione un proyecto"
+                :options="opcionesProyectos"
+                show-search
+                :filter-option="buscarProyecto"
+            />
+        </FormItem>
+
+        <FormItem label="Revisor" name="revisor_id">
+            <Select
+                v-model:value="reserva.revisor_id"
+                placeholder="Seleccione un revisor"
+                :options="opcionesUsuarios"
+                show-search
+                :filter-option="buscarUsuario"
+            />
+        </FormItem>
+
         <!-- Fecha y Rango de hora en la misma fila -->
         <div class="flex gap-x-3">
             <FormItem
@@ -208,6 +229,8 @@
         type: Array,
         default: () => [],
     },
+    proyectos: Array,
+    usuarios: Array,
     });
 
     const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
@@ -235,6 +258,8 @@
         recurso_id: r.recurso_id,
         equipo_id: r.equipo_id,
         area_id: r.area_id,
+        proyecto_id: r.proyecto_id,
+        revisor_id: r.revisor_id,
         fecha: r.fecha ? r.fecha.format('YYYY-MM-DD') : null,
         hora_range:
         r.hora_range && r.hora_range.length
@@ -343,12 +368,30 @@
     }))
     );
 
+    const opcionesProyectos = ref(
+    props.proyectos.map((proyecto) => ({
+        label: proyecto.nombre,
+        value: proyecto.id,
+    }))
+    );
+
+    const opcionesUsuarios = ref(
+    props.usuarios.map((usuario) => ({
+        label: `${usuario.nombres} ${usuario.apellidos}`,
+        value: usuario.id,
+    }))
+    );
+
     // Funciones para filtrar opciones
     const buscarEquipo = (input, option) =>
     option.label.toLowerCase().includes(input.toLowerCase());
     const buscarRecurso = (input, option) =>
     option.label.toLowerCase().includes(input.toLowerCase());
     const buscarArea = (input, option) =>
+    option.label.toLowerCase().includes(input.toLowerCase());
+    const buscarProyecto = (input, option) =>
+    option.label.toLowerCase().includes(input.toLowerCase());
+    const buscarUsuario = (input, option) =>
     option.label.toLowerCase().includes(input.toLowerCase());
 
     // Al seleccionar en un tab se deseleccionan los otros

@@ -114,6 +114,26 @@ const columnas = [
         width: 150,
         sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at),
     },
+    {
+        title: "Proyecto",
+        key: "proyecto",
+        customRender: ({ record }) => record.proyecto?.nombre || "No asignado",
+        sorter: (a, b) => {
+            const proyectoA = a.proyecto?.nombre || "";
+            const proyectoB = b.proyecto?.nombre || "";
+            return proyectoA.localeCompare(proyectoB);
+        },
+    },
+    {
+        title: "Revisor",
+        key: "revisor",
+        customRender: ({ record }) => record.revisor?.nombres + " " + record.revisor?.apellidos || "No asignado",
+        sorter: (a, b) => {
+            const revisorA = a.revisor?.nombres || "";
+            const revisorB = b.revisor?.nombres || "";
+            return revisorA.localeCompare(revisorB);
+        },
+    },
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 

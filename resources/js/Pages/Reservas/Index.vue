@@ -42,6 +42,7 @@
                 :equipos="props.equipos"
                 :recursos="props.recursos"
                 :areas="props.areas"
+                :proyectos="props.proyectos"
                 @actualizar-tabla="actualizarTabla"
             />
 
@@ -54,6 +55,7 @@
                 :equipos="props.equipos"
                 :recursos="props.recursos"
                 :areas="props.areas"
+                :proyectos="props.proyectos"
                 @actualizar-tabla="actualizarTabla"
             />
         </div>
@@ -77,6 +79,7 @@ const reservaSeleccionada = ref(null);
 const valorBuscar = ref("");
 
 // Filtro de reservas
+
 const reservasFiltradas = computed(() =>
     !valorBuscar.value
         ? reservas.value

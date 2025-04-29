@@ -20,7 +20,8 @@ class Reserva extends Model
         'equipo_id',
         'recurso_id',
         'area_id',
-
+        'revisor_id',
+        'proyecto_id',
     ];
 
     // Una reserva pertenece a un usuario.
@@ -45,5 +46,17 @@ class Reserva extends Model
     public function area()
     {
         return $this->belongsTo(Area::class);
+    }
+
+    // Una reserva puede estar asociada a un proyecto (opcional).
+    public function proyecto()
+    {
+        return $this->belongsTo(Proyecto::class);
+    }
+
+    // Una reserva tiene un revisor (usuario que aprobó/desaprobó).
+    public function revisor()
+    {
+        return $this->belongsTo(User::class, 'revisor_id');
     }
 }

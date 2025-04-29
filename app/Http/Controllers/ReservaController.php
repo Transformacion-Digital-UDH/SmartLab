@@ -7,6 +7,7 @@ use App\Models\Equipo;
 use App\Models\Recurso;
 use App\Models\Reserva;
 use App\Models\User;
+use App\Models\Proyecto;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -28,6 +29,8 @@ class ReservaController extends Controller
         'equipo_id'   => 'nullable|exists:equipos,id',
         'recurso_id'  => 'nullable|exists:recursos,id',
         'area_id'     => 'nullable|exists:areas,id',
+        'revisor_id'  => 'nullable|exists:users,id',
+        'proyecto_id' => 'nullable|exists:proyectos,id',
     ];
 
     /**
@@ -79,7 +82,7 @@ class ReservaController extends Controller
         $user = Auth::user();
 
         // Query base para reservas
-        $reservasQuery = Reserva::with(['usuario', 'equipo', 'recurso', 'area'])
+        $reservasQuery = Reserva::with(['usuario', 'equipo', 'recurso', 'area', 'proyecto', 'revisor'])
             ->where('is_active', true);
 
         // Queries para modelos relacionados (agregando el filtro de tipo "Reservable")
@@ -116,6 +119,7 @@ class ReservaController extends Controller
             'equipos' => $equipos,
             'recursos' => $recursos,
             'areas' => $areas,
+            'proyectos' => Proyecto::where('is_active', true)->get(),
         ]);
     }
 
@@ -176,6 +180,7 @@ class ReservaController extends Controller
         }
 
         // Aprobar la reserva y guardarla.
+        $reserva->revisor_id = Auth::id();
         $reserva->estado = 'Aprobada';
         $reserva->save();
 
@@ -261,6 +266,7 @@ class ReservaController extends Controller
     public function desaprobar(Reserva $reserva)
     {
         $reserva->estado = 'No aprobada';
+        $reserva->revisor_id = Auth::id();
         $reserva->save();
     }
 }

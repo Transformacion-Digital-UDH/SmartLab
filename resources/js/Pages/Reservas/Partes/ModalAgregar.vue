@@ -29,6 +29,27 @@
           </FormItem>
         </div>
 
+        <!-- Campos para seleccionar Proyecto y Revisor -->
+        <FormItem label="Proyecto" name="proyecto_id">
+          <Select
+            v-model:value="reserva.proyecto_id"
+            placeholder="Seleccione un proyecto"
+            :options="opcionesProyectos"
+            show-search
+            :filter-option="buscarProyecto"
+          />
+        </FormItem>
+
+        <FormItem label="Revisor" name="revisor_id">
+          <Select
+            v-model:value="reserva.revisor_id"
+            placeholder="Seleccione un revisor"
+            :options="opcionesUsuarios"
+            show-search
+            :filter-option="buscarUsuario"
+          />
+        </FormItem>
+
         <!-- Tabs para seleccionar entre Recurso, Equipo o Área -->
         <Tabs v-model:activeKey="activeTab" type="line">
           <TabPane key="recurso" tab="Recurso">
@@ -207,6 +228,8 @@
         recurso_id: null,
         area_id: null,
         usuario_id: null,
+        proyecto_id: null,
+        revisor_id: null,
       }),
     },
     equipos: Array,
@@ -216,6 +239,10 @@
       default: () => [],
     },
     usuarios: {
+      type: Array,
+      default: () => [],
+    },
+    proyectos: {
       type: Array,
       default: () => [],
     },
@@ -253,6 +280,8 @@
           : [],
       estado: r.estado,
       usuario_id: r.usuario_id,
+      proyecto_id: r.proyecto_id,
+      revisor_id: r.revisor_id,
     };
   };
 
@@ -331,6 +360,13 @@
     }))
   );
 
+  const opcionesProyectos = ref(
+    props.proyectos.map((proyecto) => ({
+      label: proyecto.nombre,
+      value: proyecto.id,
+    }))
+  );
+
   // Funciones para filtrar las opciones de cada select
   const buscarEquipo = (input, option) =>
     option.label.toLowerCase().includes(input.toLowerCase());
@@ -339,6 +375,8 @@
   const buscarArea = (input, option) =>
     option.label.toLowerCase().includes(input.toLowerCase());
   const buscarUsuario = (input, option) =>
+    option.label.toLowerCase().includes(input.toLowerCase());
+  const buscarProyecto = (input, option) =>
     option.label.toLowerCase().includes(input.toLowerCase());
 
   // Métodos para actualizar la selección en cada tab
@@ -416,6 +454,8 @@
           estado: 'Por aprobar',
           fecha: null,
           hora_range: [],
+          proyecto_id: null,
+          revisor_id: null,
         };
         activeTab.value = 'recurso';
         originalReserva.value = { ...reserva.value };
