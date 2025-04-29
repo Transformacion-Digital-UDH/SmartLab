@@ -5,20 +5,57 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use App\Models\Laboratorio;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class AreaController extends Controller
 {
-    protected $reglas = [
-        'nombre' => ['required', 'string', 'max:80'],
-        'descripcion' => ['nullable', 'string', 'max:160'],
-        'aforo' => ['nullable', 'integer'],
-        'laboratorio_id' => ['nullable', 'exists:laboratorios,id'],
+    protected $rules = [
+        'nombre' => ['required', 'string', 'max:100'],
+        'descripcion' => ['nullable', 'string'],
+        'tipo' => ['required', 'in:Reservable,No reservable'],
+        'aforo' => ['nullable', 'integer', 'min:1'],
+        'laboratorio_id' => ['required', 'exists:laboratorios,id'],
+        'fotos.*' => ['image'],
+        'fotos_nuevas.*' => ['image'],
+        'fotos_eliminadas' => ['array'],
+        'fotos_eliminadas.*' => ['integer', 'exists:fotos_areas,id'],
     ];
 
-    /**
-     * API: Obtener todas las áreas activas de un laboratorio.
-     */
-    public function index($laboratorio_id)
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+
+        $areasQuery = Area::with('laboratorio', 'fotos')
+            ->where('is_active', true);
+
+        // Si el usuario no es Admin o ya tiene laboratorio seleccionado, filtramos por laboratorio
+        if (!($user->rol === 'Admin' && $user->laboratorio_seleccionado === null)) {
+            $areasQuery->where('laboratorio_id', $user->laboratorio_seleccionado);
+        }
+
+        // Excluir la primera área (por id mínimo) de cada laboratorio
+        $areasQuery->whereNotIn('id', function($query) {
+            $query->select(DB::raw('MIN(id)'))
+                  ->from('areas')
+                  ->groupBy('laboratorio_id');
+        });
+
+        $areas = $areasQuery->orderBy('id', 'desc')->get();
+
+        $laboratorios = Laboratorio::where('is_active', true)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return Inertia::render('Areas/Index', [
+            'areas' => $areas,
+            'laboratorios' => $laboratorios,
+        ]);
+    }
+
+    public function json($laboratorio_id)
     {
         if (Laboratorio::where('id', $laboratorio_id)->exists()) {
 
@@ -31,54 +68,49 @@ class AreaController extends Controller
         }
     }
 
-    /**
-     * API: Guardar un nuevo área.
-     */
     public function store(Request $request)
     {
-        // Validación de los datos
-        $request->validate($this->reglas);
+        $request->validate($this->rules);
+        $area = Area::create($request->all());
 
-        // Crear el área
-        Area::create([
-            'nombre' => $request->nombre ?? null,
-            'descripcion' => $request->descripcion ?? null,
-            'aforo' => $request->aforo ?? null,
-            'laboratorio_id' => $request->laboratorio_id ?? null,
-            'is_active' => true,
-        ]);
+        // Procesar y guardar las imágenes si se enviaron
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $imagen) {
+                $ruta = $imagen->store('areas', 'public');
+                $area->fotos()->create(['ruta' => $ruta]);
+            }
+        }
     }
 
-    /**
-     * API: Obtener un área específica.
-     */
-    public function show(string $id)
+    public function update(Request $request, Area $area)
     {
-        //
+        $request->validate($this->rules);
+        $area->update($request->all());
+
+        // Eliminar fotos enviadas para eliminación
+        if ($request->has('fotos_eliminadas')) {
+            foreach ($request->fotos_eliminadas as $fotoId) {
+                $foto = $area->fotos()->find($fotoId);
+                if ($foto) {
+                    // Eliminar archivo físico y el registro en la base de datos
+                    Storage::disk('public')->delete($foto->ruta);
+                    $foto->delete();
+                }
+            }
+        }
+
+        // Agregar fotos nuevas
+        if ($request->hasFile('fotos_nuevas')) {
+            foreach ($request->file('fotos_nuevas') as $imagen) {
+                $ruta = $imagen->store('areas', 'public');
+                $area->fotos()->create(['ruta' => $ruta]);
+            }
+        }
     }
 
-    /**
-     * API: Actualizar un área específica.
-     */
-    public function update(Request $request, $area_id)
+    public function destroy(Area $area)
     {
-        // Validación de los datos recibidos
-        $request->validate($this->reglas);
-
-        // Buscar el área por ID y actualizarla
-        $area = Area::findOrFail($area_id);
-        $area->nombre = $request->nombre;
-        $area->descripcion = $request->descripcion;
-        $area->aforo = $request->aforo;
-        $area->save();
-    }
-
-    /**
-     * API: Eliminar un área específica.
-     */
-    public function destroy($area_id)
-    {
-        $area = Area::findOrFail($area_id);
         $area->update(['is_active' => false]);
     }
 }
+

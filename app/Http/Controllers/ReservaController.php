@@ -76,15 +76,39 @@ class ReservaController extends Controller
     // Listar las reservas en la vista
     public function index()
     {
-        $reservas = Reserva::with(['usuario', 'equipo', 'recurso', 'area'])
-            ->where('is_active', true)
-            ->orderBy('id', 'desc')
-            ->get();
+        $user = Auth::user();
 
-        $usuarios = User::where('is_active', true)->get();
-        $equipos  = Equipo::where('is_active', true)->get();
-        $recursos = Recurso::where('is_active', true)->get();
-        $areas    = Area::where('is_active', true)->get();
+        // Query base para reservas
+        $reservasQuery = Reserva::with(['usuario', 'equipo', 'recurso', 'area'])
+            ->where('is_active', true);
+
+        // Queries para modelos relacionados (agregando el filtro de tipo "Reservable")
+        $usuariosQuery = User::where('is_active', true);
+        $equiposQuery = Equipo::where('is_active', true)->where('tipo', 'Reservable');
+        $recursosQuery = Recurso::where('is_active', true)->where('tipo', 'Reservable');
+        $areasQuery = Area::where('is_active', true)->where('tipo', 'Reservable');
+
+        // Aplicar filtro de laboratorio solo si no es Admin o si tiene lab seleccionado
+        if (!($user->rol === 'Admin' && $user->laboratorio_seleccionado === null)) {
+            // Filtro para reservas
+            $reservasQuery->where(function($query) use ($user) {
+                $query->whereHas('equipo.area', fn($q) => $q->where('laboratorio_id', $user->laboratorio_seleccionado))
+                      ->orWhereHas('recurso.area', fn($q) => $q->where('laboratorio_id', $user->laboratorio_seleccionado))
+                      ->orWhereHas('area', fn($q) => $q->where('laboratorio_id', $user->laboratorio_seleccionado));
+            });
+
+            // Filtros para equipos, recursos y áreas
+            $equiposQuery->whereHas('area', fn($q) => $q->where('laboratorio_id', $user->laboratorio_seleccionado));
+            $recursosQuery->whereHas('area', fn($q) => $q->where('laboratorio_id', $user->laboratorio_seleccionado));
+            $areasQuery->where('laboratorio_id', $user->laboratorio_seleccionado);
+        }
+
+        // Ejecutar consultas
+        $reservas = $reservasQuery->orderBy('id', 'desc')->get();
+        $usuarios = $usuariosQuery->get();
+        $equipos = $equiposQuery->get();
+        $recursos = $recursosQuery->get();
+        $areas = $areasQuery->get();
 
         return Inertia::render('Reservas/Index', [
             'reservas' => $reservas,
@@ -94,6 +118,7 @@ class ReservaController extends Controller
             'areas' => $areas,
         ]);
     }
+
 
     // Crear una reserva
     public function store(Request $request)
