@@ -18,7 +18,7 @@
                     class="w-full"
                     size="large"
                 />
-        
+
                 <Button
                     type="primary"
                     @click="abrirModalCrear"
@@ -39,7 +39,7 @@
             <!-- Modal para agregar laboratorio -->
             <ModalAgregar
                 v-model:visible="mostrarModalCrear"
-                :responsables="props.responsables"
+                :usuarios="props.usuarios"
                 @actualizar-tabla="actualizarTabla"
             />
 
@@ -48,7 +48,7 @@
                 v-if="labSeleccionado"
                 v-model:visible="mostrarModalEditar"
                 :laboratorio="labSeleccionado"
-                :responsables="props.responsables"
+                :usuarios="props.usuarios"
                 @actualizar-tabla="actualizarTabla"
             />
 

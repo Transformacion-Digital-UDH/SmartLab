@@ -23,9 +23,6 @@ return new class extends Migration
             $table->string('google_calendar_id')->nullable();
             $table->boolean('is_active')->default(true);
 
-            $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('coordinador_id')->nullable()->constrained('users')->onDelete('set null');
-
             $table->timestamps();
         });
     }

@@ -2,7 +2,10 @@
 import { Button, Card, CardMeta } from 'ant-design-vue';
 
 const props = defineProps({
-	recurso: Array,
+	recurso: {
+		type: Object,
+		default: () => ({})
+	},
 });
 
 const emitir = defineEmits(['open-modal']);

@@ -89,8 +89,9 @@ const nuevaArea = ref({
     nombre: "",
     descripcion: "",
     aforo: null,
-    tipo: "",
+    tipo: "No reservable", 
 });
+
 
 const cargando = ref(false);
 const errors = ref({});

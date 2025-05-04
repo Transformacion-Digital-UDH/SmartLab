@@ -5,17 +5,31 @@
 	import TimeLine from "./TimeLine.vue";
 	import ReservaEstado from "./ReservaEstado.vue";
 	import { ref, watch } from 'vue';
+<<<<<<< HEAD
 	import { Button, DatePicker, message, Modal, RangePicker, Tooltip, Select, Carousel, SelectOption, Space } from 'ant-design-vue';
 	import { InfoCircleOutlined, ClockCircleOutlined, CalendarOutlined, LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons-vue';
 	import { usePage } from "@inertiajs/vue3";
 	import { DateTime } from "@/lib/utils/datetime";
+=======
+	import { Button, message, Modal, RangePicker, Space } from 'ant-design-vue';
+	import { InfoCircleOutlined } from '@ant-design/icons-vue';
+	import { usePage, router } from "@inertiajs/vue3";
+	import axios from "axios";
+>>>>>>> dcbf80d3a65200e8ac9d17a43dba829de91c12ab
 
 	dayjs.locale('es');
 
 	const page = usePage()
 
 	const props = defineProps({
+<<<<<<< HEAD
 		area: Array,
+=======
+		recurso: {
+			type: Object,
+			default: () => ({})
+		},
+>>>>>>> dcbf80d3a65200e8ac9d17a43dba829de91c12ab
 		open: Boolean,
 		tipo: String
 	});
@@ -46,6 +60,7 @@
 
 	watch(() => props.open, (val)=>{
 		if (val) {
+<<<<<<< HEAD
 			console.log(val);
 			area.value = { ...props.area };
 			console.log(area.value);
@@ -78,14 +93,19 @@
 			area.value.fotos = [
 				{	id: 1, ruta_imagen: 'https://www.nbmchealth.com/wp-content/uploads/2018/04/default-placeholder.png'},
 			]
+=======
+			recurso.value = props.recurso ? { ...props.recurso } : {};
+			tipo.value = props.tipo
+>>>>>>> dcbf80d3a65200e8ac9d17a43dba829de91c12ab
 		}
 	})
 
 	function onRangeChange([start,end]) {
+		if (!start || !end) return;
+
 		const h = Math.floor(dayjs(end).diff(dayjs(start),'hour',true))
 		const m = Math.floor(dayjs(end).diff(dayjs(start),'minute',true))%60
 
-		console.log(`${Math.floor(h)}h ${m%60}m`);
 		tiempo.value = `: ${h}h ${m}m`
 
 		if (h < 3) {
@@ -95,22 +115,60 @@
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	function onRangeOk([start,end]){
+		if (!start || !end) return;
+
+		data.hora_inicio = dayjs(start).format('YYYY-MM-DD HH:mm:ss')
+		data.hora_fin = dayjs(end).format('YYYY-MM-DD HH:mm:ss')
+	}
+
+>>>>>>> dcbf80d3a65200e8ac9d17a43dba829de91c12ab
 	const handleOk = async () => {
+		// Verificar que recurso.value exista
+		if (!recurso.value || !tipo.value) {
+			message.error("Faltan datos para realizar la reserva");
+			return;
+		}
+
+		if (!data.hora_inicio || !data.hora_fin) {
+			message.error("Debe seleccionar un horario");
+			return;
+		}
+
 		if (tipo.value == 'equipo') {
 			data.equipo_id = area.value.id;
 			data.recurso_id = null;
+			data.area_id = null;
 		} else if(tipo.value == 'recurso'){
 			data.equipo_id = null;
+<<<<<<< HEAD
 			data.recurso_id = area.value.id;
 		}
+=======
+			data.recurso_id = recurso.value.id;
+			data.area_id = null;
+		} else if(tipo.value == 'area'){
+			data.equipo_id = null;
+			data.recurso_id = null;
+			data.area_id = recurso.value.id;
+			}
+
+		cargando.value = true;
+>>>>>>> dcbf80d3a65200e8ac9d17a43dba829de91c12ab
 
 		cargando.value = true;
 		console.log();
 		data.hora_inicio = `${dayjs(fecha.value).format('YYYY-MM-DD')} ${hora_inicio.value.value}:00`
 		data.hora_fin = `${dayjs(fecha.value).format('YYYY-MM-DD')} ${hora_fin.value.value}:00`
 		try {
+<<<<<<< HEAD
 			const response = await axios.post(route('reserva.create'), {...data});
 			
+=======
+			const response = await axios.post(route('reservas.store'), {...data});
+>>>>>>> dcbf80d3a65200e8ac9d17a43dba829de91c12ab
 			if (response.status === 201) {
 				message.success('Solicitud de reserva enviada correctamente');
 				emitir('close');
@@ -118,10 +176,9 @@
 				throw new Error('Error al reservar')
 			}
 		} catch (error) {
-				message.error('Error al reservar');
-				console.log(error);
+			message.error('Error al reservar');
 		} finally {
-				cargando.value = false;
+			cargando.value = false;
 		}
 	};
 
@@ -203,7 +260,11 @@
 	}
 </script>
 <template>
+<<<<<<< HEAD
 	<Modal v-model:open="props.open" title="Reservación" width="min(620px,100%)" @cancel="emitir('close')" @ok="handleOk">
+=======
+	<Modal :open="open" title="Reservación" width="min(620px,100%)" @cancel="emitir('close')" @ok="handleOk">
+>>>>>>> dcbf80d3a65200e8ac9d17a43dba829de91c12ab
 		<div class="flex w-auto  flex-wrap sm:flex-nowrap sm:justify-end gap-3">
 			<!-- portada -->
 			<div>

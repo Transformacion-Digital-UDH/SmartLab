@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'apellidos' => 'Ramírez',
             'email' => 'admin@smartlab.udh',
             'rol' => 'Admin',
+            'estado_cuenta' => 'Aprobada',
         ]);
 
         // Crear un usuario con rol Responsable
@@ -28,8 +29,9 @@ class UserSeeder extends Seeder
             'dni' => '74937272',
             'nombres' => 'Abimael',
             'apellidos' => 'Fernandez Ventura',
-            'email' => 'abimaelfv@hotmail.com',
-            'rol' => 'Responsable',
+            'email' => 'abimaelfv@udh.edu.pe.com',
+            'rol' => 'Admin',
+            'estado_cuenta' => 'Aprobada',
         ]);
 
         User::factory()->create([
@@ -37,7 +39,8 @@ class UserSeeder extends Seeder
             'nombres' => 'Axel Texu',
             'apellidos' => 'Perez Lazarte',
             'email' => 'havook01@gmail.com',
-            'rol' => 'Responsable',
+            'rol' => 'Invitado',
+            'estado_cuenta' => 'En revisión',
             'celular' => '917289674',
         ]);
 
@@ -47,7 +50,8 @@ class UserSeeder extends Seeder
             'nombres' => 'Abimael',
             'apellidos' => 'Saenz',
             'email' => 'coordinador@smartlab.udh',
-            'rol' => 'Coordinador',
+            'rol' => 'Libre',
+            'estado_cuenta' => 'Suspendida',
         ]);
 
         // Crear un usuario con rol Libre
@@ -57,6 +61,7 @@ class UserSeeder extends Seeder
             'apellidos' => 'Pérez',
             'email' => 'libre@smartlab.udh',
             'rol' => 'Libre',
+            'estado_cuenta' => 'En revisión',
         ]);
 
         // Crear un usuario con rol Invitado
@@ -66,6 +71,7 @@ class UserSeeder extends Seeder
             'apellidos' => 'López',
             'email' => 'invitado@smartlab.udh',
             'rol' => 'Invitado',
+            'estado_cuenta' => 'Desaprobada',
         ]);
 
         // Crear un usuario con rol Miembro
@@ -74,7 +80,8 @@ class UserSeeder extends Seeder
             'nombres' => 'Luis',
             'apellidos' => 'González',
             'email' => 'miembro@smartlab.udh',
-            'rol' => 'Miembro',
+            'rol' => 'Invitado',
+            'estado_cuenta' => 'Desaprobada',
         ]);
     }
 }

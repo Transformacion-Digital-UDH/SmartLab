@@ -49,6 +49,8 @@ class GoogleController extends Controller
                 $user = new User();
                 $user->nombres = $google->user['given_name'] ?? null;
                 $user->apellidos = $google->user['family_name'] ?? null;
+                $user->rol = "Invitado";
+
                 $user->email = $google->email;
                 $user->password = bcrypt($this->usuarioCorreo($google->email));
                 $user->email_verified_at = now();

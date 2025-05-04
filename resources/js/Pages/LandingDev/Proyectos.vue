@@ -4,7 +4,6 @@
 	import { usePage } from '@inertiajs/vue3';
 	import { CalendarOutlined } from "@ant-design/icons-vue";
 	const { props } = usePage()
-	console.log(props);
 </script>
 <template>
 	<Nav></Nav>
@@ -26,5 +25,5 @@
 	</section>
 </template>
 <style scoped>
-	
+
 </style>

@@ -23,7 +23,7 @@ function formatTime(date) {
 }
 
 class Asistencia {
-  constructor(props){ 
+  constructor(props){
     this.data = props
     this.fecha = formatDateTime(new Date(props.hora_entrada)).slice(0,11),
     this.check = true
@@ -31,7 +31,7 @@ class Asistencia {
     this.salida = props.hora_salida == null ? null : new Date(props.hora_salida);
 
     this.type = this.entrada.getHours() < 12 ? 'A': this.entrada.getHours() < 18 ? 'B' : 'C';
-  
+
     // Props
     this.id = props.id
     this.nombres = `${props.nombres} ${props.apellidos}`
@@ -55,7 +55,6 @@ class Asistencia {
   getTime(date) {
     const h = date.getHours().toString()
     const m = date.getMinutes().toString()
-    console.log(h,m)
     return `${h.length < 2 ? '0' : ''}${h}:${m.length < 2 ? '0' : ''}${m}`
   }
   getHoraSalida(h) {

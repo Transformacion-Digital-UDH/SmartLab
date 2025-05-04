@@ -4,7 +4,7 @@
   import axios from 'axios';
   import moment from 'moment'
 
-  
+
   const props = defineProps({
     visible: Boolean,
     asistencia: {
@@ -18,7 +18,7 @@
   const asistencia = ref({ ...props.asistencia })
   const cargando = ref(false);
   const selectedTime = ref(asistencia.value.hora_entrada);
-  
+
   // Cierra el modal y emite el evento para cerrar en el componente padre
   const cerrarModal = () => {
     emitir('update:visible', false);
@@ -27,20 +27,17 @@
   const enviarFormulario = async () => {
     cargando.value = true;
     try {
-        // Enviar la solicitud para actualizar el laboratorio
-        console.log(asistencia)
         const response = await axios.put(route(
           'asistencia.editar.salida',{
-            id: asistencia.value.id, 
+            id: asistencia.value.id,
             date: `${moment(asistencia.entrada).format('YYYY-MM-DD')} ${selectedTime.value}:00`
-          } 
+          }
         ));
         message.success('Asistencia actualizado exitosamente');
         cerrarModal();
         emitir('actualizar-tabla', response.data["laboratorio"]);
     } catch (error) {
         message.error('Error al actualizar la hora de salida');
-        console.log(error)
     } finally {
         cargando.value = false;
     }
@@ -63,7 +60,7 @@
       :footer="null"
   >
       <Form layout="vertical" @finish="enviarFormulario" :model="asistencia">
-  
+
           <FormItem label="Hora de entrada" name="inauguracion">
               <Input type="time" v-model:value="asistencia.hora_entrada" readonly style="width: 100%;" />
           </FormItem>

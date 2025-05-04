@@ -28,6 +28,8 @@
             <!-- Modal para agregar miembro -->
             <ModalAgregar
                 v-model:visible="mostrarModalCrear"
+                :usuarios="usuarios"
+                :miembros="miembros"
                 @actualizar-tabla="actualizarTabla"
             />
 
@@ -49,12 +51,12 @@ import { usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Button, InputSearch } from 'ant-design-vue';
 import TablaMiembros from './Partes/TablaMiembros.vue';
-import ModalAreas from './Partes/ModalAreas.vue';
 import ModalAgregar from './Partes/ModalAgregar.vue';
 import ModalEditar from './Partes/ModalEditar.vue';
 
 const { props } = usePage();
 const miembros = ref(props.miembros || []);
+const usuarios = ref(props.usuarios || []);
 const mostrarModalCrear = ref(false);
 const mostrarModalEditar = ref(false);
 const mostrarModalAreas = ref(false);

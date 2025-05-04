@@ -10,7 +10,6 @@
 		asistencia: Object
 	})
 
-	console.log( dayjs(asistencia.salida).diff(asistencia.entrada,'hour'));
 </script>
 <template>
 	<article :class="'flex justify-between bg-neutral-50 border border-neutral-100 rounded-xl py-1 pl-3 pr-3 boder ' + (asistencia.check ? 'border-green-300 bg-green-100' : '') ">

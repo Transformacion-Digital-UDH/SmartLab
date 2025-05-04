@@ -6,6 +6,7 @@ use App\Models\Area;
 use App\Models\Equipo;
 use App\Models\Recurso;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -29,22 +30,38 @@ class RecursoController extends Controller
 
     public function index(Request $request)
     {
-        $recursos = Recurso::with('area', 'equipo',  'fotos')
-            ->where('is_active', true)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        $equipos = Equipo::with('area', 'recursos',  'fotos')
-            ->where('is_active', true)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        $areas = Area::with('laboratorio')
-            ->where('is_active', true)
-            ->orderBy('id', 'desc')
-            ->get();
-
+        $user = Auth::user();
         $tab = $request->query('tab', 1);
+
+        // Query para Recursos
+        $recursosQuery = Recurso::with('area', 'equipo', 'fotos')
+            ->where('is_active', true);
+
+        // Query para Equipos
+        $equiposQuery = Equipo::with('area', 'recursos', 'fotos')
+            ->where('is_active', true);
+
+        // Query para Áreas
+        $areasQuery = Area::with('laboratorio')
+            ->where('is_active', true);
+
+        // Aplicar filtro de laboratorio si no es Admin sin laboratorio seleccionado
+        if (!($user->rol === 'Admin' && $user->laboratorio_seleccionado === null)) {
+            $recursosQuery->whereHas('area.laboratorio', function($query) use ($user) {
+                $query->where('id', $user->laboratorio_seleccionado);
+            });
+
+            $equiposQuery->whereHas('area.laboratorio', function($query) use ($user) {
+                $query->where('id', $user->laboratorio_seleccionado);
+            });
+
+            $areasQuery->where('laboratorio_id', $user->laboratorio_seleccionado);
+        }
+
+        // Obtener resultados ordenados
+        $recursos = $recursosQuery->orderBy('id', 'desc')->get();
+        $equipos = $equiposQuery->orderBy('id', 'desc')->get();
+        $areas = $areasQuery->orderBy('id', 'desc')->get();
 
         return Inertia::render('Recursos/Index', [
             'recursos' => $recursos,

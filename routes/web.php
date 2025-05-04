@@ -17,8 +17,6 @@ use App\Models\Proyecto;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Las rutas que serán accedidas por aplicaciones externas se definen en api.php,
-// las que se usarán internamente en esta app laravel se definen en web.php
 
 // Página principal
 Route::get('/', function () {
@@ -33,10 +31,14 @@ Route::middleware('guest')->controller(GoogleController::class)->group(function 
     Route::get('/google/callback', 'callback');
 });
 
-Route::middleware('auth')->controller(CompletarRegistro::class)->group(function () {
-    Route::get('/completar-registro', 'create')->name('completar.registro');
-    Route::post('/completar-registro', 'store');
+// ÚNICA DEFINICIÓN DE RUTAS PARA COMPLETAR REGISTRO
+Route::middleware(['auth'])->group(function () {
+    Route::get('/completar-registro', [CompletarRegistro::class, 'create'])
+        ->name('completar.registro');
+
+    Route::post('/completar-registro', [CompletarRegistro::class, 'store']);
 });
+
 
 // Grupo de rutas con middleware de autenticación (sesión interna)
 Route::middleware([
@@ -69,13 +71,15 @@ Route::middleware([
     Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
     Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
     Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+    Route::post('/usuario/seleccionar-laboratorio', [UserController::class, 'seleccionarLaboratorio'])
+    ->name('usuario.seleccionarLaboratorio');
 
     // miembros
     Route::get('/miembros', [MiembroController::class, 'index'])->name('miembros.index');
     Route::post('/miembros', [MiembroController::class, 'store'])->name('miembros.store');
-    Route::put('/miembros/{usuario}', [MiembroController::class, 'update'])->name('miembros.update');
-    Route::delete('/miembros/{usuario}', [MiembroController::class, 'destroy'])->name('miembros.destroy');
-
+    // Route::put('/miembros/{usuario}', [MiembroController::class, 'update'])->name('miembros.update');
+    Route::delete('/miembros/{miembro}', [MiembroController::class, 'destroy'])
+    ->name('miembros.destroy');
 
     // Recursos
     Route::get('/inventario', [RecursoController::class, 'index'])->name('recursos.index');
@@ -94,10 +98,11 @@ Route::middleware([
     Route::get('/catalogo/reservas/{tipo}/{id}', [CatalogoController::class, 'listaDeReservados'])->name('catalogo.horarios');
 
     // Áreas
-    Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'index'])->name('areas.json');
+    Route::get('/laboratorios/{laboratorio_id}/areas', [AreaController::class, 'json'])->name('areas.json');
+    Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
     Route::post('/areas', [AreaController::class, 'store'])->name('areas.store');
-    Route::put('/areas/{area_id}', [AreaController::class, 'update'])->name('areas.update');
-    Route::delete('/areas/{area_id}', [AreaController::class, 'destroy'])->name('areas.destroy');
+    Route::put('/areas/{area}', [AreaController::class, 'update'])->name('areas.update');
+    Route::delete('/areas/{area}', [AreaController::class, 'destroy'])->name('areas.destroy');
 
     // Reservas
     Route::get('/reservas', [ReservaController::class, 'index'])->name('reservas.index');

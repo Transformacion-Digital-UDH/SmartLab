@@ -36,8 +36,12 @@ class User extends Authenticatable
         'codigo',
         'celular',
         'rol',
-        'is_active',
+        'estado_cuenta',
         'google_token_json',
+        'razon_registro',
+        'se_registro',
+        'is_active',
+        'laboratorio_seleccionado',
     ];
 
     /**
@@ -91,14 +95,9 @@ class User extends Authenticatable
         return $this->hasMany(MiembroProyecto::class);
     }
 
-    public function laboratoriosResponsable()
+    public function laboratoriosParticipante()
     {
-        return $this->hasMany(Laboratorio::class, 'responsable_id');
-    }
-
-    public function laboratoriosCoordinador()
-    {
-        return $this->hasMany(Laboratorio::class, 'coordinador_id');
+        return $this->hasMany(LaboratorioUser::class, 'user_id');
     }
 
     // Setters
@@ -130,5 +129,10 @@ class User extends Authenticatable
     public function setApellidosAttribute($value)
     {
         $this->attributes['apellidos'] = mb_strtoupper(trim($value), 'UTF-8');
+    }
+
+    public function setRazonRegistroAttribute($value)
+    {
+        $this->attributes['razon_registro'] = $value ? trim($value) : null;
     }
 }

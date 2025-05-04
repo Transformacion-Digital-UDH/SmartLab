@@ -14,12 +14,14 @@ use Inertia\Inertia;
 
 class AsistenciaController extends Controller
 {
-    public function index(Request $request){
-        $cantidad = $request -> query('cantidad', 20);
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $cantidad = $request->query('cantidad', 20);
 
-        $asistencias = DB::table('asistencias')
-            ->where('asistencias.is_active',1)
-            ->join('users','users.id','=','asistencias.usuario_id')
+        $asistenciasQuery = DB::table('asistencias')
+            ->where('asistencias.is_active', 1)
+            ->join('users', 'users.id', '=', 'asistencias.usuario_id')
             ->when(request('q'), function ($query, $busqueda) {
                 // Buscar por nombres, apellidos o DNI
                 $query->where(function ($subquery) use ($busqueda) {
@@ -27,10 +29,17 @@ class AsistenciaController extends Controller
                         ->orWhere('users.nombres', 'like', "%{$busqueda}%")
                         ->orWhere('users.apellidos', 'like', "%{$busqueda}%");
                 });
-            })
-            ->select('asistencias.*', 'users.dni','users.nombres','users.apellidos','users.rol')
+            });
+
+        // No filtrar por laboratorio si el usuario es "Admin" y no tiene un laboratorio seleccionado
+        if (!($user->rol === 'Admin' && $user->laboratorio_seleccionado === null)) {
+            $asistenciasQuery->where('asistencias.laboratorio_id', $user->laboratorio_seleccionado);
+        }
+
+        $asistencias = $asistenciasQuery
+            ->select('asistencias.*', 'users.dni', 'users.nombres', 'users.apellidos', 'users.rol')
             ->orderBy('asistencias.hora_entrada', 'desc')
-            ->paginate(10);
+            ->paginate($cantidad);
 
         return Inertia::render('Asistencia/Index', [
             'token' => csrf_token(),

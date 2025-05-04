@@ -140,8 +140,6 @@ const emitir = defineEmits(['update:visible', 'actualizar-tabla']);
 const equipo = ref({ ...props.equipo });
 const cargando = ref(false);
 
-console.log(equipo.value);
-
 const opcionesTipo = ref([
     { label: 'Reservable', value: 'Reservable' },
     { label: 'No reservable', value: 'No reservable' },
@@ -283,8 +281,6 @@ onMounted(() => {
         equipo_id: recurso.equipo_id || null,
         foto: recurso.fotos.length > 0 ? `/storage/${recurso.fotos[0].ruta}` : '/img/default-placeholder.webp',
     }));
-
-    console.log("Recursos", listaRecursos.value);
 
     // Cargar recursos asignados al equipo al montar el componente
     recursosAsignados.value = props.equipo.recursos.map(recurso => recurso.id.toString());

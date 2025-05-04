@@ -36,6 +36,7 @@ const props = defineProps({
     laboratorios: Array,
 });
 
+console.log(props.laboratorios);
 const emitir = defineEmits(["editar", "mostrar-areas", "actualizar-tabla"]);
 
 // Definir las columnas de la tabla de laboratorios
@@ -49,8 +50,10 @@ const columnas = [
     },
     {
         title: "Responsable",
-        customRender: ({ record }) =>
-            `${record.responsable.nombres} ${record.responsable.apellidos}`,
+        customRender: ({ record }) => 
+            record.responsable 
+                ? `${record.responsable.nombres} ${record.responsable.apellidos}`
+                : 'Sin asignar',
         key: "nombres",
     },
     {

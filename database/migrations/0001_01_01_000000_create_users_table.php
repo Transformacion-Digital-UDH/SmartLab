@@ -20,12 +20,15 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('celular')->nullable();
             $table->string('codigo', 20)->nullable();
+            $table->enum('estado_cuenta', ['En revisión', 'Aprobada', 'Desaprobada', 'Suspendida'])->nullable();
             $table->integer('se_registro')->default(0);
-            $table->enum('rol', ['Libre', 'Invitado', 'Miembro', 'Coordinador', 'Responsable', 'Admin']);
+            $table->enum('rol', ['Libre', 'Invitado', 'Admin']);
             $table->string('profile_photo_path', 2048)->nullable();
+            $table->text('razon_registro')->nullable();
             $table->boolean('is_active')->default(true);
-
             $table->text('google_token_json')->nullable();
+
+            $table->foreignId('laboratorio_seleccionado')->nullable()->constrained('laboratorios')->onDelete('set null');
 
             $table->rememberToken();
 

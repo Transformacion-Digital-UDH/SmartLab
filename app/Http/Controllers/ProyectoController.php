@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Proyecto;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ProyectoController extends Controller
 {
     protected $rules = [
         'nombre' => 'required|max:100',
-        'descripcion' => 'nullable|max:255',
+        'descripcion' => 'nullable',
         'fecha_inicio' => 'nullable|date',
         'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
         'estado' => 'required|in:Sin iniciar,En proceso,Completado,Cancelado',
@@ -23,13 +24,19 @@ class ProyectoController extends Controller
     // Listar los proyectos en la vista
     public function index()
     {
-        $proyectos = Proyecto::with('responsable')
-            ->with('laboratorio')
-            ->where('is_active', true)
-            ->orderBy('id', 'desc')
-            ->get();
+        $user = Auth::user();
 
-        // Por ahora cualquier usuario puede ser responsable de un proyecto
+        $proyectosQuery = Proyecto::with('responsable')
+            ->with('laboratorio')
+            ->where('is_active', true);
+
+        // No filtrar por laboratorio si el usuario es "Admin" y no tiene un laboratorio seleccionado
+        if (!($user->rol === 'Admin' && $user->laboratorio_seleccionado === null)) {
+            $proyectosQuery->where('laboratorio_id', $user->laboratorio_seleccionado);
+        }
+
+        $proyectos = $proyectosQuery->orderBy('id', 'desc')->get();
+
         $responsables = User::all();
         $laboratorios = Laboratorio::all();
 
@@ -87,7 +94,7 @@ class ProyectoController extends Controller
         foreach ($request->usuario_ids as $usuarioId) {
             $proyecto->participantes()->updateOrCreate(
                 ['usuario_id' => $usuarioId],
-                ['is_active' => true] 
+                ['is_active' => true]
             );
         }
 

@@ -34,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
                         'user' => Auth::user(),
                         'roles' => Auth::user()->getRoleNames(), // ["admin", "editor"]
                         'permissions' => Auth::user()->getAllPermissions()->pluck('name'), // ["edit articles", "delete articles"]
+
+
                     ];
                 }
                 return null;
