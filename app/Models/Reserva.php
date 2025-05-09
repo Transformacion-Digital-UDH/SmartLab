@@ -20,6 +20,7 @@ class Reserva extends Model
         'equipo_id',
         'recurso_id',
         'area_id',
+        'razon'
 
     ];
 

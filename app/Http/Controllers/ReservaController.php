@@ -28,6 +28,7 @@ class ReservaController extends Controller
         'equipo_id'   => 'nullable|exists:equipos,id',
         'recurso_id'  => 'nullable|exists:recursos,id',
         'area_id'     => 'nullable|exists:areas,id',
+        'razon'       => 'nullable|string|max:255', 
     ];
 
     /**

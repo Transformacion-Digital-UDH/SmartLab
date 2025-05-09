@@ -46,6 +46,7 @@ const props = defineProps({
 
 const emitir = defineEmits(["editar", "actualizar-tabla"]);
 
+
 // Mapeo de estados a colores
 const estadoColor = (estado) => {
     const colores = {
@@ -106,6 +107,12 @@ const columnas = [
         dataIndex: ["usuario", "nombres", "usuario", "apellidos"],
         key: "usuario",
         customRender: ({ record }) => `${record.usuario.nombres} ${record.usuario.apellidos}`,
+    },
+     {
+        title: "Razón",
+        dataIndex: "razon",
+        key: "razon",
+        customRender: ({ record }) => `${record.razon}`,
     },
     {
         title: "Fecha registro",

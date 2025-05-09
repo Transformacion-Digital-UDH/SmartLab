@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('laboratorio_id')->nullable()->constrained('laboratorios')->onDelete('set null');
-
+            $table->boolean('aprobado_vri')->default(false);
 
             $table->timestamps();
         });

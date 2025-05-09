@@ -107,38 +107,6 @@ function handleChange(value) {
 </script>
 
 <template>
-<<<<<<< HEAD
-    <AppLayout title="Catálogo">
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0">
-                Catálogo
-            </h2>
-        </template>
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8 px-4">
-            <div
-                class="flex flex-col-reverse justify-end gap-y-4 mb-6 sm:flex-row sm:justify-between sm:items-center gap-x-4">
-                <InputSearch placeholder="Buscar" class="w-full" size="large" :loading="loading" @search="buscar"
-                    v-model:value="valorBuscar" />
-                <Select v-model:value="idLabSelected" show-search placeholder="Selecciona el laboratorio" size="large"
-                    style="width: 200px" :options="options" :filter-option="filterOption" @change="handleChange">
-                </Select>
-            </div>
-            <!-- Catalogos -->
-            <section>
-                <div class="catalogos grid gap-4">
-                    <CardRecurso v-for="equipo in equiposFiltrados" :key="equipo.id" :recurso="equipo"
-                        @open-modal="handleSelect(equipo, 'equipo')" />
-                    <CardRecurso v-for="recurso in recursosFiltrados" :key="recurso.id" :recurso="recurso"
-                        @open-modal="handleSelect(recurso, 'recurso')" />
-                    <CardArea v-for="area in areasFiltradas" :key="area.id" :area="area"
-                        @open-modal="handleSelect(area, 'area')" />
-                </div>
-            </section>
-            <ModalReservar :recurso="recursoSeleccionado" :tipo="tipo" v-model:open="open" @close="open = false" />
-            <ModalReservarArea v-if="tipo === 'area'" :area="recursoSeleccionado" :open="open" @close="open = false" />
-        </div>
-    </AppLayout>
-=======
 	<AppLayout title="Catálogo">
 		<template #header>
 			<h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-0">
@@ -168,7 +136,6 @@ function handleChange(value) {
 			<ModalReservar :recurso="recursoSeleccionado" :tipo="tipo" v-model:open="open" @close="open = false" />
 		</div>
 	</AppLayout>
->>>>>>> dcbf80d3a65200e8ac9d17a43dba829de91c12ab
 </template>
 
 <style scoped>

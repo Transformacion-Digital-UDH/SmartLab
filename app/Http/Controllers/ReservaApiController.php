@@ -7,10 +7,6 @@ use Carbon\Carbon;
 
 class ReservaApiController extends Controller
 {
-<<<<<<< HEAD
-=======
-
->>>>>>> dcbf80d3a65200e8ac9d17a43dba829de91c12ab
     public function index($tipo, $id)
     {
         $query = Reserva::where('is_active', true)

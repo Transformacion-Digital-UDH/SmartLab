@@ -6,6 +6,10 @@
                     {{ record.estado }}
                 </Tag>
             </template>
+            <template v-if="column.key === 'vri'">
+                <CheckCircleFilled v-if="record.aprobado_vri"class="text-green-600 text-lg text-center"/>
+                <CheckCircleFilled v-else class="text-center text-gray-400 text-lg"/>
+            </template>
             <template v-else-if="column.key === 'acciones'">
                 <FormOutlined @click="editar(record)" class="text-blue-600" />
                 <DeleteOutlined
@@ -29,6 +33,8 @@ import {
     FormOutlined,
     DeleteOutlined,
     TeamOutlined,
+    CheckCircleFilled,
+    CheckCircleOutlined
 } from "@ant-design/icons-vue";
 
 const props = defineProps({
@@ -80,6 +86,7 @@ const columnas = [
         sorter: (a, b) => new Date(a.fecha_fin) - new Date(b.fecha_fin),
     },
     { title: "Estado", dataIndex: "estado", key: "estado", sorter: (a, b) => a.estado.localeCompare(b.estado), width: 100 },
+    { title: "Aprobación de VRI", dataIndex: "vri", key: "vri", width: 100 },
     { title: "Acciones", key: "acciones", fixed: "right", width: 90 },
 ];
 
